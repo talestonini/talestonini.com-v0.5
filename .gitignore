@@ -1,0 +1,8 @@
+.bloop
+.metals
+node_modules
+project/.bloop
+target
+
+temp
+package-lock.json
