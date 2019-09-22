@@ -1,0 +1,96 @@
+* {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.logo table td {
+  font-family: Ultra, serif;
+  font-size: x-large;
+  padding: 0px;
+  line-height: 20px;
+}
+
+.logo table {
+  border-collapse: collapse;
+}
+
+.logo div {
+  padding: 14px;
+  background: white;
+}
+
+.logo .symbol {
+  color: #8ecdc5;
+  font-size: large;
+  padding-right: 1px;
+}
+
+.logo .tales_t {
+  color: black;
+  background: white;
+}
+
+.logo .ales {
+  color: black;
+  background: white;
+}
+
+.logo .tonini_t {
+  color: black;
+  background: white;
+}
+
+.logo .onini {
+  color: black;
+  background: white;
+}
+
+.logo .dot {
+  color: #e84327;
+  background: white;
+  text-align: center;
+}
+
+.logo .com {
+  color: black;
+  background: white;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Style the top navigation bar */
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+/* Style the topnav links */
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Change color on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Style the content */
+.content {
+  background-color: #ddd;
+  padding: 10px;
+}
+
+/* Style the footer */
+.footer {
+  background-color: #f1f1f1;
+  padding: 10px;
+}
