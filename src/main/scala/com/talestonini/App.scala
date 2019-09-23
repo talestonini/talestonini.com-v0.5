@@ -19,6 +19,14 @@ object App {
   val data = Vars.empty[Contact]
 
   @dom
+  def pronouncedTd(p: String) = 
+    <td class="pronounced">
+      <a href="https://www.oxfordlearnersdictionaries.com/about/english/pronunciation_english" target="_blank">
+        { p }
+      </a>
+    </td>
+
+  @dom
   def page: Binding[BindingSeq[Node]] = {
     <div class="logo">
       <div>
@@ -27,16 +35,19 @@ object App {
             <td class="symbol">&#x276F;</td>
             <td class="tales_t">T</td>
             <td class="ales">ales</td>
+            { pronouncedTd("/tɑː \u2022 les/").bind }
           </tr>
           <tr>
             <td></td>
             <td class="tonini_t">T</td>
             <td class="onini">onini</td>
+            { pronouncedTd("/toʊ \u2022 niː \u2022 nɪ/").bind }
           </tr>
           <tr>
             <td></td>
-            <td class="dot">.</td>
+            <td class="dot">&#x2022;</td>
             <td class="com">com</td>
+            <td></td>
           </tr>
         </table>
       </div>

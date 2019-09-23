@@ -22,7 +22,7 @@
 .logo .symbol {
   color: #8ecdc5;
   font-size: large;
-  padding-right: 1px;
+  padding-right: 4px;
 }
 
 .logo .tales_t {
@@ -54,6 +54,16 @@
 .logo .com {
   color: black;
   background: white;
+}
+
+.logo .pronounced a {
+  font-family: 'Roboto', sans-serif;
+  font-style: italic;
+  font-size: 16px;
+  padding-left: 14px;
+  text-decoration: none;
+  color: #5285c5;
+  line-height: 20px;
 }
 
 body {
