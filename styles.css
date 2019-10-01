@@ -3,20 +3,28 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.logo table td {
-  font-family: Ultra, serif;
-  font-size: x-large;
-  padding: 0px;
-  line-height: 20px;
+.page {
+  justify-content: center;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+}
+
+.logo div {
+  padding: 14px;
 }
 
 .logo table {
   border-collapse: collapse;
 }
 
-.logo div {
-  padding: 14px;
-  background: white;
+.logo table td {
+  font-family: Ultra, serif;
+  font-size: x-large;
+  padding: 0px;
+  line-height: 20px;
 }
 
 .logo .symbol {
@@ -25,38 +33,12 @@
   padding-right: 4px;
 }
 
-.logo .tales_t {
-  color: black;
-  background: white;
-}
-
-.logo .ales {
-  color: black;
-  background: white;
-}
-
-.logo .tonini_t {
-  color: black;
-  background: white;
-}
-
-.logo .onini {
-  color: black;
-  background: white;
-}
-
 .logo .dot {
   color: #e84327;
-  background: white;
   text-align: center;
 }
 
-.logo .com {
-  color: black;
-  background: white;
-}
-
-.logo .pronounced a {
+.logo .pronunciation a {
   font-family: 'Roboto', sans-serif;
   font-style: italic;
   font-size: 16px;
@@ -66,21 +48,14 @@
   line-height: 20px;
 }
 
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 /* Style the top navigation bar */
 .topnav {
-  overflow: hidden;
   background-color: #333;
 }
 
 /* Style the topnav links */
 .topnav a {
   float: left;
-  display: block;
   color: #f2f2f2;
   text-align: center;
   padding: 14px 16px;
@@ -91,6 +66,11 @@ body {
 .topnav a:hover {
   background-color: #ddd;
   color: black;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 /* Style the content */

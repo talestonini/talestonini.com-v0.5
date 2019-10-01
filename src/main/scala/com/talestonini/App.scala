@@ -19,86 +19,89 @@ object App {
   val data = Vars.empty[Contact]
 
   @dom
-  def pronouncedTd(p: String) = 
-    <td class="pronounced">
+  def pronunciationTd(p: String) = 
+    <td class="pronunciation">
       <a href="https://www.oxfordlearnersdictionaries.com/about/english/pronunciation_english" target="_blank">
         { p }
       </a>
     </td>
 
   @dom
-  def page: Binding[BindingSeq[Node]] = {
-    <div class="logo">
-      <div>
-        <table>
-          <tr>
-            <td class="symbol">&#x276F;</td>
-            <td class="tales_t">T</td>
-            <td class="ales">ales</td>
-            { pronouncedTd("/tɑː \u2022 les/").bind }
-          </tr>
-          <tr>
-            <td></td>
-            <td class="tonini_t">T</td>
-            <td class="onini">onini</td>
-            { pronouncedTd("/toʊ \u2022 niː \u2022 nɪ/").bind }
-          </tr>
-          <tr>
-            <td></td>
-            <td class="dot">&#x2022;</td>
-            <td class="com">com</td>
-            <td></td>
-          </tr>
+  def page: Binding[Node] = {
+    <div class="page">
+      <div class="header">
+        <div class="logo">
+          <div>
+            <table>
+              <tr>
+                <td class="symbol">&#x276F;</td>
+                <td class="tales_t">T</td>
+                <td class="ales">ales</td>
+                { pronunciationTd("/tɑː \u2022 les/").bind }
+              </tr>
+              <tr>
+                <td></td>
+                <td class="tonini_t">T</td>
+                <td class="onini">onini</td>
+                { pronunciationTd("/toʊ \u2022 niː \u2022 nɪ/").bind }
+              </tr>
+              <tr>
+                <td></td>
+                <td class="dot">&#x2022;</td>
+                <td class="com">com</td>
+                <td></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="topnav">
+          <a href="#">Link</a>
+          <a href="#">Link</a>
+          <a href="#">Link</a>
+          <a href="#">Link</a>
+          <a href="#">Link</a>
+        </div>
+      </div>
+
+      <div class="content">
+        <h2>CSS Template</h2>
+        <p>A topnav, content and a footer.</p>
+
+        <div>
+          <button onclick={ event: Event => 
+            data.value += Contact(Var("Tales Tonini"), Var("talestonini@gmail.com"))
+          }>Add a contact</button>
+        </div>
+        
+        <table border="1" cellPadding="5">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>E-mail</th>
+              <th>Operation</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              for (contact <- data) yield {
+                <tr>
+                  <td>{contact.name.bind}</td>
+                  <td>{contact.email.bind}</td>
+                  <td>
+                    <button onclick={ event: Event => 
+                      contact.name.value = "Modified Name" 
+                    }>Modify the name</button>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
         </table>
       </div>
-    </div>
 
-    <div class="topnav">
-      <a href="#">Link</a>
-      <a href="#">Link</a>
-      <a href="#">Link</a>
-      <a href="#">Link</a>
-      <a href="#">Link</a>
-    </div>
-
-    <div class="content">
-      <h2>CSS Template</h2>
-      <p>A topnav, content and a footer.</p>
-
-      <div>
-        <button onclick={ event: Event => 
-          data.value += Contact(Var("Tales Tonini"), Var("talestonini@gmail.com"))
-        }>Add a contact</button>
+      <div class="footer">
+        <p>Footer</p>
       </div>
-      
-      <table border="1" cellPadding="5">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>E-mail</th>
-            <th>Operation</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            for (contact <- data) yield {
-              <tr>
-                <td>{contact.name.bind}</td>
-                <td>{contact.email.bind}</td>
-                <td>
-                  <button onclick={ event: Event => 
-                    contact.name.value = "Modified Name" 
-                  }>Modify the name</button>
-                </td>
-              </tr>
-            }
-          }
-        </tbody>
-      </table>
-    </div>
-
-    <div class="footer">
-      <p>Footer</p>
     </div>
   }
 
