@@ -1,3 +1,7 @@
+* {
+  color: #222222;
+}
+
 .logo {
   padding: 10px;
   text-align: left;
@@ -36,7 +40,7 @@
   line-height: 20px;
 }
 
-.topnav {
+.menu {
   font-family: 'Open Sans', sans-serif;
   font-size: large;
   width: 100%;
@@ -46,10 +50,14 @@
   align-items: center;
 }
 
-.topnav a {
+.menu a {
   text-align: center;
   padding: 10px;
   text-decoration: none;
+}
+
+.mobile-menu {
+  font-family: 'Open Sans', sans-serif;
 }
 
 body {
@@ -59,12 +67,15 @@ body {
 
 /* Style the content */
 .content {
-  background-color: #ddd;
   padding: 10px;
 }
 
 /* Style the footer */
 .footer {
-  background-color: #f1f1f1;
   padding: 10px;
+}
+
+hr {
+  border-top: 1px dotted lightgray;
+  margin: 0px 10px 0px 10px;
 }

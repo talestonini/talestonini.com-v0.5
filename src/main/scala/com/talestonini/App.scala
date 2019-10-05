@@ -19,28 +19,20 @@ object App {
   val data = Vars.empty[Contact]
 
   @dom
-  def pronunciationTd(p: String) = 
-    <td class="pronunciation">
-      <a href="https://www.oxfordlearnersdictionaries.com/about/english/pronunciation_english" target="_blank">
-        { p }
-      </a>
-    </td>
-
-  @dom
-  def logoDiv =
+  def logo =
     <div class="w3-col logo">
       <table>
         <tr>
           <td class="symbol">&#x276F;</td>
           <td class="tales_t">T</td>
           <td class="ales">ales</td>
-          { pronunciationTd("/tɑː \u2022 les/").bind }
+          {pronunciation("/tɑː \u2022 les/").bind}
         </tr>
         <tr>
           <td></td>
           <td class="tonini_t">T</td>
           <td class="onini">onini</td>
-          { pronunciationTd("/toʊ \u2022 niː \u2022 nɪ/").bind }
+          {pronunciation("/toʊ \u2022 niː \u2022 nɪ/").bind}
         </tr>
         <tr>
           <td></td>
@@ -52,13 +44,31 @@ object App {
     </div>
 
   @dom
-  def topnav: Binding[Node] = {
-    val menuItemClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-padding-10"
+  def pronunciation(p: String) = 
+    <td class="pronunciation">
+      <a href="https://www.oxfordlearnersdictionaries.com/about/english/pronunciation_english" target="_blank">{p}</a>
+    </td>
+
+  @dom
+  def menu: Binding[Node] = {
+    val classes = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-padding-10 w3-hide-small"
     <div class="w3-rest">
-      <div class="topnav">
-        <a href="#" class={menuItemClasses}>Link 1</a>
-        <a href="#" class={menuItemClasses}>Link 2</a>
-        <a href="#" class={menuItemClasses}>Link 3</a>
+      <div class="menu">
+        <a href="#" class={classes}>Link 1</a>
+        <a href="#" class={classes}>Link 2</a>
+        <a href="#" class={classes}>Link 3</a>
+      </div>
+    </div>
+  }
+
+  @dom
+  def mobileMenu: Binding[Node] = {
+    val classes = "w3-bar-item w3-button w3-padding-large"
+    <div class="w3-bar-block w3-hide-large w3-hide-medium">
+      <div class="mobile-menu">
+        <a href="#" class={classes}>Link 1</a>
+        <a href="#" class={classes}>Link 2</a>
+        <a href="#" class={classes}>Link 3</a>
       </div>
     </div>
   }
@@ -67,14 +77,13 @@ object App {
   def page: Binding[Node] = {
     <div>
       <div class="w3-row">
-        {logoDiv.bind}
-        {topnav.bind}
+        {logo.bind}
+        {menu.bind}
       </div>
+      {mobileMenu.bind}
+      <hr></hr>
 
-      <div class="content">
-        <h2>CSS Template</h2>
-        <p>A topnav, content and a footer.</p>
-
+      <div class="w3-content content">
         <div>
           <button onclick={ event: Event => 
             data.value += Contact(Var("Tales Tonini"), Var("talestonini@gmail.com"))
@@ -107,11 +116,16 @@ object App {
         </table>
       </div>
 
-      <div class="footer">
-        <p>Footer</p>
-      </div>
+      <hr></hr>
+      {footer.bind}
     </div>
   }
+
+  @dom
+  def footer: Binding[Node] =
+    <footer class="footer">
+      <p>Footer</p>
+    </footer>
 
   @JSExport("main")
   def main(): Unit = {
