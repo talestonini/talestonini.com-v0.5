@@ -28,7 +28,7 @@ object App {
 
   @dom
   def logoDiv =
-    <div class="logo">
+    <div class="w3-col logo">
       <table>
         <tr>
           <td class="symbol">&#x276F;</td>
@@ -54,13 +54,15 @@ object App {
   @dom
   def page: Binding[Node] = {
     val menuItemClasses = "w3-bar-item w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-padding-16"
-    <div class="page">
-      <div class="header">
+    <div>
+      <div class="w3-row">
         {logoDiv.bind}
-        <div class="w3-bar topnav">
-          <a href="#" class={menuItemClasses}>Link 1</a>
-          <a href="#" class={menuItemClasses}>Link 2</a>
-          <a href="#" class={menuItemClasses}>Link 3</a>
+        <div class="w3-rest">
+          <div class="topnav">
+            <a href="#" class={menuItemClasses}>Link 1</a>
+            <a href="#" class={menuItemClasses}>Link 2</a>
+            <a href="#" class={menuItemClasses}>Link 3</a>
+          </div>
         </div>
       </div>
 
