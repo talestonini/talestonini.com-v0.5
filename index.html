@@ -27,6 +27,18 @@
 </head>
 
 <body>
+  <script>
+    function w3_toggle_open_close() {
+      var state = document.getElementById("mySidebar").style.display;
+      if (state == 'none') {
+        document.getElementById("mySidebar").style.width = "100%";
+        document.getElementById("mySidebar").style.display = "block";
+      } else {
+        document.getElementById("mySidebar").style.display = "none";
+      }
+    }
+  </script>
+        
   <script type="text/javascript">
     App.main()
   </script>

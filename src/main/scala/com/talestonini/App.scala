@@ -13,13 +13,22 @@ import com.thoughtworks.binding.Binding.BindingSeq
 
 case class Contact(name: Var[String], email: Var[String])
 
+case class MenuItem(label: String, href: String)
+
 @JSExportTopLevel("App")
 object App {
 
   val data = Vars.empty[Contact]
-
+  
+  val menuItems = Vars(
+    MenuItem("Item 1", "#"),
+    MenuItem("Item 2", "#"),
+    MenuItem("Item 3", "#"),
+    MenuItem("Item 4", "#")
+  )
+  
   @dom
-  def logo =
+  def logo: Binding[Node] =
     <div class="w3-col logo">
       <table>
         <tr>
@@ -44,32 +53,32 @@ object App {
     </div>
 
   @dom
-  def pronunciation(p: String) = 
+  def pronunciation(p: String): Binding[Node] = 
     <td class="pronunciation">
       <a href="https://www.oxfordlearnersdictionaries.com/about/english/pronunciation_english" target="_blank">{p}</a>
     </td>
 
   @dom
-  def menu: Binding[Node] = {
-    val classes = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-padding-10 w3-hide-small"
+  def menu: Binding[BindingSeq[Node]] = {
+    val normalClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-padding-10 w3-hide-small"
+    val hamburgerClasses = "w3-button w3-padding-10 w3-xxlarge w3-hide-large w3-hide-medium"
+    val mobileClasses = "w3-bar-item w3-button"
     <div class="w3-rest">
       <div class="menu">
-        <a href="#" class={classes}>Link 1</a>
-        <a href="#" class={classes}>Link 2</a>
-        <a href="#" class={classes}>Link 3</a>
+        {
+          for (mi <- menuItems) yield {
+            <a href={mi.href} class={normalClasses}>{mi.label}</a>
+          }
+        }
+        <a href="#" class={hamburgerClasses} data:onclick="w3_toggle_open_close()">☰</a>
       </div>
     </div>
-  }
-
-  @dom
-  def mobileMenu: Binding[Node] = {
-    val classes = "w3-bar-item w3-button w3-padding-large"
-    <div class="w3-bar-block w3-hide-large w3-hide-medium">
-      <div class="mobile-menu">
-        <a href="#" class={classes}>Link 1</a>
-        <a href="#" class={classes}>Link 2</a>
-        <a href="#" class={classes}>Link 3</a>
-      </div>
+    <div class="w3-sidebar w3-bar-block mobile-menu" style="display:none" id="mySidebar">
+      {
+        for (mi <- menuItems) yield {
+          <a href={mi.href} class={mobileClasses}>{mi.label}</a>
+        }
+      }
     </div>
   }
 
@@ -80,7 +89,6 @@ object App {
         {logo.bind}
         {menu.bind}
       </div>
-      {mobileMenu.bind}
       <hr></hr>
 
       <div class="w3-content content">
