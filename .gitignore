@@ -4,5 +4,7 @@ node_modules
 project/.bloop
 target
 
-temp
+temp*
 package-lock.json
+Session.vim
+

@@ -1,21 +1,20 @@
 package com.talestonini.components
 
-import org.scalajs.{dom => jsdom}
 import org.scalajs.dom.raw.Node
 
 import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
 import com.thoughtworks.binding.Binding.BindingSeq
 
-case class MenuItem(label: String, href: String)
 
 object Menu {
 
+  case class MenuItem(label: String, hash: String)
+
   val menuItems = Vars(
-    MenuItem("Item 1", "#"),
-    MenuItem("Item 2", "#"),
-    MenuItem("Item 3", "#"),
-    MenuItem("Item 4", "#")
+    MenuItem("Item 1", "#/itemOne"),
+    MenuItem("Item 2", "#/itemTwo"),
+    MenuItem("About", "#/about")
   )
   
   @dom
@@ -27,16 +26,16 @@ object Menu {
       <div class="menu">
         {
           for (mi <- menuItems) yield {
-            <a href={mi.href} class={normalClasses}>{mi.label}</a>
+            <a href={mi.hash} class={normalClasses}>{mi.label}</a>
           }
         }
-        <a href="#" class={hamburgerClasses} data:onclick="w3_toggle_open_close()">☰</a>
+        <a class={hamburgerClasses} data:onclick="toggle_sidebar()">☰</a>
       </div>
     </div>
-    <div class="w3-sidebar w3-bar-block mobile-menu" style="display:none" id="mySidebar">
+    <div class="w3-sidebar w3-bar-block mobile-menu" style="display:none" id="sidebar">
       {
         for (mi <- menuItems) yield {
-          <a href={mi.href} class={mobileClasses}>{mi.label}</a>
+          <a href={mi.hash} class={mobileClasses} data:onclick="toggle_sidebar()">{mi.label}</a>
         }
       }
     </div>

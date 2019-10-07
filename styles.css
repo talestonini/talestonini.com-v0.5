@@ -8,6 +8,10 @@
   width: 240px;
 }
 
+.logo a {
+    text-decoration: none;
+}
+
 .logo table {
   border-collapse: collapse;
 }

@@ -28,14 +28,17 @@
 
 <body>
   <script>
-    function w3_toggle_open_close() {
-      var state = document.getElementById("mySidebar").style.display;
+    function toggle_sidebar() {
+      var state = document.getElementById("sidebar").style.display;
       if (state == 'none') {
-        document.getElementById("mySidebar").style.width = "100%";
-        document.getElementById("mySidebar").style.display = "block";
+        document.getElementById("sidebar").style.width = "100%";
+        document.getElementById("sidebar").style.display = "block";
       } else {
-        document.getElementById("mySidebar").style.display = "none";
+        document.getElementById("sidebar").style.display = "none";
       }
+    }
+    function close_sidebar() {
+      document.getElementById("sidebar").style.display = "none";
     }
   </script>
         
@@ -45,3 +48,4 @@
 </body>
 
 </html>
+
