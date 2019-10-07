@@ -11,83 +11,21 @@ import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import com.thoughtworks.binding.Binding.BindingSeq
 
-case class Contact(name: Var[String], email: Var[String])
+import components.{Logo, Menu, Footer}
 
-case class MenuItem(label: String, href: String)
+case class Contact(name: Var[String], email: Var[String])
 
 @JSExportTopLevel("App")
 object App {
 
   val data = Vars.empty[Contact]
   
-  val menuItems = Vars(
-    MenuItem("Item 1", "#"),
-    MenuItem("Item 2", "#"),
-    MenuItem("Item 3", "#"),
-    MenuItem("Item 4", "#")
-  )
-  
-  @dom
-  def logo: Binding[Node] =
-    <div class="w3-col logo">
-      <table>
-        <tr>
-          <td class="symbol">&#x276F;</td>
-          <td class="tales_t">T</td>
-          <td class="ales">ales</td>
-          {pronunciation("/tɑː \u2022 les/").bind}
-        </tr>
-        <tr>
-          <td></td>
-          <td class="tonini_t">T</td>
-          <td class="onini">onini</td>
-          {pronunciation("/toʊ \u2022 niː \u2022 nɪ/").bind}
-        </tr>
-        <tr>
-          <td></td>
-          <td class="dot">&#x2022;</td>
-          <td class="com">com</td>
-          <td></td>
-        </tr>
-      </table>
-    </div>
-
-  @dom
-  def pronunciation(p: String): Binding[Node] = 
-    <td class="pronunciation">
-      <a href="https://www.oxfordlearnersdictionaries.com/about/english/pronunciation_english" target="_blank">{p}</a>
-    </td>
-
-  @dom
-  def menu: Binding[BindingSeq[Node]] = {
-    val normalClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-padding-10 w3-hide-small"
-    val hamburgerClasses = "w3-button w3-padding-10 w3-xxlarge w3-hide-large w3-hide-medium"
-    val mobileClasses = "w3-bar-item w3-button"
-    <div class="w3-rest">
-      <div class="menu">
-        {
-          for (mi <- menuItems) yield {
-            <a href={mi.href} class={normalClasses}>{mi.label}</a>
-          }
-        }
-        <a href="#" class={hamburgerClasses} data:onclick="w3_toggle_open_close()">☰</a>
-      </div>
-    </div>
-    <div class="w3-sidebar w3-bar-block mobile-menu" style="display:none" id="mySidebar">
-      {
-        for (mi <- menuItems) yield {
-          <a href={mi.href} class={mobileClasses}>{mi.label}</a>
-        }
-      }
-    </div>
-  }
-
   @dom
   def page: Binding[Node] = {
     <div>
       <div class="w3-row">
-        {logo.bind}
-        {menu.bind}
+        {Logo().bind}
+        {Menu().bind}
       </div>
       <hr></hr>
 
@@ -125,15 +63,9 @@ object App {
       </div>
 
       <hr></hr>
-      {footer.bind}
+      {Footer().bind}
     </div>
   }
-
-  @dom
-  def footer: Binding[Node] =
-    <footer class="footer">
-      <p>Footer</p>
-    </footer>
 
   @JSExport("main")
   def main(): Unit = {
@@ -141,3 +73,4 @@ object App {
   }
 
 }
+
