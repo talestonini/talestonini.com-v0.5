@@ -14,10 +14,17 @@ object Routing {
   case class Page(name: String, hash: String, content: Var[Binding[Node]])
   
   @dom
-  val homeContent: Binding[Node] = <div><p>Home page content...</p></div>
+  val homeContent: Binding[Node] =
+    <div>
+      <p>Home page content...</p>
+    </div>
   
   @dom
-  val itemOneContent: Binding[Node] = <div><p>Page under construction...</p></div>
+  val itemOneContent: Binding[Node] =
+    <div>
+      <p>Page under construction...</p>
+      <p><a href="#/">Home</a></p>
+    </div>
 
   // app pages
   val home = Page("Home", "#/", Var(homeContent))
