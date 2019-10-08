@@ -18,17 +18,21 @@ object App {
   @dom
   def page: Binding[Node] =
     <div>
-      <div class="w3-row">
-        {Logo().bind}
-        {Menu().bind}
-      </div>
-      <hr></hr>
-
-      <div class="w3-content content">
-        {route.state.bind.content.value.bind}
+      <div class="w3-content w3-row">
+        <div class="w3-padding-16">
+          {Logo().bind}
+          {Menu().bind}
+        </div>
+        <hr></hr>
       </div>
 
-      <hr></hr>
+      <div class="w3-content">
+        <div class="content">
+          {route.state.bind.content.value.bind}
+        </div>
+        <hr></hr>
+      </div>
+
       {Footer().bind}
     </div>
 

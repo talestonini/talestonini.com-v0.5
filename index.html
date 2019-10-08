@@ -8,7 +8,8 @@
   <!-- w3schools.com -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Ultra&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
@@ -31,7 +32,8 @@
     function toggle_sidebar() {
       var state = document.getElementById("sidebar").style.display;
       if (state == 'none') {
-        document.getElementById("sidebar").style.width = "100%";
+        document.getElementById("sidebar").style.width = "75%";
+        document.getElementById("sidebar").style.right = 0;
         document.getElementById("sidebar").style.display = "block";
       } else {
         document.getElementById("sidebar").style.display = "none";
