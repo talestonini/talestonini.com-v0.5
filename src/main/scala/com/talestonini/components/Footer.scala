@@ -20,6 +20,9 @@ object Footer {
         <a href="https://github.com/talestonini" class="no-decoration" target="_blank">
           <i class="fa fa-github w3-hover-opacity"></i>
         </a>
+        <a href="https://www.instagram.com/talestonini" class="no-decoration" target="_blank">
+          <i class="fa fa-instagram w3-hover-opacity"></i>
+        </a>
       </div>
       <div class="w3-small">
         <p>© Tales Tonini</p>
