@@ -23,9 +23,12 @@ object Footer {
         <a href="https://www.instagram.com/talestonini" class="no-decoration" target="_blank">
           <i class="fa fa-instagram w3-hover-opacity"></i>
         </a>
+        <a href="mailto:talestonini@gmail.com" class="no-decoration" target="_blank">
+          <i class="fa fa-envelope w3-hover-opacity"></i>
+        </a>
       </div>
       <div class="w3-small">
-        <p>© Tales Tonini</p>
+        <p>© 2019 Tales Tonini</p>
       </div>
     </footer>
 

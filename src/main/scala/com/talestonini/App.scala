@@ -16,7 +16,7 @@ object App {
   import Routing._
 
   @dom
-  def page: Binding[Node] =
+  def app: Binding[Node] =
     <div>
       <div class="w3-content w3-row">
         <div class="w3-padding-16">
@@ -38,7 +38,7 @@ object App {
 
   @JSExport("main")
   def main(): Unit =
-    dom.render(document.body, page)
+    dom.render(document.body, app)
 
 }
 
