@@ -99,3 +99,31 @@ hr {
   text-decoration: none;
 }
 
+@media all and (max-width: 600px) {
+  .logo {
+    padding: 10px 5px 10px 10px;
+  }
+
+  .menu-item {
+    margin: 0px 20px 0px 20px;
+  }
+
+  .menu-lang {
+    padding: 10px 10px 10px 0px;
+  }
+
+  .lang-menu-item {
+    font-size: small;
+    padding: 10px 0px 10px 0px;
+    margin: 0px 0px 0px 10px;
+    text-decoration: none;
+  }
+
+  .content {
+    padding: 10px;
+  }
+
+  hr {
+    margin: 0px 10px 0px 10px;
+  }
+}
