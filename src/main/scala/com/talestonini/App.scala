@@ -18,8 +18,15 @@ object App {
   @dom
   def app: Binding[Node] =
     <div>
-      <div class="w3-content w3-row">
+      <div class="w3-content w3-row w3-hide-small">
         <div class="w3-padding-16">
+          {Logo().bind}
+          {Menu().bind}
+        </div>
+        <hr></hr>
+      </div>
+      <div class="w3-content w3-row w3-hide-large w3-hide-medium">
+        <div class="w3-padding-8">
           {Logo().bind}
           {Menu().bind}
         </div>
@@ -33,7 +40,12 @@ object App {
         <hr></hr>
       </div>
 
-      {Footer().bind}
+      <footer class="w3-container w3-padding-16 w3-center w3-hide-small">
+        {Footer().bind}
+      </footer>
+      <footer class="w3-container w3-padding-8 w3-center w3-hide-large w3-hide-medium">
+        {Footer().bind}
+      </footer>
     </div>
 
   @JSExport("main")

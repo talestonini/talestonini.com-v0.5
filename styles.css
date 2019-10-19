@@ -99,6 +99,10 @@ hr {
   text-decoration: none;
 }
 
+.w3-padding-8 {
+  padding: 8px 0px 8px 0px; 
+}
+
 @media all and (max-width: 600px) {
   .logo {
     padding: 10px 5px 10px 10px;
