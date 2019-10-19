@@ -5,7 +5,6 @@
 .logo {
   padding: 10px;
   text-align: left;
-  width: 240px;
 }
 
 .logo a {
@@ -53,15 +52,26 @@
   align-items: center;
 }
 
-.menu a {
+.menu-item {
   text-align: center;
-  padding: 10px;
+  padding: 10px 30px 10px 30px;
   text-decoration: none;
 }
 
 .mobile-menu {
   font-family: 'Open Sans', sans-serif;
   border: 1px dotted lightgray;
+}
+
+.lang-menu-item {
+  font-size: small;
+  padding: 10px;
+  text-decoration: none;
+}
+
+.mobile-lang-menu-item {
+  font-size: small;
+  padding: 5px;
 }
 
 .content {
