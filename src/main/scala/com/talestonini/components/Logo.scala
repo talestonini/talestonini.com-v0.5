@@ -9,7 +9,7 @@ object Logo {
 
   @dom
   def apply(): Binding[Node] =
-    <div class="w3-col w3-left logo" style="width:240px">
+    <div class="w3-col w3-left logo" style="width:245px">
       <a href="#/" data:onclick="close_sidebar()">
         <table>
           <tr>
