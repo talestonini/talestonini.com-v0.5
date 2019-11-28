@@ -1,5 +1,6 @@
 .bloop
 .metals
+coursier
 node_modules
 project/.bloop
 target
@@ -8,3 +9,5 @@ temp*
 package-lock.json
 Session.vim
 
+public*
+.firebase/hosting.cHVibGlj.cache

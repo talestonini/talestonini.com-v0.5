@@ -1,12 +1,7 @@
 #!/bin/bash
 
 # prep files to deploy
-mkdir -p temp/favicom
-mkdir -p temp/target/scala-2.12
-cp index.html temp
-cp styles.css temp
-cp -r favicom/* temp/favicom
-cp target/scala-2.12/talestonini-com-fastopt.js temp/target/scala-2.12
+./prep_deploy.sh temp
 
 lftp -c "
 #debug;

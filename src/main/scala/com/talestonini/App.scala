@@ -28,7 +28,7 @@ object App {
       <div class="w3-content w3-row w3-hide-large w3-hide-medium">
         <div class="w3-padding-8">
           {Logo().bind}
-          {Menu(true).bind}
+          {Menu(createSidebar = true).bind}
         </div>
         <hr></hr>
       </div>
