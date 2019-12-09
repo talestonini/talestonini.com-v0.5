@@ -3,7 +3,7 @@ enablePlugins(ScalaJSPlugin)
 name := "TalesTonini.com"
 scalaVersion := "2.12.9"
 
-resolvers in ThisBuild += "https://jcenter.bintray.com/"
+resolvers += Resolver.bintrayRepo("hmil", "maven")
 
 libraryDependencies ++= Seq(
   "org.scala-js"             %%% "scalajs-dom" % "0.9.7",
