@@ -22,6 +22,8 @@ object ItemTwo {
 
   val data = Vars.empty[Contact]
 
+  var token: Var[String] = Var("nothing yet...")
+
   val ApiKey = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY"
   val ProjectId = "ttdotcom"
   val Database = "(default)"
@@ -34,7 +36,7 @@ object ItemTwo {
     "Content-Type" -> "application/json"
   }
 
-  def getAuthToken(): Option[String] = {
+  def getAuthToken() =
     HttpRequest()
       .withMethod(POST)
       .withProtocol(HTTPS)
@@ -46,20 +48,18 @@ object ItemTwo {
       .onComplete({
         case rawJson: Success[SimpleHttpResponse] => 
           val res: Json = parse(rawJson.get.body).getOrElse(Json.Null)
-          Some((res \\ "idToken")(0))
+          token.value = (res \\ "idToken")(0).toString
         case e: Failure[SimpleHttpResponse] => 
-          None
+          token.value = "failure..."
       })
-  }
-
-  val token: Var[Option[String]] = Var(getAuthToken())
 
   def requestComments(): Unit = {
     val req = HttpRequest(s"{FirestoreApi}/projects/{ProjectId}/databases/{Database}/documents/comments")
   }
 
   @dom
-  def apply(): Binding[Node] =
+  def apply(): Binding[Node] = {
+    getAuthToken()
     <div>
       <div>
         <button onclick={ event: Event =>
@@ -82,7 +82,7 @@ object ItemTwo {
                 <td>{contact.name.bind}</td>
                 <td>{contact.email.bind}</td>
                 <td>
-                  <button onclick={ event: Event =>
+                  <button onclick={event: Event =>
                     contact.name.value = "Modified Name"
                   }>Modify the name</button>
                 </td>
@@ -90,11 +90,12 @@ object ItemTwo {
             }
           }
           <tr>
-            <td>{getAuthToken().getOrElse("no auth")}</td>
+            <td>{token.bind}</td>
           </tr>
         </tbody>
       </table>
     </div>
+  }
     
 }
 
