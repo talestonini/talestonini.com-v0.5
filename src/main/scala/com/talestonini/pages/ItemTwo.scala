@@ -1,5 +1,13 @@
 package com.talestonini.pages
 
+import java.time._
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ofPattern
+
+import scala.concurrent._
+import ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
+
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.raw.Event
 
@@ -7,25 +15,27 @@ import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 
 import com.talestonini.Firebase
+import com.talestonini.Firebase.Post
 
 object ItemTwo {
 
   case class Contact(name: Var[String], email: Var[String])
-
   val data = Vars.empty[Contact]
 
-  val fb = new Firebase()
+  case class BindingPost(title: Var[String], publishDate: Var[String])
+  val posts = Vars.empty[BindingPost]
 
-  val token = Var(fb.token)
-
-  //def requestComments(): Unit = {
-    //val req = HttpRequest(s"{FirestoreApi}/projects/{ProjectId}/databases/{Database}/documents/comments")
-  //}
+  //val tkn = Var("not token yet")
+  
+  def date2Str(date: Option[LocalDate], dtf: DateTimeFormatter): String =
+    if (date.isDefined)
+      date.get.format(dtf)
+    else
+      "no date"
 
   @dom
   def apply(): Binding[Node] = {
-    fb.getAuthToken()
-    <div>
+    val itemTwo = <div>
       <div>
         <button onclick={ event: Event =>
           data.value += Contact(Var("Tales Tonini"), Var("talestonini@gmail.com"))
@@ -53,13 +63,36 @@ object ItemTwo {
                 </td>
               </tr>
             }
+            for (p <- posts) yield {
+              <tr>
+                <td>{p.title.bind}</td>
+                <td>{p.publishDate.bind}</td>
+              </tr>
+            }
           }
-          <tr>
-            <td>{token.bind}</td>
-          </tr>
         </tbody>
       </table>
     </div>
+
+    Firebase.getAuthToken()
+      .onComplete({
+        case res: Success[String] => 
+          val token = res.get
+          //tkn.value = token
+          Firebase.getPosts(token)
+            .onComplete({
+              case res: Success[Array[Post]] =>
+                for (p <- res.get) {
+                  println(">>> " + p)
+                  posts.value += BindingPost(Var(p.title.getOrElse("no title")), 
+                                             Var(""))
+                }
+              case res: Failure[Array[Post]] =>
+            })
+        case res: Failure[String] => 
+      })
+
+    itemTwo
   }
     
 }
