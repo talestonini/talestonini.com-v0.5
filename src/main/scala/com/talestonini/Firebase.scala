@@ -17,16 +17,23 @@ import monix.execution.Scheduler.Implicits.{global => scheduler}
 import io.circe._, io.circe.parser._
 
 
+case class Comment(author: Option[String], date: Option[LocalDate], text: Option[String])
+
+case class Post(title: Option[String],
+                resource: Option[String],
+                firstPublishDate: Option[LocalDate],
+                publishDate: Option[LocalDate],
+)
+
 object Firebase {
 
-  case class Comment(author: Option[String], date: Option[LocalDate], text: Option[String])
-
-  case class Post(title: Option[String],
-                  resource: Option[String],
-                  firstPublishDate: Option[LocalDate],
-                  publishDate: Option[LocalDate],
-                  comments: Option[Array[Comment]]
-  )
+  implicit val postDecoder: Decoder[Post] = (hCursor: HCursor) =>
+    for {
+      title <- hCursor.downField("title").get[String]("stringValue")
+      resource <- hCursor.downField("resource").get[String]("stringValue")
+      firstPublishDate <- parseDate(hCursor.downField("first_publish_date").get[String]("timestampValue"))
+      publishDate <- parseDate(hCursor.downField("publish_date").get[String]("timestampValue"))
+    } yield Post(Option(title), Option(resource), firstPublishDate, publishDate)
 
   val ApiKey = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY"
   val ProjectId = "ttdotcom"
@@ -75,13 +82,18 @@ object Firebase {
         .send()
         .onComplete({
           case rawJson: Success[SimpleHttpResponse] => 
-            val docs = parse(rawJson.get.body).getOrElse(Json.Null) \\ "documents"
-            for (d <- docs) {
-              val title = d.hcursor.downField("fields").downField("title").get[String]("stringValue").toOption.get
-              println(">>> " + title)
-              
-
+            parse(rawJson.get.body) match {
+              case Left(failure) =>
+                println("invalid JSON response from GET posts")
+              case Right(json) =>
+                println("navigating JSON response from GET posts")
+                val docs = json \\ "documents"
+                for (d <- docs) {
+                  val title = d.hcursor.downField("fields").downField("title").get[String]("stringValue").toOption.get
+                    println(">>> " + title)
+                }
             }
+          
             
             //var posts = (for {
               //doc <- (parse(rawJson.get.body).getOrElse(Json.Null))
@@ -104,13 +116,13 @@ object Firebase {
     p.future
   }
 
-  //private def parseDate(str: Option[String],
-                        //dtf: DateTimeFormatter = ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")): Option[LocalDate] = {
-    //if (str.isDefined)
-      //Some(LocalDate.parse(str.get, dtf))
-    //else
-      //None
-  //}
+  private def parseDate(str: Decoder.Result[String],
+                        dtf: DateTimeFormatter = ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")): Decoder[LocalDate] = {
+    if (str.toOption.isDefined)
+      Decoder[LocalDate](LocalDate.parse(str.toOption.get, dtf))
+    else
+      null
+  }
 
 }
 
