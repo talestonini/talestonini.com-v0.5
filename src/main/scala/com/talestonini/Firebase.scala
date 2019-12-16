@@ -14,7 +14,8 @@ import fr.hmil.roshttp.Protocol.HTTPS
 import fr.hmil.roshttp.Method.{GET, POST}
 import fr.hmil.roshttp.body.PlainTextBody
 import monix.execution.Scheduler.Implicits.{global => scheduler}
-import io.circe._, io.circe.parser._
+import io.circe._, io.circe.parser._, io.circe.generic.semiauto._
+import cats.syntax.either._
 
 
 case class Comment(author: Option[String], date: Option[LocalDate], text: Option[String])
@@ -27,13 +28,21 @@ case class Post(title: Option[String],
 
 object Firebase {
 
-  implicit val postDecoder: Decoder[Post] = (hCursor: HCursor) =>
-    for {
-      title <- hCursor.downField("title").get[String]("stringValue")
-      resource <- hCursor.downField("resource").get[String]("stringValue")
-      firstPublishDate <- parseDate(hCursor.downField("first_publish_date").get[String]("timestampValue"))
-      publishDate <- parseDate(hCursor.downField("publish_date").get[String]("timestampValue"))
-    } yield Post(Option(title), Option(resource), firstPublishDate, publishDate)
+  implicit val decodeLocalDate: Decoder[LocalDate] = Decoder.decodeString.emap { str =>
+    Either.catchNonFatal(LocalDate.parse(str, ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))).leftMap(t => "LocalDate")
+  }
+
+  implicit val decodePost: Decoder[Post] = new Decoder[Post] {
+    final def apply(c: HCursor): Decoder.Result[Post] =
+      for {
+        title <- c.downField("title").get[String]("stringValue")
+        resource <- c.downField("resource").get[String]("stringValue")
+        firstPublishDate <- c.downField("first_publish_date").get[LocalDate]("timestampValue")
+        publishDate <- c.downField("publish_date").get[LocalDate]("timestampValue")
+      } yield {
+        Post(Option(title), Option(resource), Option(firstPublishDate), Option(publishDate))
+      }
+  }
 
   val ApiKey = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY"
   val ProjectId = "ttdotcom"
@@ -114,14 +123,6 @@ object Firebase {
         })
     }
     p.future
-  }
-
-  private def parseDate(str: Decoder.Result[String],
-                        dtf: DateTimeFormatter = ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")): Decoder[LocalDate] = {
-    if (str.toOption.isDefined)
-      Decoder[LocalDate](LocalDate.parse(str.toOption.get, dtf))
-    else
-      null
   }
 
 }

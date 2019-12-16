@@ -20,7 +20,8 @@ libraryDependencies ++= Seq(
   "io.circe"                 %%% "circe-generic"   % circeVersion,
   "io.circe"                 %%% "circe-parser"    % circeVersion,
 
-  "io.github.cquiroz"        %%% "scala-java-time" % "2.0.0-RC3"
+  "io.github.cquiroz"        %%% "scala-java-time" % "2.0.0-RC3",
+  "org.typelevel"            %%% "cats"            % "0.9.0"
 )
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)

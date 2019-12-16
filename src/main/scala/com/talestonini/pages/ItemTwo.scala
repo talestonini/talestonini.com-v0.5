@@ -15,7 +15,7 @@ import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 
 import com.talestonini.Firebase
-import com.talestonini.Firebase.Post
+import com.talestonini.Post
 
 object ItemTwo {
 
