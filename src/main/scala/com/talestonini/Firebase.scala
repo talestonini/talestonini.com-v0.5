@@ -18,28 +18,57 @@ import io.circe._, io.circe.parser._, io.circe.generic.semiauto._, io.circe.pars
 import cats.syntax.either._
 
 
-case class Comment(author: Option[String], date: Option[LocalDate], text: Option[String])
-
-case class Post(title: Option[String],
-                resource: Option[String],
-                firstPublishDate: Option[LocalDate],
-                publishDate: Option[LocalDate],
-)
-
 object Firebase {
 
-  lazy implicit val decodeLocalDate: Decoder[LocalDate] = Decoder.decodeString.emap { str =>
-    Either.catchNonFatal(LocalDate.parse(str, ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))).leftMap(t => "LocalDate")
+  case class PostFields(title: Option[String],
+                        resource: Option[String],
+                        firstPublishDate: Option[LocalDateTime],
+                        publishDate: Option[LocalDateTime]
+  )
+  
+  case class CommentFields(author: Option[String], date: Option[LocalDateTime], text: Option[String])
+  
+  case class Doc[D](name: String, fields: D, createTime: String, updateTime: String)
+  
+  case class DocsRes[D](documents: Seq[Doc[D]])
+
+  type Posts = Seq[Doc[PostFields]]
+
+  lazy implicit val decodeLocalDateTime: Decoder[LocalDateTime] = Decoder.decodeString.emap { str =>
+    Either.catchNonFatal(
+      try {
+        LocalDateTime.parse(str, ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
+      } catch {
+        case _: Exception => LocalDateTime.parse(str, ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+      }
+    ).leftMap(t => "LocalDateTime")
   }
 
-  lazy implicit val decodePost: Decoder[Post] = new Decoder[Post] {
-    final def apply(c: HCursor): Decoder.Result[Post] =
+  lazy implicit val decodePostFields: Decoder[PostFields] = new Decoder[PostFields] {
+    final def apply(c: HCursor): Decoder.Result[PostFields] =
       for {
         title <- c.downField("title").get[String]("stringValue")
         resource <- c.downField("resource").get[String]("stringValue")
-        firstPublishDate <- c.downField("first_publish_date").get[LocalDate]("timestampValue")
-        publishDate <- c.downField("publish_date").get[LocalDate]("timestampValue")
-      } yield Post(Option(title), Option(resource), Option(firstPublishDate), Option(publishDate))
+        firstPublishDate <- c.downField("first_publish_date").get[LocalDateTime]("timestampValue")
+        publishDate <- c.downField("publish_date").get[LocalDateTime]("timestampValue")
+      } yield PostFields(Option(title), Option(resource), Option(firstPublishDate), Option(publishDate))
+  }
+
+  lazy implicit val decodePostDoc: Decoder[Doc[PostFields]] = new Decoder[Doc[PostFields]] {
+    final def apply(c: HCursor): Decoder.Result[Doc[PostFields]] = 
+      for {
+        name <- c.get[String]("name")
+        fields <- c.get[PostFields]("fields")
+        createTime <- c.get[String]("createTime")
+        updateTime <- c.get[String]("updateTime")
+      } yield Doc(name, fields, createTime, updateTime)
+  }
+
+  lazy implicit val decodePosts: Decoder[DocsRes[PostFields]] = new Decoder[DocsRes[PostFields]] {
+    final def apply(c: HCursor): Decoder.Result[DocsRes[PostFields]] = 
+      for {
+        docs <- c.get[Seq[Doc[PostFields]]]("documents")
+      } yield DocsRes(docs)
   }
 
   val ApiKey = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY"
@@ -76,8 +105,8 @@ object Firebase {
     p.future
   }
 
-  def getPosts(token: String): Future[Array[Post]] = {
-    val p = Promise[Array[Post]]()
+  def getPosts(token: String): Future[Posts] = {
+    val p = Promise[Posts]()
     Future {
       HttpRequest()
         .withMethod(GET)
@@ -87,26 +116,18 @@ object Firebase {
         .withHeaders(Firebase.commonHeaders)
         .withHeader("Authorization", s"Bearer $token")
         .send()
-        .onComplete(
-        {
-          case rawJson: Success[SimpleHttpResponse] => 
-            //parse(rawJson.get.body) match {
-              //case Left(failure) =>
-                //println("invalid JSON response from GET posts")
-              //case Right(json) =>
-                //println("navigating JSON response from GET posts")
-                //println(">>> " + (json \\ "documents")(0))
-                //val docs = (json \\ "documents")
-                //for (d <- docs) {
-                  //println(">>> " + d)
-                //}
-            //}
-            decode[List[Post]](rawJson.get.body)
-            p success Array.empty[Post]
+        .onComplete({
+          case rawJson: Success[SimpleHttpResponse] =>
+            p success (decode[DocsRes[PostFields]](rawJson.get.body) match {
+              case Left(e) =>
+                println(s"unable to decode response: ${e.getMessage()}")
+                Seq.empty
+              case Right(res) =>
+                res.documents
+            })
           case e: Failure[SimpleHttpResponse] => 
-            p success Array.empty[Post]
-        }
-        )
+            p success Seq.empty
+        })
     }
     p.future
   }

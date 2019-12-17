@@ -15,7 +15,8 @@ import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 
 import com.talestonini.Firebase
-import com.talestonini.Post
+import com.talestonini.Firebase._
+
 
 object ItemTwo {
 
@@ -25,11 +26,10 @@ object ItemTwo {
   case class BindingPost(title: Var[String], publishDate: Var[String])
   val posts = Vars.empty[BindingPost]
 
-  val tkn = Var("not token yet")
-  
-  def date2Str(date: Option[LocalDate], dtf: DateTimeFormatter): String =
-    if (date.isDefined)
-      date.get.format(dtf)
+  def datetime2Str(datetime: Option[LocalDateTime], 
+                   dtf: DateTimeFormatter = ofPattern("dd/MM/yyyy")): String =
+    if (datetime.isDefined)
+      datetime.get.format(dtf)
     else
       "no date"
 
@@ -38,16 +38,14 @@ object ItemTwo {
       .onComplete({
         case res: Success[String] => 
           val token = res.get
-          tkn.value = token
           Firebase.getPosts(token)
             .onComplete({
-              case res: Success[Array[Post]] =>
+              case res: Success[Posts] =>
                 for (p <- res.get) {
-                  println(">>> " + p)
-                  posts.value += BindingPost(Var(p.title.getOrElse("no title")), 
-                                             Var(""))
+                  posts.value += BindingPost(Var(p.fields.title.get), 
+                                             Var(datetime2Str(p.fields.publishDate)))
                 }
-              case res: Failure[Array[Post]] =>
+              case res: Failure[Posts] =>
             })
         case res: Failure[String] => 
       })

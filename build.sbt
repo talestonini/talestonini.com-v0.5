@@ -3,7 +3,7 @@ enablePlugins(ScalaJSPlugin)
 name := "TalesTonini.com"
 scalaVersion := "2.12.9"
 val bindingVersion = "11.9.0"
-val circeVersion = "0.11.1"
+val circeVersion = "0.12.3"
 
 resolvers += Resolver.bintrayRepo("hmil", "maven")
 
@@ -22,7 +22,10 @@ libraryDependencies ++= Seq(
   "io.circe"                 %%% "circe-parser"    % circeVersion,
 
   "io.github.cquiroz"        %%% "scala-java-time" % "2.0.0-RC3",
-  "org.typelevel"            %%% "cats"            % "0.9.0"
+  "org.typelevel"            %%% "cats"            % "0.9.0",
+
+  // Test
+  "org.scalatest"            %%% "scalatest"       % "3.0.0" % "test"
 )
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
