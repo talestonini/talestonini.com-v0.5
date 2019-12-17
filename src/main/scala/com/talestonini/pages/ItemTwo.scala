@@ -25,7 +25,7 @@ object ItemTwo {
   case class BindingPost(title: Var[String], publishDate: Var[String])
   val posts = Vars.empty[BindingPost]
 
-  //val tkn = Var("not token yet")
+  val tkn = Var("not token yet")
   
   def date2Str(date: Option[LocalDate], dtf: DateTimeFormatter): String =
     if (date.isDefined)
@@ -33,13 +33,37 @@ object ItemTwo {
     else
       "no date"
 
+  lazy val getPosts = () => 
+    Firebase.getAuthToken()
+      .onComplete({
+        case res: Success[String] => 
+          val token = res.get
+          tkn.value = token
+          Firebase.getPosts(token)
+            .onComplete({
+              case res: Success[Array[Post]] =>
+                for (p <- res.get) {
+                  println(">>> " + p)
+                  posts.value += BindingPost(Var(p.title.getOrElse("no title")), 
+                                             Var(""))
+                }
+              case res: Failure[Array[Post]] =>
+            })
+        case res: Failure[String] => 
+      })
+
   @dom
   def apply(): Binding[Node] = {
-    val itemTwo = <div>
+    <div>
       <div>
         <button onclick={ event: Event =>
           data.value += Contact(Var("Tales Tonini"), Var("talestonini@gmail.com"))
         }>Add a contact</button>
+      </div>
+      <div>
+        <button onclick={ event: Event =>
+          getPosts()
+        }>Get Posts</button>
       </div>
 
       <table border="1" cellPadding="5">
@@ -73,26 +97,6 @@ object ItemTwo {
         </tbody>
       </table>
     </div>
-
-    Firebase.getAuthToken()
-      .onComplete({
-        case res: Success[String] => 
-          val token = res.get
-          //tkn.value = token
-          Firebase.getPosts(token)
-            .onComplete({
-              case res: Success[Array[Post]] =>
-                for (p <- res.get) {
-                  println(">>> " + p)
-                  posts.value += BindingPost(Var(p.title.getOrElse("no title")), 
-                                             Var(""))
-                }
-              case res: Failure[Array[Post]] =>
-            })
-        case res: Failure[String] => 
-      })
-
-    itemTwo
   }
     
 }

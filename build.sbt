@@ -2,6 +2,7 @@ enablePlugins(ScalaJSPlugin)
 
 name := "TalesTonini.com"
 scalaVersion := "2.12.9"
+val bindingVersion = "11.9.0"
 val circeVersion = "0.11.1"
 
 resolvers += Resolver.bintrayRepo("hmil", "maven")
@@ -10,8 +11,8 @@ libraryDependencies ++= Seq(
   "org.scala-js"             %%% "scalajs-dom"     % "0.9.7",
 
   // Binding
-  "com.thoughtworks.binding" %%% "dom"             % "11.8.1+36-f6ab2503",
-  "com.thoughtworks.binding" %%% "route"           % "11.8.1+36-f6ab2503",
+  "com.thoughtworks.binding" %%% "dom"             % bindingVersion,
+  "com.thoughtworks.binding" %%% "route"           % bindingVersion,
 
   // RosHTTP
   "fr.hmil"                  %%% "roshttp"         % "2.2.4",
