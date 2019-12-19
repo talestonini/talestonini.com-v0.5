@@ -1,8 +1,7 @@
 package com.talestonini
 
 import java.time._
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatter.ofPattern
+import java.time.format.DateTimeFormatter.{ofPattern => pattern}
 
 import scala.concurrent._
 import ExecutionContext.Implicits.global
@@ -12,9 +11,8 @@ import fr.hmil.roshttp.HttpRequest
 import fr.hmil.roshttp.response.SimpleHttpResponse
 import fr.hmil.roshttp.Protocol.HTTPS
 import fr.hmil.roshttp.Method.{GET, POST}
-import fr.hmil.roshttp.body.PlainTextBody
 import monix.execution.Scheduler.Implicits.{global => scheduler}
-import io.circe._, io.circe.parser._, io.circe.generic.semiauto._, io.circe.parser.decode
+import io.circe._, io.circe.parser._
 import cats.syntax.either._
 
 
@@ -34,20 +32,20 @@ object Firebase {
 
   type Posts = Seq[Doc[PostFields]]
 
-  val ApiKey = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY"
-  val ProjectId = "ttdotcom"
-  val Database = "(default)"
-  val FirestoreHost = "firestore.googleapis.com"
+  private val ApiKey = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY"
+  private val ProjectId = "ttdotcom"
+  private val Database = "(default)"
+  private val FirestoreHost = "firestore.googleapis.com"
 
-  val commonHeaders = {
+  private val commonHeaders = {
     "Access-Control-Allow-Origin" -> "*"
     "Access-Control-Allow-Headers" -> "Content-Type"
     "Access-Control-Allow-Methods" -> "POST"
     "Content-Type" -> "application/json"
   }
 
-  private val LongDateTimeFormatter = ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-  private val ShortDateTimeFormatter = ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+  private val LongDateTimeFormatter = pattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+  private val ShortDateTimeFormatter = pattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
   lazy implicit val decodeLocalDateTime: Decoder[LocalDateTime] = 
     Decoder.decodeString.emap { str =>
@@ -64,18 +62,18 @@ object Firebase {
   lazy implicit val decodePostFields: Decoder[PostFields] = new Decoder[PostFields] {
     final def apply(c: HCursor): Decoder.Result[PostFields] =
       for {
-        title <- c.downField("title").get[String]("stringValue")
-        resource <- c.downField("resource").get[String]("stringValue")
+        title            <- c.downField("title").get[String]("stringValue")
+        resource         <- c.downField("resource").get[String]("stringValue")
         firstPublishDate <- c.downField("first_publish_date").get[LocalDateTime]("timestampValue")
-        publishDate <- c.downField("publish_date").get[LocalDateTime]("timestampValue")
+        publishDate      <- c.downField("publish_date").get[LocalDateTime]("timestampValue")
       } yield PostFields(Option(title), Option(resource), Option(firstPublishDate), Option(publishDate))
   }
 
   lazy implicit val decodePostDoc: Decoder[Doc[PostFields]] = new Decoder[Doc[PostFields]] {
     final def apply(c: HCursor): Decoder.Result[Doc[PostFields]] = 
       for {
-        name <- c.get[String]("name")
-        fields <- c.get[PostFields]("fields")
+        name       <- c.get[String]("name")
+        fields     <- c.get[PostFields]("fields")
         createTime <- c.get[String]("createTime")
         updateTime <- c.get[String]("updateTime")
       } yield Doc(name, fields, createTime, updateTime)

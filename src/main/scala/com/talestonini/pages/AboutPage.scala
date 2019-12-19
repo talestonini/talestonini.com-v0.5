@@ -5,7 +5,7 @@ import org.scalajs.dom.raw.Node
 import com.thoughtworks.binding.{Binding, dom}
 
 
-object About {
+object AboutPage {
 
   @dom
   def apply(): Binding[Node] =

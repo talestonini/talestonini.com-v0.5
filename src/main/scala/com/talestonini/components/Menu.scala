@@ -13,8 +13,8 @@ object Menu {
   case class MenuItem(labels: Array[String], label: Var[String], hash: String)
 
   val menuItems: Vars[MenuItem] = Vars(
-    MenuItem(Array("Posts", "Artigos"), Var("Posts"), "#/itemOne"),
-    MenuItem(Array("Tags", "Tags"), Var("Tags"), "#/itemTwo"),
+    MenuItem(Array("Posts", "Artigos"), Var("Posts"), "#/posts"),
+    MenuItem(Array("Tags", "Tags"), Var("Tags"), "#/tags"),
     MenuItem(Array("About", "Sobre"), Var("About"), "#/about")
   )
 
