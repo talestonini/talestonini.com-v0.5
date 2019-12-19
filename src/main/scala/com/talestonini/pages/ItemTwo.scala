@@ -20,20 +20,16 @@ import com.talestonini.Firebase._
 
 object ItemTwo {
 
-  case class Contact(name: Var[String], email: Var[String])
-  val data = Vars.empty[Contact]
-
   case class BindingPost(title: Var[String], publishDate: Var[String])
   val posts = Vars.empty[BindingPost]
 
-  def datetime2Str(datetime: Option[LocalDateTime], 
-                   dtf: DateTimeFormatter = ofPattern("dd/MM/yyyy")): String =
+  def datetime2Str(datetime: Option[LocalDateTime], dtf: DateTimeFormatter = ofPattern("dd/MM/yyyy")): String =
     if (datetime.isDefined)
       datetime.get.format(dtf)
     else
       "no date"
 
-  lazy val getPosts = () => 
+  def getPosts() = 
     Firebase.getAuthToken()
       .onComplete({
         case res: Success[String] => 
@@ -52,39 +48,16 @@ object ItemTwo {
 
   @dom
   def apply(): Binding[Node] = {
-    <div>
-      <div>
-        <button onclick={ event: Event =>
-          data.value += Contact(Var("Tales Tonini"), Var("talestonini@gmail.com"))
-        }>Add a contact</button>
-      </div>
-      <div>
-        <button onclick={ event: Event =>
-          getPosts()
-        }>Get Posts</button>
-      </div>
-
+    val itemTwo = <div>
       <table border="1" cellPadding="5">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>E-mail</th>
-            <th>Operation</th>
+            <th>Post</th>
+            <th>Published</th>
           </tr>
         </thead>
         <tbody>
           {
-            for (contact <- data) yield {
-              <tr>
-                <td>{contact.name.bind}</td>
-                <td>{contact.email.bind}</td>
-                <td>
-                  <button onclick={event: Event =>
-                    contact.name.value = "Modified Name"
-                  }>Modify the name</button>
-                </td>
-              </tr>
-            }
             for (p <- posts) yield {
               <tr>
                 <td>{p.title.bind}</td>
@@ -95,6 +68,8 @@ object ItemTwo {
         </tbody>
       </table>
     </div>
+    getPosts()
+    itemTwo
   }
     
 }

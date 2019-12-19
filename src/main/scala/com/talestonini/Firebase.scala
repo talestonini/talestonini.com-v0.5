@@ -34,15 +34,32 @@ object Firebase {
 
   type Posts = Seq[Doc[PostFields]]
 
-  lazy implicit val decodeLocalDateTime: Decoder[LocalDateTime] = Decoder.decodeString.emap { str =>
-    Either.catchNonFatal(
-      try {
-        LocalDateTime.parse(str, ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
-      } catch {
-        case _: Exception => LocalDateTime.parse(str, ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
-      }
-    ).leftMap(t => "LocalDateTime")
+  val ApiKey = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY"
+  val ProjectId = "ttdotcom"
+  val Database = "(default)"
+  val FirestoreHost = "firestore.googleapis.com"
+
+  val commonHeaders = {
+    "Access-Control-Allow-Origin" -> "*"
+    "Access-Control-Allow-Headers" -> "Content-Type"
+    "Access-Control-Allow-Methods" -> "POST"
+    "Content-Type" -> "application/json"
   }
+
+  private val LongDateTimeFormatter = ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+  private val ShortDateTimeFormatter = ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+
+  lazy implicit val decodeLocalDateTime: Decoder[LocalDateTime] = 
+    Decoder.decodeString.emap { str =>
+      // TODO: is a try-catch correct inside catchNonFatal?
+      Either.catchNonFatal(
+        try {
+          LocalDateTime.parse(str, LongDateTimeFormatter)
+        } catch {
+          case _: Exception => LocalDateTime.parse(str, ShortDateTimeFormatter)
+        }
+      ).leftMap(t => "LocalDateTime")
+    }
 
   lazy implicit val decodePostFields: Decoder[PostFields] = new Decoder[PostFields] {
     final def apply(c: HCursor): Decoder.Result[PostFields] =
@@ -71,18 +88,6 @@ object Firebase {
       } yield DocsRes(docs)
   }
 
-  val ApiKey = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY"
-  val ProjectId = "ttdotcom"
-  val Database = "(default)"
-  val FirestoreHost = "firestore.googleapis.com"
-
-  val commonHeaders = {
-    "Access-Control-Allow-Origin" -> "*"
-    "Access-Control-Allow-Headers" -> "Content-Type"
-    "Access-Control-Allow-Methods" -> "POST"
-    "Content-Type" -> "application/json"
-  }
-
   def getAuthToken(): Future[String] = {
     val p = Promise[String]()
     Future {
@@ -97,9 +102,17 @@ object Firebase {
         .onComplete({
           case rawJson: Success[SimpleHttpResponse] => 
             val json = parse(rawJson.get.body).getOrElse(Json.Null)
-            p success (json \\ "idToken")(0).asString.get
-          case e: Failure[SimpleHttpResponse] => 
-            p success "unable to obtain token"
+            val token = json.hcursor.get[String]("idToken") match {
+              case Left(e) =>
+                println(s"unable to decode POST signUp response: ${e.getMessage()}")
+                "no token"
+              case Right(res) =>
+                res
+            }
+            p success token
+          case f: Failure[SimpleHttpResponse] => 
+            println(s"POST signUp request failed: ${f.exception.getMessage()}")
+            p success "no token"
         })
     }
     p.future
@@ -113,19 +126,20 @@ object Firebase {
         .withProtocol(HTTPS)
         .withHost(FirestoreHost)
         .withPath(s"/v1/projects/$ProjectId/databases/$Database/documents/posts")
-        .withHeaders(Firebase.commonHeaders)
         .withHeader("Authorization", s"Bearer $token")
         .send()
         .onComplete({
           case rawJson: Success[SimpleHttpResponse] =>
-            p success (decode[DocsRes[PostFields]](rawJson.get.body) match {
+            val posts = decode[DocsRes[PostFields]](rawJson.get.body) match {
               case Left(e) =>
-                println(s"unable to decode response: ${e.getMessage()}")
+                println(s"unable to decode GET posts response: ${e.getMessage()}")
                 Seq.empty
               case Right(res) =>
                 res.documents
-            })
-          case e: Failure[SimpleHttpResponse] => 
+            }
+            p success posts
+          case f: Failure[SimpleHttpResponse] => 
+            println(s"GET posts request failed: ${f.exception.getMessage()}")
             p success Seq.empty
         })
     }
