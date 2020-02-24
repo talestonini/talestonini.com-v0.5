@@ -6,7 +6,7 @@ import org.scalajs.dom.window
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom, Route}
 
-import pages.{ItemTwo, About}
+import pages._
 
 
 object Routing {
@@ -20,7 +20,7 @@ object Routing {
     </div>
   
   @dom
-  val itemOneContent: Binding[Node] =
+  val underConstructionContent: Binding[Node] =
     <div>
       <p>Page under construction...</p>
       <p><a href="#/">Home</a></p>
@@ -28,11 +28,11 @@ object Routing {
 
   // app pages
   val home = Page("Home", "#/", Var(homeContent))
-  val itemOne = Page("Item 1", "#/itemOne", Var(itemOneContent))
-  val itemTwo = Page("Item 2", "#/itemTwo", Var(ItemTwo()))
-  val about = Page("About", "#/about", Var(About()))
+  val postsPage = Page("Posts", "#/posts", Var(PostsPage()))
+  val tagsPage = Page("Tags", "#/tags", Var(underConstructionContent))
+  val about = Page("About", "#/about", Var(AboutPage()))
 
-  val allPages = Vector(home, itemOne, itemTwo, about)
+  val allPages = Vector(home, postsPage, tagsPage, about)
   val route = Route.Hash(home)(new Route.Format[Page] {
     override def unapply(hashText: String) = allPages.find(_.hash == window.location.hash)
     override def apply(page: Page): String = page.hash
