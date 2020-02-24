@@ -18,6 +18,7 @@ import cats.syntax.either._
 
 object Firebase {
 
+  // Post, ie Article
   case class PostFields(title: Option[String],
                         resource: Option[String],
                         firstPublishDate: Option[LocalDateTime],
