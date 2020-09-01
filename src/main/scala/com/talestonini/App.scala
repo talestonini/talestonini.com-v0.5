@@ -1,13 +1,12 @@
 package com.talestonini
 
-import org.scalajs.{dom => jsdom}
-import jsdom.document
-import scala.scalajs.js.annotation.{JSExportTopLevel, JSExport}
+import com.thoughtworks.binding.Binding
+import components.{Footer, Logo, Menu}
+import org.lrng.binding.html
+import org.scalajs.dom.document
 import org.scalajs.dom.raw.Node
-
-import com.thoughtworks.binding.{Binding, dom}
-
-import components.{Logo, Menu, Footer}
+import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
+import scala.language.implicitConversions._
 
 
 @JSExportTopLevel("App")
@@ -15,8 +14,7 @@ object App {
 
   import Routing._
 
-  @dom
-  def app: Binding[Node] =
+  @html def app: Binding[Node] =
     <div>
       <div class="w3-content w3-row w3-hide-small">
         <div class="w3-padding-16">
@@ -50,7 +48,6 @@ object App {
 
   @JSExport("main")
   def main(): Unit =
-    dom.render(document.body, app)
+    html.render(document.body, app)
 
 }
-

@@ -1,14 +1,15 @@
 package com.talestonini
 
-import org.scalatest._
-import Matchers._
-
 import java.time._
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
 
+import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers._
 
-class LocalDateTest extends FunSpec {
+
+class LocalDateTest extends AnyFunSpec {
 
   describe("Parsing dates") {
     it("should parse a date from a datetime string") {
@@ -19,4 +20,3 @@ class LocalDateTest extends FunSpec {
   }
 
 }
-

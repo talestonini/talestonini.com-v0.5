@@ -1,26 +1,23 @@
 package com.talestonini
 
+import com.thoughtworks.binding.Binding.Var
+import com.thoughtworks.binding.{Binding, Route}
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.window
-
-import com.thoughtworks.binding.Binding.Var
-import com.thoughtworks.binding.{Binding, dom, Route}
-
 import pages._
+import org.lrng.binding.html
 
 
 object Routing {
 
   case class Page(name: String, hash: String, content: Var[Binding[Node]])
   
-  @dom
-  val homeContent: Binding[Node] =
+  @html val homeContent: Binding[Node] =
     <div>
       <p>Home page content...</p>
     </div>
   
-  @dom
-  val underConstructionContent: Binding[Node] =
+  @html val underConstructionContent: Binding[Node] =
     <div>
       <p>Page under construction...</p>
       <p><a href="#/">Home</a></p>
@@ -40,4 +37,3 @@ object Routing {
   route.watch()
 
 }
-
