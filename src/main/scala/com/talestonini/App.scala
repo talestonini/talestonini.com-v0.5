@@ -6,7 +6,6 @@ import org.lrng.binding.html
 import org.scalajs.dom.document
 import org.scalajs.dom.raw.Node
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
-import scala.language.implicitConversions._
 
 
 @JSExportTopLevel("App")
