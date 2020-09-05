@@ -5,6 +5,7 @@ import com.thoughtworks.binding.{Binding, Route}
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.window
 import pages._
+import posts._
 import org.lrng.binding.html
 
 
@@ -29,7 +30,11 @@ object Routing {
   val tagsPage = Page("Tags", "#/tags", Var(underConstructionContent))
   val about = Page("About", "#/about", Var(AboutPage()))
 
-  val allPages = Vector(home, postsPage, tagsPage, about)
+  // posts
+  val capstonePost = Page("Capstone", "#/capstone", Var(capstone()))
+  val rapidsPost = Page("Rapids", "#/rapids", Var(rapids()))
+
+  val allPages = Vector(home, postsPage, tagsPage, about, capstonePost, rapidsPost)
   val route = Route.Hash(home)(new Route.Format[Page] {
     override def unapply(hashText: String) = allPages.find(_.hash == window.location.hash)
     override def apply(page: Page): String = page.hash

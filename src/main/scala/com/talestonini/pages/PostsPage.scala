@@ -15,7 +15,7 @@ import scala.util.{Failure, Success}
 
 object PostsPage {
 
-  private case class BPost(title: Var[String], publishDate: Var[String])
+  private case class BPost(title: Var[String], resource: Var[String], publishDate: Var[String])
 
   private val bPosts = Vars.empty[BPost]
 
@@ -26,7 +26,11 @@ object PostsPage {
           .onComplete({
             case posts: Success[Posts] =>
               for (p <- posts.get)
-                bPosts.value += BPost(Var(p.fields.title.get), Var(datetime2Str(p.fields.publishDate)))
+                bPosts.value += BPost(
+                  Var(p.fields.title.get), 
+                  Var(p.fields.resource.get),
+                  Var(datetime2Str(p.fields.publishDate))
+                )
             case f: Failure[Posts] =>
               println(s"failure getting posts: ${f.exception.getMessage()}")
           })
@@ -38,7 +42,7 @@ object PostsPage {
     <div>
       {
         for (p <- bPosts) yield
-          <p>{p.title.bind} ({p.publishDate.bind})</p>
+          <p><a href={s"#/${p.resource.bind}"}>{p.title.bind}</a> ({p.publishDate.bind})</p>
       }
     </div>
     
