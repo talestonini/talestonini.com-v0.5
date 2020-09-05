@@ -1,14 +1,13 @@
 package com.talestonini.components
 
+import com.thoughtworks.binding.Binding
+import org.lrng.binding.html
 import org.scalajs.dom.raw.Node
-
-import com.thoughtworks.binding.{Binding, dom}
 
 
 object Logo {
 
-  @dom
-  def apply(): Binding[Node] =
+  @html def apply(): Binding[Node] =
     <div class="w3-col w3-left logo" style="width:245px">
       <a href="#/" data:onclick="close_sidebar()">
         <table>
@@ -34,8 +33,7 @@ object Logo {
       </a>
     </div>
 
-  @dom
-  def pronunciation(p: String): Binding[Node] = 
+  @html def pronunciation(p: String): Binding[Node] = 
     <td class="pronunciation">
       <a href="https://www.oxfordlearnersdictionaries.com/about/english/pronunciation_english" target="_blank">
         {p}
@@ -43,4 +41,3 @@ object Logo {
     </td>
 
 }
-

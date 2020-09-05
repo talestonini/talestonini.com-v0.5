@@ -1,11 +1,9 @@
 package com.talestonini.components
 
-import org.scalajs.dom.raw.Node
-import org.scalajs.dom.raw.Event
-
-import com.thoughtworks.binding.Binding.{Vars, Var}
-import com.thoughtworks.binding.{Binding, dom}
-import com.thoughtworks.binding.Binding.BindingSeq
+import com.thoughtworks.binding.Binding
+import com.thoughtworks.binding.Binding.{BindingSeq, Vars, Var}
+import org.lrng.binding.html
+import org.scalajs.dom.raw.{Event, Node}
 
 
 object Menu {
@@ -18,15 +16,15 @@ object Menu {
     MenuItem(Array("About", "Sobre"), Var("About"), "#/about")
   )
 
-  @dom
-  def changeLang(lang: Int) =
+  @html def changeLang(lang: Int) =
     for (mi <- menuItems.value) yield
       mi.label.value = mi.labels(lang)
 
-  @dom
-  def apply(createSidebar: Boolean = false): Binding[BindingSeq[Node]] = {
-    val normalClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-hide-small menu-item"
-    val langClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-white w3-hide-small lang-menu-item"
+  @html def apply(createSidebar: Boolean = false): Binding[BindingSeq[Node]] = Binding {
+    val normalClasses = """w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-hide-small
+                          | menu-item""".stripMargin
+    val langClasses = """w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-white w3-hide-small
+                        | lang-menu-item""".stripMargin
     val pipeClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-white w3-hide-small pipe"
     val mobileLangClasses = "w3-button mobile-lang-menu-item w3-large"
     val sid = if (createSidebar) "sidebar" else ""
@@ -63,4 +61,3 @@ object Menu {
   }
 
 }
-

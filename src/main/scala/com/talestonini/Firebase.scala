@@ -3,17 +3,17 @@ package com.talestonini
 import java.time._
 import java.time.format.DateTimeFormatter.{ofPattern => pattern}
 
-import scala.concurrent._
-import ExecutionContext.Implicits.global
-import scala.util.{Failure, Success}
-
-import fr.hmil.roshttp.HttpRequest
-import fr.hmil.roshttp.response.SimpleHttpResponse
-import fr.hmil.roshttp.Protocol.HTTPS
-import fr.hmil.roshttp.Method.{GET, POST}
-import monix.execution.Scheduler.Implicits.{global => scheduler}
-import io.circe._, io.circe.parser._
 import cats.syntax.either._
+import fr.hmil.roshttp.HttpRequest
+import fr.hmil.roshttp.Method.{GET, POST}
+import fr.hmil.roshttp.Protocol.HTTPS
+import fr.hmil.roshttp.response.SimpleHttpResponse
+import io.circe._ 
+import io.circe.parser._
+import monix.execution.Scheduler.Implicits.{global => scheduler}
+import scala.concurrent._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
 
 
 object Firebase {
@@ -146,4 +146,3 @@ object Firebase {
   }
 
 }
-

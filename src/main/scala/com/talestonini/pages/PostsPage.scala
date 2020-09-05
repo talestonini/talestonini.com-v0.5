@@ -3,16 +3,14 @@ package com.talestonini.pages
 import java.time._
 import java.time.format.DateTimeFormatter.{ofPattern => pattern}
 
-import scala.concurrent._
-import ExecutionContext.Implicits.global
-import scala.util.{Failure, Success}
-
-import org.scalajs.dom.raw.{Node, Event}
-
-import com.thoughtworks.binding.{Binding, dom}
-import com.thoughtworks.binding.Binding.{Var, Vars}
-
 import com.talestonini.Firebase, com.talestonini.Firebase._
+import com.thoughtworks.binding.Binding
+import com.thoughtworks.binding.Binding.{Var, Vars}
+import org.lrng.binding.html
+import org.scalajs.dom.raw.{Node, Event}
+import scala.concurrent._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
 
 
 object PostsPage {
@@ -36,8 +34,7 @@ object PostsPage {
         println(s"failure getting auth token: ${f.exception.getMessage()}")
     })
 
-  @dom
-  def apply(): Binding[Node] =
+  @html def apply(): Binding[Node] =
     <div>
       {
         for (p <- bPosts) yield
@@ -54,4 +51,3 @@ object PostsPage {
       "no date"
 
 }
-

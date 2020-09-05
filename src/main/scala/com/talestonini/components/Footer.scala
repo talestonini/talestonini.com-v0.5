@@ -1,15 +1,14 @@
 package com.talestonini.components
 
+import com.thoughtworks.binding.Binding
+import com.thoughtworks.binding.Binding.BindingSeq
+import org.lrng.binding.html
 import org.scalajs.dom.raw.Node
-
-import com.thoughtworks.binding.{Binding, dom}
-import Binding.BindingSeq
 
 
 object Footer {
 
-  @dom
-  def apply(): Binding[BindingSeq[Node]] =
+  @html def apply(): Binding[BindingSeq[Node]] = Binding {
     <div class="w3-xlarge">
       <a href="https://twitter.com/talestonini" class="no-decoration" target="_blank">
         <i class="fa fa-twitter w3-hover-opacity"></i>
@@ -30,6 +29,6 @@ object Footer {
     <div class="w3-small">
       <p>© 2019 Tales Tonini</p>
     </div>
+  }
 
 }
-
