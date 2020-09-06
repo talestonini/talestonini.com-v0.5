@@ -3,7 +3,8 @@ package com.talestonini.pages
 import java.time._
 import java.time.format.DateTimeFormatter.{ofPattern => pattern}
 
-import com.talestonini.Firebase, com.talestonini.Firebase._
+import com.talestonini.db.Firebase, com.talestonini.db.Firebase._
+import com.talestonini.db.model._
 import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import org.lrng.binding.html
@@ -15,7 +16,12 @@ import scala.util.{Failure, Success}
 
 object PostsPage {
 
-  private case class BPost(title: Var[String], resource: Var[String], publishDate: Var[String])
+  private case class BPost(
+    restEntityLink: Var[String], 
+    title: Var[String], 
+    resource: Var[String], 
+    publishDate: Var[String]
+  )
 
   private val bPosts = Vars.empty[BPost]
 
@@ -27,6 +33,7 @@ object PostsPage {
             case posts: Success[Posts] =>
               for (p <- posts.get)
                 bPosts.value += BPost(
+                  Var(p.name),
                   Var(p.fields.title.get), 
                   Var(p.fields.resource.get),
                   Var(datetime2Str(p.fields.publishDate))
