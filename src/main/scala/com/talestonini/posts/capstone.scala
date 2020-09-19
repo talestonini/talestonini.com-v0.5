@@ -4,12 +4,11 @@ import com.thoughtworks.binding.Binding
 import org.lrng.binding.html
 import org.scalajs.dom.raw.Node
 
-
-object rapids {
+object Capstone {
 
   @html def apply(): Binding[Node] =
     <div>
-      <p>Rapids</p>
+      <p>Capstone</p>
     </div>
 
 }

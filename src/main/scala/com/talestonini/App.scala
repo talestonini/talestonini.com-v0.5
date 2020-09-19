@@ -7,7 +7,6 @@ import org.scalajs.dom.document
 import org.scalajs.dom.raw.Node
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 
-
 @JSExportTopLevel("App")
 object App {
 

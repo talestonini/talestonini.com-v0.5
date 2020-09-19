@@ -4,7 +4,6 @@ import com.thoughtworks.binding.Binding
 import org.lrng.binding.html
 import org.scalajs.dom.raw.Node
 
-
 object Logo {
 
   @html def apply(): Binding[Node] =
@@ -33,7 +32,7 @@ object Logo {
       </a>
     </div>
 
-  @html def pronunciation(p: String): Binding[Node] = 
+  @html def pronunciation(p: String): Binding[Node] =
     <td class="pronunciation">
       <a href="https://www.oxfordlearnersdictionaries.com/about/english/pronunciation_english" target="_blank">
         {p}

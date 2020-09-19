@@ -5,7 +5,6 @@ import com.thoughtworks.binding.Binding.BindingSeq
 import org.lrng.binding.html
 import org.scalajs.dom.raw.Node
 
-
 object Footer {
 
   @html def apply(): Binding[BindingSeq[Node]] = Binding {

@@ -4,38 +4,40 @@ import java.time._
 import java.time.format.DateTimeFormatter.{ofPattern => pattern}
 
 import cats.syntax.either._
-import io.circe._ 
+import io.circe._
 
 package object model {
-  
-  private val LongDateTimeFormatter = pattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+
+  private val LongDateTimeFormatter  = pattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
   private val ShortDateTimeFormatter = pattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
-  lazy implicit val decodeLocalDateTime: Decoder[LocalDateTime] = 
+  implicit lazy val decodeLocalDateTime: Decoder[LocalDateTime] =
     Decoder.decodeString.emap { str =>
       // TODO: is a try-catch correct inside catchNonFatal?
-      Either.catchNonFatal(
-        try {
-          LocalDateTime.parse(str, LongDateTimeFormatter)
-        } catch {
-          case _: Exception => LocalDateTime.parse(str, ShortDateTimeFormatter)
-        }
-      ).leftMap(t => "LocalDateTime")
+      Either
+        .catchNonFatal(
+          try {
+            LocalDateTime.parse(str, LongDateTimeFormatter)
+          } catch {
+            case _: Exception => LocalDateTime.parse(str, ShortDateTimeFormatter)
+          }
+        )
+        .leftMap(t => "LocalDateTime")
     }
 
   // --- common --------------------------------------------------------------------------------------------------------
 
   case class Doc[D](name: String, fields: D, createTime: String, updateTime: String)
-  
+
   case class DocsRes[D](documents: Seq[Doc[D]])
 
   sealed trait DocType
 
   type Docs[D] = Seq[Doc[D]]
 
-  implicit def docDecoder[D <: DocType](implicit fieldsDecoder: Decoder[D]): Decoder[Doc[D]] = 
+  implicit def docDecoder[D <: DocType](implicit fieldsDecoder: Decoder[D]): Decoder[Doc[D]] =
     new Decoder[Doc[D]] {
-      final def apply(c: HCursor): Decoder.Result[Doc[D]] = 
+      final def apply(c: HCursor): Decoder.Result[Doc[D]] =
         for {
           name       <- c.get[String]("name")
           fields     <- c.get[D]("fields")
@@ -44,9 +46,9 @@ package object model {
         } yield Doc(name, fields, createTime, updateTime)
     }
 
-  implicit def docsResDecoder[D <: DocType](implicit docSeqDecoder: Decoder[Seq[Doc[D]]]): Decoder[DocsRes[D]] = 
+  implicit def docsResDecoder[D <: DocType](implicit docSeqDecoder: Decoder[Seq[Doc[D]]]): Decoder[DocsRes[D]] =
     new Decoder[DocsRes[D]] {
-      final def apply(c: HCursor): Decoder.Result[DocsRes[D]] = 
+      final def apply(c: HCursor): Decoder.Result[DocsRes[D]] =
         for {
           docs <- c.get[Seq[Doc[D]]]("documents")
         } yield DocsRes(docs)
@@ -60,10 +62,10 @@ package object model {
     firstPublishDate: Option[LocalDateTime],
     publishDate: Option[LocalDateTime]
   ) extends DocType
-  
+
   type Posts = Seq[Doc[Post]]
 
-  lazy implicit val postFieldsDecoder: Decoder[Post] = 
+  implicit lazy val postFieldsDecoder: Decoder[Post] =
     new Decoder[Post] {
       final def apply(c: HCursor): Decoder.Result[Post] =
         for {
@@ -77,14 +79,14 @@ package object model {
   // --- comment -------------------------------------------------------------------------------------------------------
 
   case class Comment(
-    author: Option[String], 
-    date: Option[LocalDateTime], 
+    author: Option[String],
+    date: Option[LocalDateTime],
     text: Option[String]
   ) extends DocType
 
   type Comments = Seq[Doc[Comment]]
 
-  lazy implicit val commentFieldsDecoder: Decoder[Comment] = 
+  implicit lazy val commentFieldsDecoder: Decoder[Comment] =
     new Decoder[Comment] {
       final def apply(c: HCursor): Decoder.Result[Comment] =
         for {

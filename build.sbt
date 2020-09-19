@@ -1,7 +1,7 @@
 enablePlugins(ScalaJSPlugin)
 
 name := "TalesTonini.com"
-scalaVersion := "2.13.1"
+scalaVersion := "2.13.3"
 val circeVersion = "0.14.0-M1"
 
 resolvers += Resolver.bintrayRepo("hmil", "maven")
@@ -47,3 +47,7 @@ libraryDependencies ++= Seq(
   // Test
   "org.scalatest"            %%% "scalatest"       % "3.2.0" % "test"
 )
+
+lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
+compileScalastyle := scalastyle.in(Compile).toTask("").value
+(compile in Compile) := ((compile in Compile) dependsOn compileScalastyle).value

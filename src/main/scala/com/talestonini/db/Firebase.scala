@@ -6,7 +6,7 @@ import fr.hmil.roshttp.HttpRequest
 import fr.hmil.roshttp.Method.{GET, POST}
 import fr.hmil.roshttp.Protocol.HTTPS
 import fr.hmil.roshttp.response.SimpleHttpResponse
-import io.circe._ 
+import io.circe._
 import io.circe.parser._
 import monix.execution.Scheduler.Implicits.{global => scheduler}
 import scala.concurrent._
@@ -14,24 +14,24 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.implicitConversions._
 import scala.util.{Failure, Success}
 
-
 object Firebase {
 
-  private val ApiKey = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY"
-  private val ProjectId = "ttdotcom"
-  private val Database = "(default)"
+  private val ApiKey        = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY"
+  private val ProjectId     = "ttdotcom"
+  private val Database      = "(default)"
   private val FirestoreHost = "firestore.googleapis.com"
-  private val pathPrefix = "/v1"
+  private val pathPrefix    = "/v1"
 
   private val commonHeaders = {
-    "Access-Control-Allow-Origin" -> "*"
+    "Access-Control-Allow-Origin"  -> "*"
     "Access-Control-Allow-Headers" -> "Content-Type"
     "Access-Control-Allow-Methods" -> "POST"
-    "Content-Type" -> "application/json"
+    "Content-Type"                 -> "application/json"
   }
 
   def getAuthToken(): Future[String] = {
     val p = Promise[String]()
+
     Future {
       HttpRequest()
         .withMethod(POST)
@@ -42,7 +42,7 @@ object Firebase {
         .withHeaders(Firebase.commonHeaders)
         .send()
         .onComplete({
-          case rawJson: Success[SimpleHttpResponse] => 
+          case rawJson: Success[SimpleHttpResponse] =>
             val json = parse(rawJson.get.body).getOrElse(Json.Null)
             val token = json.hcursor.get[String]("idToken") match {
               case Left(e) =>
@@ -52,7 +52,7 @@ object Firebase {
                 res
             }
             p success token
-          case f: Failure[SimpleHttpResponse] => 
+          case f: Failure[SimpleHttpResponse] =>
             println(s"POST signUp request failed: ${f.exception.getMessage()}")
             p success "no token"
         })
@@ -60,16 +60,15 @@ object Firebase {
     p.future
   }
 
-  def getPosts(token: String): Future[Posts] = 
+  def getPosts(token: String): Future[Posts] =
     get[Post](token, s"/projects/$ProjectId/databases/$Database/documents/posts")
 
   def getComments(token: String, postRestEntityLink: String): Future[Comments] =
     get[Comment](token, s"$postRestEntityLink/comments")
 
-  private def get[D <: DocType](
-    token: String, 
-    path: String
-  )(implicit docsResDecoder: Decoder[DocsRes[D]]): Future[Docs[D]] = {
+  private def get[D <: DocType](token: String, path: String)(
+    implicit docsResDecoder: Decoder[DocsRes[D]]
+  ): Future[Docs[D]] = {
     val p = Promise[Docs[D]]()
     Future {
       HttpRequest()
