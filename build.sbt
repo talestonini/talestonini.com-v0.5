@@ -1,7 +1,7 @@
 enablePlugins(ScalaJSPlugin)
 
 name := "TalesTonini.com"
-scalaVersion := "2.13.3"
+scalaVersion := "2.13.1"
 val circeVersion = "0.14.0-M1"
 
 resolvers += Resolver.bintrayRepo("hmil", "maven")
@@ -27,25 +27,21 @@ libraryDependencies ++= {
 }
 
 libraryDependencies ++= Seq(
-  "org.scala-js"             %%% "scalajs-dom"     % "1.0.0",
-
+  "org.scala-js" %%% "scalajs-dom" % "1.0.0",
   // Binding
-  "com.thoughtworks.binding" %%% "route"           % "latest.release",
-  "com.thoughtworks.binding" %%% "binding"         % "latest.release",
-  "org.lrng.binding"         %%% "html"            % "latest.release",
-
+  "com.thoughtworks.binding" %%% "route"   % "latest.release",
+  "com.thoughtworks.binding" %%% "binding" % "latest.release",
+  "org.lrng.binding"         %%% "html"    % "latest.release",
   // RosHTTP
-  "fr.hmil"                  %%% "roshttp"         % "3.0.0",
-
-  "io.circe"                 %%% "circe-core"      % circeVersion,
-  "io.circe"                 %%% "circe-generic"   % circeVersion,
-  "io.circe"                 %%% "circe-parser"    % circeVersion,
-
-  "io.github.cquiroz"        %%% "scala-java-time" % "2.0.0",
+  "fr.hmil"           %%% "roshttp"         % "3.0.0",
+  "io.circe"          %%% "circe-core"      % circeVersion,
+  "io.circe"          %%% "circe-generic"   % circeVersion,
+  "io.circe"          %%% "circe-parser"    % circeVersion,
+  "io.github.cquiroz" %%% "scala-java-time" % "2.0.0",
   //"org.typelevel"            %%% "cats"            % "0.9.0",
 
   // Test
-  "org.scalatest"            %%% "scalatest"       % "3.2.0" % "test"
+  "org.scalatest" %%% "scalatest" % "3.2.0" % "test"
 )
 
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
