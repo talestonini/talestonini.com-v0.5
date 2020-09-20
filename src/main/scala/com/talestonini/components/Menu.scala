@@ -7,6 +7,9 @@ import org.scalajs.dom.raw.{Event, Node}
 
 object Menu {
 
+  // CSS classes
+  private val commonClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-hide-small"
+
   case class MenuItem(labels: Array[String], label: Var[String], hash: String)
 
   val menuItems: Vars[MenuItem] = Vars(
@@ -15,16 +18,9 @@ object Menu {
     MenuItem(Array("About", "Sobre"), Var("About"), "#/about")
   )
 
-  @html private def changeLang(lang: Int) =
-    for (mi <- menuItems.value) yield mi.label.value = mi.labels(lang)
-
   @html def apply(createSidebar: Boolean = false): Binding[BindingSeq[Node]] = Binding {
-    val normalClasses     = """w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-hide-small
-                              | menu-item""".stripMargin
-    val langClasses       = """w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-white w3-hide-small
-                              | lang-menu-item""".stripMargin
-    val pipeClasses       = """w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-white w3-hide-small
-                              | pipe""".stripMargin
+    val pipeClasses       = s"$commonClasses pipe"
+    val langClasses       = s"$commonClasses lang-menu-item"
     val mobileLangClasses = "w3-button mobile-lang-menu-item w3-large"
     val sid               = if (createSidebar) "sidebar" else ""
 
@@ -36,11 +32,7 @@ object Menu {
       </div>
     </div>
     <div class="w3-rest w3-hide-small">
-      <div class="menu">
-        {
-      for (mi <- menuItems) yield <a href={mi.hash} class={normalClasses}>{mi.label.bind}</a>
-    }
-      </div>
+      <div class="menu">{menu()}</div>
     </div>
 
     <div class="w3-rest w3-hide-large w3-hide-medium">
@@ -50,13 +42,18 @@ object Menu {
         <a class="w3-button w3-xxxlarge hamburger" data:onclick="toggle_sidebar()">☰</a>
       </div>
     </div>
-    <div class="w3-sidebar w3-bar-block mobile-menu" style="display:none" id={sid}>
-      {
-      for (mi <- menuItems) yield <a href={mi.hash} class="w3-bar-item w3-button" data:onclick="toggle_sidebar()">{
-        mi.label.bind
-      }</a>
-    }
-    </div>
+    <div class="w3-sidebar w3-bar-block mobile-menu" style="display:none" id={sid}>{mobileMenu()}</div>
   }
+
+  @html private def changeLang(lang: Int) =
+    for (mi <- menuItems.value) yield mi.label.value = mi.labels(lang)
+
+  @html private def menu() =
+    for (mi <- menuItems)
+      yield <a href={mi.hash} class={s"$commonClasses menu-item"}>{mi.label.bind}</a>
+
+  @html private def mobileMenu() =
+    for (mi <- menuItems)
+      yield <a href={mi.hash} class="w3-bar-item w3-button" data:onclick="toggle_sidebar()">{mi.label.bind}</a>
 
 }

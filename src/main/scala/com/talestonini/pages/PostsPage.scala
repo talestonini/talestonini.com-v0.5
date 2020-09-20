@@ -47,11 +47,11 @@ object PostsPage {
     })
 
   @html def apply(): Binding[Node] =
-    <div>
-      {
-      for (p <- bPosts) yield <p><a href={s"#/${p.resource.bind}"}>{p.title.bind}</a> ({p.publishDate.bind})</p>
-    }
-    </div>
+    <div>{postItems()}</div>
+
+  @html private def postItems() =
+    for (p <- bPosts)
+      yield <p><a href={s"#/${p.resource.bind}"}>{p.title.bind}</a> ({p.publishDate.bind})</p>
 
   private val SimpleDateFormatter = pattern("dd/MM/yyyy")
 
