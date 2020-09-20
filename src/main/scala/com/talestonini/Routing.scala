@@ -10,7 +10,7 @@ import posts._
 
 object Routing {
 
-  case class Page(name: String, hash: String, content: Var[Binding[Node]])
+  case class Page(hash: String, content: Var[Binding[Node]])
 
   @html val homeContent: Binding[Node] =
     <div>
@@ -24,16 +24,20 @@ object Routing {
     </div>
 
   // app pages
-  val home      = Page("Home", "#/", Var(homeContent))
-  val postsPage = Page("Posts", "#/posts", Var(PostsPage()))
-  val tagsPage  = Page("Tags", "#/tags", Var(underConstructionContent))
-  val about     = Page("About", "#/about", Var(AboutPage()))
+  val home      = Page("#/", Var(homeContent))
+  val postsPage = Page("#/posts", Var(PostsPage()))
+  val tagsPage  = Page("#/tags", Var(underConstructionContent))
+  val about     = Page("#/about", Var(AboutPage()))
 
-  // posts
-  val capstonePost = Page("Capstone", "#/capstone", Var(Capstone()))
-  val rapidsPost   = Page("Rapids", "#/rapids", Var(Rapids()))
+  var allPages = Seq(home, postsPage, tagsPage, about)
 
-  val allPages = Vector(home, postsPage, tagsPage, about, capstonePost, rapidsPost)
+  def newPostPage(resource: String): Page =
+    Page(s"#/$resource", Var(Posts.get(resource).getOrElse(throw new Exception("post is missing"))))
+
+  // add posts to all pages
+  for (p <- Posts.keys)
+    allPages = allPages :+ newPostPage(p)
+
   val route = Route.Hash(home)(new Route.Format[Page] {
     override def unapply(hashText: String) = allPages.find(_.hash == window.location.hash)
     override def apply(page: Page): String = page.hash
