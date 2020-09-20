@@ -6,39 +6,30 @@ import org.lrng.binding.html
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.window
 import pages._
-import posts._
+import pages.posts._
 
 object Routing {
 
   case class Page(hash: String, content: Var[Binding[Node]])
 
-  @html val homeContent: Binding[Node] =
-    <div>
-      <p>Home page content...</p>
-    </div>
+  val homePage = Page("#/", Var(Home()))
+  val otherPages: Map[String, Binding[Node]] = Map(
+    "about" -> About(),
+    "posts" -> Posts(),
+    "tags"  -> UnderConstruction(),
+    // posts
+    "capstone" -> Capstone(),
+    "rapids"   -> Rapids()
+  )
 
-  @html val underConstructionContent: Binding[Node] =
-    <div>
-      <p>Page under construction...</p>
-      <p><a href="#/">Home</a></p>
-    </div>
+  def newPage(hash: String): Page =
+    Page(s"#/$hash", Var(otherPages.get(hash).getOrElse(throw new Exception("page not found"))))
 
-  // app pages
-  val home      = Page("#/", Var(homeContent))
-  val postsPage = Page("#/posts", Var(PostsPage()))
-  val tagsPage  = Page("#/tags", Var(underConstructionContent))
-  val about     = Page("#/about", Var(AboutPage()))
+  var allPages = Seq(homePage)
+  for (p <- otherPages.keys)
+    allPages = allPages :+ newPage(p)
 
-  var allPages = Seq(home, postsPage, tagsPage, about)
-
-  def newPostPage(resource: String): Page =
-    Page(s"#/$resource", Var(Posts.get(resource).getOrElse(throw new Exception("post is missing"))))
-
-  // add posts to all pages
-  for (p <- Posts.keys)
-    allPages = allPages :+ newPostPage(p)
-
-  val route = Route.Hash(home)(new Route.Format[Page] {
+  val route = Route.Hash(homePage)(new Route.Format[Page] {
     override def unapply(hashText: String) = allPages.find(_.hash == window.location.hash)
     override def apply(page: Page): String = page.hash
   })

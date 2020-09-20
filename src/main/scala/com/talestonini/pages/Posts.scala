@@ -13,7 +13,7 @@ import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 
-object PostsPage {
+object Posts {
 
   private case class BPost(
     restEntityLink: Var[String],
