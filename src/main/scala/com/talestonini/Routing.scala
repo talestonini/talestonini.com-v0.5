@@ -12,8 +12,8 @@ object Routing {
 
   case class Page(hash: String, content: Var[Binding[Node]])
 
-  val homePage = Page("#/", Var(Home()))
-  val otherPages: Map[String, Binding[Node]] = Map(
+  val pageMap: Map[String, Binding[Node]] = Map(
+    ""      -> Home(),
     "about" -> About(),
     "posts" -> Posts(),
     "tags"  -> UnderConstruction(),
@@ -22,15 +22,13 @@ object Routing {
     "rapids"   -> Rapids()
   )
 
-  def newPage(hash: String): Page =
-    Page(s"#/$hash", Var(otherPages.get(hash).getOrElse(throw new Exception("page not found"))))
+  def hash2Page(hash: String): Page =
+    Page(s"#/$hash", Var(pageMap.get(hash).getOrElse(throw new Exception("page not found"))))
 
-  var allPages = Seq(homePage)
-  for (p <- otherPages.keys)
-    allPages = allPages :+ newPage(p)
+  var pages = for (hash <- pageMap.keys) yield hash2Page(hash)
 
-  val route = Route.Hash(homePage)(new Route.Format[Page] {
-    override def unapply(hashText: String) = allPages.find(_.hash == window.location.hash)
+  val route = Route.Hash(hash2Page(""))(new Route.Format[Page] {
+    override def unapply(hashText: String) = pages.find(_.hash == window.location.hash)
     override def apply(page: Page): String = page.hash
   })
   route.watch()
