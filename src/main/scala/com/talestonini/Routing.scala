@@ -21,11 +21,11 @@ object Routing {
   )
 
   val pageMap: Map[String, Binding[Node]] = Map(
-    ""         -> Home(),
-    "about"    -> About(),
-    "posts"    -> Posts(),
-    "tags"     -> UnderConstruction(),
-    "loggedIn" -> LoggedIn(),
+    ""      -> Home(),
+    "about" -> About(),
+    "login" -> Login(),
+    "posts" -> Posts(),
+    "tags"  -> UnderConstruction(),
     // posts
     "capstone" -> Capstone(),
     "rapids"   -> Rapids()

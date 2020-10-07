@@ -1,7 +1,10 @@
 package com.talestonini
 
+import com.talestonini.Routing._
 import com.thoughtworks.binding.Binding
+import com.thoughtworks.binding.Binding.Var
 import components.{Footer, Logo, Menu}
+import firebase._
 import org.lrng.binding.html
 import org.scalajs.dom.document
 import org.scalajs.dom.raw.Node
@@ -10,7 +13,35 @@ import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 @JSExportTopLevel("App")
 object App {
 
-  import Routing._
+  case object user {
+    val isLoggedIn  = Var(false)
+    val displayName = Var("")
+    val email       = Var("")
+    val providerId  = Var("")
+    val uid         = Var("")
+  }
+
+  Firebase
+    .auth()
+    .onAuthStateChanged(
+      (userInfo: UserInfo) => {
+        if (Option(userInfo).isDefined) {
+          user.isLoggedIn.value = true
+          user.displayName.value = userInfo.displayName.toString
+          user.email.value = userInfo.email.toString
+          user.providerId.value = userInfo.providerId
+          user.uid.value = userInfo.uid
+        } else {
+          user.isLoggedIn.value = false
+          user.displayName.value = ""
+          user.email.value = ""
+          user.providerId.value = ""
+          user.uid.value = ""
+        }
+      },
+      (err: firebase.auth.Error) => println("user is not logged in"),
+      () => {}
+    )
 
   @html def app: Binding[Node] =
     <div>
@@ -30,9 +61,7 @@ object App {
       </div>
 
       <div class="w3-content">
-        <div class="content">
-          {route.state.bind.content.value.bind}
-        </div>
+        {appContent()}
         <hr></hr>
       </div>
 
@@ -43,6 +72,11 @@ object App {
         {Footer().bind}
       </footer>
     </div>
+
+  @html def appContent(): Binding[Node] = {
+    if (user.isLoggedIn.value) route.state.value = hash2Page("login")
+    <div class="content">{route.state.bind.content.value.bind}</div>
+  }
 
   @JSExport("main")
   def main(): Unit =
