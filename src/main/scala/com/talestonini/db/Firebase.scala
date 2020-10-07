@@ -39,7 +39,7 @@ object Firebase {
         .withHost("identitytoolkit.googleapis.com")
         .withPath(s"$pathPrefix/accounts:signUp")
         .withQueryParameter("key", Firebase.ApiKey)
-        .withHeaders(Firebase.commonHeaders)
+        //.withHeaders(Firebase.commonHeaders)
         .send()
         .onComplete({
           case rawJson: Success[SimpleHttpResponse] =>
@@ -63,37 +63,65 @@ object Firebase {
   def getPosts(token: String): Future[Posts] =
     get[Post](token, s"/projects/$ProjectId/databases/$Database/documents/posts")
 
+  def getPosts(): Future[Posts] =
+    get[Post](s"/projects/$ProjectId/databases/$Database/documents/posts")
+
   def getComments(token: String, postRestEntityLink: String): Future[Comments] =
     get[Comment](token, s"$postRestEntityLink/comments")
+
+  def getComments(postRestEntityLink: String): Future[Comments] =
+    get[Comment](s"$postRestEntityLink/comments")
 
   private def get[D <: DocType](token: String, path: String)(
     implicit docsResDecoder: Decoder[DocsRes[D]]
   ): Future[Docs[D]] = {
-    val p = Promise[Docs[D]]()
+    val dType = docType(path)
+    val p     = Promise[Docs[D]]()
     Future {
       HttpRequest()
         .withMethod(GET)
         .withProtocol(HTTPS)
         .withHost(FirestoreHost)
         .withPath(pathPrefix + path)
-        .withHeader("Authorization", s"Bearer $token")
+        //.withHeaders(commonHeaders, "Authorization" -> s"Bearer $token")
         .send()
         .onComplete({
           case rawJson: Success[SimpleHttpResponse] =>
             val docs = decode[DocsRes[D]](rawJson.get.body) match {
               case Left(e) =>
-                println(s"unable to decode GET docs response: ${e.getMessage()}")
+                println(s"unable to decode GET $dType response: ${e.getMessage()}")
                 Seq.empty
               case Right(res) =>
+                println(s"successfuly retrieved $dType")
                 res.documents
             }
             p success docs
           case f: Failure[SimpleHttpResponse] =>
-            println(s"GET comments request failed: ${f.exception.getMessage()}")
+            println(s"GET $dType request failed: ${f.exception.getMessage()}")
             p success Seq.empty
         })
     }
     p.future
+  }
+
+  private def get[D <: DocType](path: String)(
+    implicit docsResDecoder: Decoder[DocsRes[D]]
+  ): Future[Docs[D]] = {
+    val p = Promise[Docs[D]]()
+    getAuthToken()
+      .onComplete({
+        case token: Success[String] =>
+          p completeWith get[D](token.get, path)
+        case f: Failure[String] =>
+          println(s"failure getting auth token: ${f.exception.getMessage()}")
+          p success Seq.empty
+      })
+    p.future
+  }
+
+  private def docType(path: String) = {
+    val idx = path.lastIndexOf("/")
+    path.substring(idx + 1)
   }
 
 }

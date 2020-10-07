@@ -1,14 +1,17 @@
 package com.talestonini.pages.posts
 
+import com.talestonini.pages.PostPage
 import com.thoughtworks.binding.Binding
 import org.lrng.binding.html
 import org.scalajs.dom.raw.Node
 
-object Capstone {
+object Capstone extends PostPage {
 
   @html def apply(): Binding[Node] =
     <div>
       <p>Capstone</p>
+
+      {comments()}
     </div>
 
 }
