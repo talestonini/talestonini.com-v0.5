@@ -50,8 +50,21 @@
 
     // Initialize the FirebaseUI Widget using Firebase.
     var ui = new firebaseui.auth.AuthUI(firebase.auth());
+
     // The start method will wait until the DOM is loaded.
-    ui.start('#firebaseui-auth-container', uiConfig);
+    var uiStart = function() {
+      ui.start('#firebaseui-auth-container', uiConfig);
+    };
+
+    var handleSignedInUserJS = function() {
+      document.getElementById('user-signed-in').style.display = 'block';
+      document.getElementById('user-signed-out').style.display = 'none';
+    };
+
+    var handleSignedOutUserJS = function() {
+      document.getElementById('user-signed-in').style.display = 'none';
+      document.getElementById('user-signed-out').style.display = 'block';
+    };
   </script>
 
   <!-- ============================================================================================================= -->
