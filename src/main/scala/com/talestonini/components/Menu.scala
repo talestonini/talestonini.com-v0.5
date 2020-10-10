@@ -21,11 +21,11 @@ object Menu {
   )
 
   @html def apply(createSidebar: Boolean = false): Binding[BindingSeq[Node]] = Binding {
-    val pipeClasses       = s"$commonClasses pipe"
+    val pipeClasses       = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hide-small pipe"
     val mobileLangClasses = "w3-button mobile-lang-menu-item w3-large"
     val sid               = if (createSidebar) "sidebar" else ""
 
-    <div class="w3-col w3-right w3-hide-small" style="width:180px">
+    <div class="w3-col w3-right w3-hide-small" style="width:100px">
       <div class="menu menu-lang">
         <p class={pipeClasses}>|</p>
         {greeting()}
@@ -53,11 +53,13 @@ object Menu {
 
   @html private def greeting(): Binding[Node] =
     <div>
-      <div id="greeting-signed-in" class="hidden" style="display: none">
-        <a class={langClasses} onclick={e: Event => handleClickSignOut()}>Hi, {user.displayName.bind}! (Sign out)</a>
+      <div id="greeting-signed-in" class="hidden greeting" style="display: none">
+        <p>Hi, {user.displayName.bind}!</p>
+        <a class={langClasses} onclick={e: Event => handleClickSignOut()}>(Sign out)</a>
       </div>
-      <div id="greeting-signed-out" class="hidden" style="display: none">
-        <a class={langClasses} onclick={e: Event => handleClickSignIn()}>Hi! (Sign in)</a>
+      <div id="greeting-signed-out" class="hidden greeting" style="display: none">
+        <p>Hi!</p>
+        <a class={langClasses} onclick={e: Event => handleClickSignIn()}>(Sign in)</a>
       </div>
     </div>
 

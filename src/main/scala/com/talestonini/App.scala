@@ -118,13 +118,16 @@ object App {
       </footer>
     </div>
 
-  @html def appContent(): Binding[Node] =
+  @html def appContent(): Binding[Node] = {
+    val noThanksClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black no-thanks"
     <div>
-      <div id="sign-in-providers" class="hidden" style="display: none">
+      <div id="sign-in-providers" class="hidden sign-in-providers" style="display: none">
         <div id="firebaseui-auth-container"></div>
+        <a class={noThanksClasses} onclick={e: Event => hideSignInProviders()}>(no, thanks)</a>
       </div>
       <div class="content">{route.state.bind.content.value.bind}</div>
     </div>
+  }
 
   @JSExport("main")
   def main(): Unit =
