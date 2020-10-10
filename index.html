@@ -27,7 +27,6 @@
   <script type="text/javascript">
     // FirebaseUI config.
     var uiConfig = {
-      signInSuccessUrl: '#/',
       signInOptions: [
         // Leave the lines as is for the providers you want to offer your users.
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
@@ -55,17 +54,23 @@
       ui.start('#firebaseui-auth-container', uiConfig);
     };
 
-    var handleSignedInUserJS = function() {
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('user-signed-in').style.display = 'block';
-      document.getElementById('user-signed-out').style.display = 'none';
+    var greetSignedInUser = function() {
+      document.getElementById('greeting-signed-in').style.display = 'block';
+      document.getElementById('greeting-signed-out').style.display = 'none';
     };
 
-    var handleSignedOutUserJS = function() {
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('user-signed-in').style.display = 'none';
-      document.getElementById('user-signed-out').style.display = 'block';
+    var greetSignedOutUser = function() {
+      document.getElementById('greeting-signed-in').style.display = 'none';
+      document.getElementById('greeting-signed-out').style.display = 'block';
     };
+
+    var displaySignInProviders = function() {
+      document.getElementById('sign-in-providers').style.display = 'block';
+    }
+
+    var hideSignInProviders = function() {
+      document.getElementById('sign-in-providers').style.display = 'none';
+    }
   </script>
 
   <!-- ============================================================================================================= -->

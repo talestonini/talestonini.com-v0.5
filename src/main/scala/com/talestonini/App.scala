@@ -23,12 +23,20 @@ object App {
   def uiStart(component: String, uiConfig: Object): Unit = js.native
 
   @js.native
-  @JSGlobal("handleSignedInUserJS")
-  def handleSignedInUserJS(): Unit = js.native
+  @JSGlobal("greetSignedInUser")
+  def greetSignedInUser(): Unit = js.native
 
   @js.native
-  @JSGlobal("handleSignedOutUserJS")
-  def handleSignedOutUserJS(): Unit = js.native
+  @JSGlobal("greetSignedOutUser")
+  def greetSignedOutUser(): Unit = js.native
+
+  @js.native
+  @JSGlobal("displaySignInProviders")
+  def displaySignInProviders(): Unit = js.native
+
+  @js.native
+  @JSGlobal("hideSignInProviders")
+  def hideSignInProviders(): Unit = js.native
 
   case object user {
     val isLoggedIn  = Var(false)
@@ -41,32 +49,43 @@ object App {
   Firebase
     .auth()
     .onAuthStateChanged(
-      (userInfo: UserInfo) =>
-        if (Option(userInfo).isDefined)
-          handleSignedInUser(userInfo)
-        else
-          handleSignedOutUser(),
+      (userInfo: UserInfo) => {
+        if (Option(userInfo).isDefined) {
+          captureUserInfo(userInfo)
+          greetSignedInUser()
+          hideSignInProviders()
+        } else {
+          discardUserInfo()
+          greetSignedOutUser()
+          uiStart("#firebaseui-auth-container", uiConfig)
+        }
+      },
       (err: firebase.auth.Error) => println("error on auth state changed"),
       () => {}
     )
 
-  def handleSignedInUser(userInfo: UserInfo) = {
+  def captureUserInfo(userInfo: UserInfo) = {
     user.isLoggedIn.value = true
     user.displayName.value = userInfo.displayName.toString
     user.email.value = userInfo.email.toString
     user.providerId.value = userInfo.providerId
     user.uid.value = userInfo.uid
-    handleSignedInUserJS()
   }
 
-  def handleSignedOutUser() = {
+  def discardUserInfo() = {
     user.isLoggedIn.value = false
     user.displayName.value = ""
     user.email.value = ""
     user.providerId.value = ""
     user.uid.value = ""
-    handleSignedOutUserJS()
-    uiStart("#firebaseui-auth-container", uiConfig)
+  }
+
+  def handleClickSignIn() = {
+    displaySignInProviders()
+  }
+
+  def handleClickSignOut() = {
+    Firebase.auth().signOut()
   }
 
   @html def app(): Binding[Node] =
@@ -101,16 +120,10 @@ object App {
 
   @html def appContent(): Binding[Node] =
     <div>
-      <div id="loading">Loading...</div>
-      <div id="user-signed-in" class="hidden" style="display: none">
-        <p>Hello, {user.displayName.bind}!</p>
-        <button onclick={e: Event => Firebase.auth().signOut()}>Sign Out</button>
-        <div class="content">{route.state.bind.content.value.bind}</div>
-      </div>
-      <div id="user-signed-out" class="hidden" style="display: none">
-        <p>Hello!</p>
+      <div id="sign-in-providers" class="hidden" style="display: none">
         <div id="firebaseui-auth-container"></div>
       </div>
+      <div class="content">{route.state.bind.content.value.bind}</div>
     </div>
 
   @JSExport("main")
