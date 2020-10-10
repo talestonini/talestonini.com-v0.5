@@ -64,11 +64,11 @@
   border: 1px dotted lightgray;
 }
 
-.menu-lang {
+.menu-sign-in-out {
   padding: 10px 20px 10px 0px;
 }
 
-.lang-menu-item {
+.sign-in-out-menu-item {
   font-size: small;
   padding: 0px 0px 10px 0px;
   text-decoration: none;
@@ -78,10 +78,6 @@
   font-size: small;
   padding: 0px 10px 0px 0px;
   text-decoration: none;
-}
-
-.mobile-lang-menu-item {
-  padding: 5px;
 }
 
 .hamburger {
@@ -120,11 +116,11 @@ hr {
     margin: 0px 20px 0px 20px;
   }
 
-  .menu-lang {
+  .menu-sign-in-out {
     padding: 10px 10px 10px 0px;
   }
 
-  .lang-menu-item {
+  .sign-in-out-menu-item {
     font-size: small;
     padding: 0px 0px 10px 0px;
     text-decoration: none;

@@ -8,7 +8,7 @@ object About {
 
   @html def apply(): Binding[Node] =
     <div>
-      <p>Tales is a Data Engineer at Eliiza.</p>
+      <p>Tales is a Senior Software Engineer working in Data Engineering at Eliiza.</p>
     </div>
 
 }
