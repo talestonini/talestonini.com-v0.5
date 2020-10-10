@@ -38,8 +38,7 @@
         <!--firebase.auth.PhoneAuthProvider.PROVIDER_ID,-->
         <!--firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID-->
       ],
-      // tosUrl and privacyPolicyUrl accept either url string or a callback
-      // function.
+      // tosUrl and privacyPolicyUrl accept either url string or a callback function.
       // Terms of service url/callback.
       tosUrl: '<your-tos-url>',
       // Privacy policy url/callback.
@@ -57,11 +56,13 @@
     };
 
     var handleSignedInUserJS = function() {
+      document.getElementById('loading').style.display = 'none';
       document.getElementById('user-signed-in').style.display = 'block';
       document.getElementById('user-signed-out').style.display = 'none';
     };
 
     var handleSignedOutUserJS = function() {
+      document.getElementById('loading').style.display = 'none';
       document.getElementById('user-signed-in').style.display = 'none';
       document.getElementById('user-signed-out').style.display = 'block';
     };

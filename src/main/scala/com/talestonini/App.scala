@@ -2,7 +2,6 @@ package com.talestonini
 
 import com.talestonini.Routing._
 import com.thoughtworks.binding.Binding
-import com.thoughtworks.binding.Binding.BindingSeq
 import com.thoughtworks.binding.Binding.Var
 import components.{Footer, Logo, Menu}
 import firebase._
@@ -70,7 +69,7 @@ object App {
     uiStart("#firebaseui-auth-container", uiConfig)
   }
 
-  @html def app: Binding[Node] =
+  @html def app(): Binding[Node] =
     <div>
       <div class="w3-content w3-row w3-hide-small">
         <div class="w3-padding-16">
@@ -100,20 +99,22 @@ object App {
       </footer>
     </div>
 
-  @html def appContent(): Binding[BindingSeq[Node]] = Binding {
-    <div id="user-signed-in" class="hidden">
-      <p>Hello, {user.displayName.bind}!</p>
-      <button onclick={e: Event => Firebase.auth().signOut()}>Sign Out</button>
-      <div class="content">{route.state.bind.content.value.bind}</div>
+  @html def appContent(): Binding[Node] =
+    <div>
+      <div id="loading">Loading...</div>
+      <div id="user-signed-in" class="hidden" style="display: none">
+        <p>Hello, {user.displayName.bind}!</p>
+        <button onclick={e: Event => Firebase.auth().signOut()}>Sign Out</button>
+        <div class="content">{route.state.bind.content.value.bind}</div>
+      </div>
+      <div id="user-signed-out" class="hidden" style="display: none">
+        <p>Hello!</p>
+        <div id="firebaseui-auth-container"></div>
+      </div>
     </div>
-    <div id="user-signed-out" class="hidden">
-      <p>Hello!</p>
-      <div id="firebaseui-auth-container"></div>
-    </div>
-  }
 
   @JSExport("main")
   def main(): Unit =
-    html.render(document.body, app)
+    html.render(document.body, app())
 
 }
