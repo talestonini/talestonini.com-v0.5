@@ -55,13 +55,17 @@
     };
 
     var greetSignedInUser = function() {
-      document.getElementById('greeting-signed-in').style.display = 'block';
-      document.getElementById('greeting-signed-out').style.display = 'none';
+      document.getElementById('greet-signed-in').style.display = 'block';
+      document.getElementById('greet-signed-out').style.display = 'none';
+      document.getElementById('greet-signed-in-mobile').style.display = 'block';
+      document.getElementById('greet-signed-out-mobile').style.display = 'none';
     };
 
     var greetSignedOutUser = function() {
-      document.getElementById('greeting-signed-in').style.display = 'none';
-      document.getElementById('greeting-signed-out').style.display = 'block';
+      document.getElementById('greet-signed-in').style.display = 'none';
+      document.getElementById('greet-signed-out').style.display = 'block';
+      document.getElementById('greet-signed-in-mobile').style.display = 'none';
+      document.getElementById('greet-signed-out-mobile').style.display = 'block';
     };
 
     var displaySignInProviders = function() {
@@ -99,7 +103,7 @@
 
 <body>
   <script>
-    function toggle_sidebar() {
+    function toggleSidebar() {
       var state = document.getElementById("sidebar").style.display;
       if (state == 'none') {
         document.getElementById("sidebar").style.width = "75%";
@@ -109,7 +113,7 @@
         document.getElementById("sidebar").style.display = "none";
       }
     }
-    function close_sidebar() {
+    function closeSidebar() {
       document.getElementById("sidebar").style.display = "none";
     }
   </script>

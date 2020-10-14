@@ -5,10 +5,16 @@ import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding.{BindingSeq, Vars, Var}
 import org.lrng.binding.html
 import org.scalajs.dom.raw.{Event, Node}
+import scala.scalajs.js
+import scala.scalajs.js.annotation.JSGlobal
 
 object Menu {
 
   private val commonClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-hide-small"
+
+  @js.native
+  @JSGlobal("toggleSidebar")
+  def toggleSidebar(): Unit = js.native
 
   case class MenuItem(label: String, hash: String)
 
@@ -18,43 +24,70 @@ object Menu {
     MenuItem("About", "#/about")
   )
 
-  @html def apply(createSidebar: Boolean = false): Binding[BindingSeq[Node]] = Binding {
-    val sid = if (createSidebar) "sidebar" else ""
-
-    <div class="w3-col w3-right w3-hide-small" style="width:100px">
-      <div class="menu menu-sign-in-out">
-        <p class="w3-button w3-hover-none w3-border-white w3-bottombar w3-hide-small pipe">|</p>
-        {greeting()}
+  @html def apply(isMobile: Boolean = false): Binding[BindingSeq[Node]] = Binding {
+    val menuElems = {
+      <div class="w3-col w3-right w3-hide-small" style="width:100px">
+        <div class="menu menu-sign-in-out">
+          <p class="w3-button w3-hover-none w3-border-white w3-bottombar w3-hide-small pipe">|</p>
+          {greetUser()}
+        </div>
       </div>
-    </div>
-    <div class="w3-rest w3-hide-small">
-      <div class="menu">{menu()}</div>
-    </div>
-
-    <div class="w3-rest w3-hide-large w3-hide-medium">
-      <div class="menu menu-sign-in-out">
-        <a class="w3-button w3-xxxlarge hamburger" data:onclick="toggle_sidebar()">☰</a>
+      <div class="w3-rest w3-hide-small">
+        <div class="menu">{menu()}</div>
       </div>
-    </div>
-    <div class="w3-sidebar w3-bar-block mobile-menu" style="display:none" id={sid}>{mobileMenu()}</div>
+    }
+
+    val mobileMenuElems = {
+      <div class="w3-rest w3-hide-large w3-hide-medium">
+        <div class="menu menu-sign-in-out">
+          <a class="w3-button w3-xxxlarge hamburger" data:onclick="toggleSidebar()">☰</a>
+        </div>
+      </div>
+      <div class="w3-sidebar w3-bar-block mobile-menu" style="display: none" id="sidebar">{mobileMenu()}</div>
+    }
+
+    if (!isMobile) menuElems else mobileMenuElems
   }
 
   @html private def menu() =
     for (mi <- menuItems)
       yield <a href={mi.hash} class={s"$commonClasses menu-item"}>{mi.label}</a>
 
-  @html private def mobileMenu() =
-    for (mi <- menuItems)
-      yield <a href={mi.hash} class="w3-bar-item w3-button" data:onclick="toggle_sidebar()">{mi.label}</a>
+  @html private def mobileMenu() = {
+    val signInOutClasses = "w3-bar-item w3-button"
 
-  @html private def greeting(): Binding[Node] = {
+    def onClick(handler: () => Unit) = {
+      handler()
+      toggleSidebar()
+    }
+
+    val signOut =
+      <a id="greet-signed-in-mobile" class={signInOutClasses} style="display: none"
+        onclick={e: Event => onClick(handleClickSignOut)}>
+        Hi, {user.displayName.bind}! (Sign out)
+      </a>
+
+    val signIn =
+      <a id="greet-signed-out-mobile" class={signInOutClasses} style="display: none"
+        onclick={e: Event => onClick(handleClickSignIn)}>
+        Hi! (Sign in)
+      </a>
+
+    val items =
+      for (mi <- menuItems)
+        yield <a href={mi.hash} class={signInOutClasses} data:onclick="toggleSidebar()">{mi.label}</a>
+
+    Seq(signIn, signOut) ++ items
+  }
+
+  @html private def greetUser(): Binding[Node] = {
     val signInOutClasses = s"$commonClasses sign-in-out-menu-item"
     <div>
-      <div id="greeting-signed-in" class="hidden greeting" style="display: none">
+      <div id="greet-signed-in" class="hidden greeting" style="display: none">
         <p>Hi, {user.displayName.bind}!</p>
         <a class={signInOutClasses} onclick={e: Event => handleClickSignOut()}>(Sign out)</a>
       </div>
-      <div id="greeting-signed-out" class="hidden greeting" style="display: none">
+      <div id="greet-signed-out" class="hidden greeting" style="display: none">
         <p>Hi!</p>
         <a class={signInOutClasses} onclick={e: Event => handleClickSignIn()}>(Sign in)</a>
       </div>

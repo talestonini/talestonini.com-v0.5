@@ -8,7 +8,7 @@ object Logo {
 
   @html def apply(): Binding[Node] =
     <div class="w3-col w3-left logo" style="width:245px">
-      <a href="#/" data:onclick="close_sidebar()">
+      <a href="#/" data:onclick="closeSidebar()">
         <table>
           <tr>
             <td class="symbol">&#x276F;</td>
