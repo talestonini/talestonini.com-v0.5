@@ -26,7 +26,7 @@ object Footer {
       </a>
     </div>
     <div class="w3-small">
-      <p>© 2019 Tales Tonini</p>
+      <p>© Tales Tonini</p>
     </div>
   }
 
