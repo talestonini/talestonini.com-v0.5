@@ -17,25 +17,25 @@ trait PostPage {
 
   val bComments = Vars.empty[BComment]
 
-  postRestEntityLinkPromise.future
-    .onComplete({
-      case link: Success[String] =>
-        Firebase
-          .getComments(link.get)
-          .onComplete({
-            case comments: Success[Comments] =>
-              for (c <- comments.get)
-                bComments.value += BComment(
-                  author = Var(c.fields.author.get),
-                  text = Var(c.fields.text.get),
-                  date = Var(datetime2Str(c.fields.date))
-                )
-            case f: Failure[Comments] =>
-              println(s"failure getting comments: ${f.exception.getMessage()}")
-          })
-      case f: Failure[String] =>
-        println(s"failure getting postRestEntityLink: ${f.exception.getMessage()}")
-    })
+  //postRestEntityLinkPromise.future
+  //.onComplete({
+  //case link: Success[String] =>
+  //Firebase
+  //.getComments(link.get)
+  //.onComplete({
+  //case comments: Success[Comments] =>
+  //for (c <- comments.get)
+  //bComments.value += BComment(
+  //author = Var(c.fields.author.get),
+  //text = Var(c.fields.text.get),
+  //date = Var(datetime2Str(c.fields.date))
+  //)
+  //case f: Failure[Comments] =>
+  //println(s"failure getting comments: ${f.exception.getMessage()}")
+  //})
+  //case f: Failure[String] =>
+  //println(s"failure getting postRestEntityLink: ${f.exception.getMessage()}")
+  //})
 
   @html def comments() =
     for (c <- bComments)

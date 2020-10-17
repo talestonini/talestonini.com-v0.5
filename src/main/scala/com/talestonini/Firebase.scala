@@ -28,7 +28,7 @@ package firebase {
 
     var emailVerified: Boolean = js.native
 
-    def getToken(forceRefresh: Boolean = ???): firebase.Promise[js.Any] = js.native
+    def getIdToken(forceRefresh: Boolean = ???): firebase.Promise[js.Any] = js.native
 
     var isAnonymous: Boolean = js.native
 
@@ -103,8 +103,7 @@ package firebase {
 
       def getRedirectResult(): firebase.Promise[js.Any] = js.native
 
-      def onAuthStateChanged(nextOrObserver: js.Function1[UserInfo, _],
-        error: js.Function1[firebase.auth.Error, Any] = ???,
+      def onAuthStateChanged(nextOrObserver: js.Function1[User, _], error: js.Function1[firebase.auth.Error, Any] = ???,
         completed: js.Function0[Any] = ???): js.Function0[Any] = js.native
 
       def sendPasswordResetEmail(email: String): firebase.Promise[js.Any] = js.native

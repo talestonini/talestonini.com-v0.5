@@ -1,5 +1,8 @@
 package com.talestonini
 
+import com.talestonini.App.user
+import com.talestonini.db.Firebase
+import com.talestonini.db.model._
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, Route}
 import org.lrng.binding.html
@@ -7,13 +10,11 @@ import org.scalajs.dom.raw.Node
 import org.scalajs.dom.window
 import pages._
 import pages.posts._
-import scala.concurrent.Promise
-import com.talestonini.db.Firebase
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Promise
 import scala.util.{Failure, Success}
-import com.talestonini.db.model._
 
-object Routing {
+object Routing extends App.Observer {
 
   val postRestEntityLinkMap: Map[String, Promise[String]] = Map(
     "capstone" -> Capstone.postRestEntityLinkPromise,
@@ -30,19 +31,24 @@ object Routing {
     "rapids"   -> Rapids()
   )
 
-  //Firebase
-  //.getPosts()
-  //.onComplete({
-  //case posts: Success[Posts] =>
-  //for (p <- posts.get) {
-  //val resource = p.fields.resource.get
-  //postRestEntityLinkMap
-  //.get(resource)
-  //.getOrElse(throw new Exception(s"missing entry in postRestEntityLinkMap for $resource")) success p.name
-  //}
-  //case f: Failure[Posts] =>
-  //println(s"failure getting posts: ${f.exception.getMessage()}")
-  //})
+  user.observe(this, "userLoggedIn")
+
+  def onNotify(event: String): Unit = {
+    if (event == "userLoggedIn")
+      Firebase
+        .getPosts(user.accessToken)
+        .onComplete({
+          case posts: Success[Posts] =>
+            for (p <- posts.get) {
+              val resource = p.fields.resource.get
+              postRestEntityLinkMap
+                .get(resource)
+                .getOrElse(throw new Exception(s"missing entry in postRestEntityLinkMap for $resource")) success p.name
+            }
+          case f: Failure[Posts] =>
+            println(s"failure getting posts: ${f.exception.getMessage()}")
+        })
+  }
 
   case class Page(hash: String, content: Var[Binding[Node]])
 

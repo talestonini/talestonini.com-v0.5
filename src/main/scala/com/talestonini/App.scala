@@ -38,18 +38,43 @@ object App {
   @JSGlobal("hideSignInProviders")
   def hideSignInProviders(): Unit = js.native
 
-  case object user {
-    val isLoggedIn  = Var(false)
-    val displayName = Var("")
-    val email       = Var("")
-    val providerId  = Var("")
-    val uid         = Var("")
+  trait Observer {
+    def onNotify(event: String): Unit
+  }
+
+  trait Observable {
+    def observe(observer: Observer, event: String): Unit
+    def notifyObservers(event: String): Unit
+  }
+
+  case object user extends Observable {
+    var isLoggedIn: Boolean = false
+    val displayName         = Var("")
+    val email               = Var("")
+    val providerId          = Var("")
+    val uid                 = Var("")
+    var accessToken: String = _
+
+    var observers: Map[String, Seq[Observer]] = Map.empty
+
+    def observe(observer: Observer, event: String): Unit = {
+      var eventObservers = observers.get(event).getOrElse(Seq.empty)
+      if (eventObservers.isEmpty)
+        observers = observers + (event -> (eventObservers :+ observer))
+      else
+        eventObservers = eventObservers :+ observer
+    }
+
+    def notifyObservers(event: String): Unit = {
+      val eventObservers = observers.get(event).getOrElse(Seq.empty)
+      eventObservers.foreach(_.onNotify(event))
+    }
   }
 
   Firebase
     .auth()
     .onAuthStateChanged(
-      (userInfo: UserInfo) => {
+      (userInfo: User) => {
         if (Option(userInfo).isDefined) {
           captureUserInfo(userInfo)
           greetSignedInUser()
@@ -64,20 +89,31 @@ object App {
       () => {}
     )
 
-  def captureUserInfo(userInfo: UserInfo) = {
-    user.isLoggedIn.value = true
+  def captureUserInfo(userInfo: User) = {
+    user.isLoggedIn = true
     user.displayName.value = userInfo.displayName.toString
     user.email.value = userInfo.email.toString
     user.providerId.value = userInfo.providerId
     user.uid.value = userInfo.uid
+    userInfo
+      .getIdToken()
+      .then(
+        (accessToken: Any) => {
+          println(accessToken)
+          user.accessToken = accessToken.toString
+          user.notifyObservers("userLoggedIn")
+        },
+        (err: Error) => println("error getting access token")
+      )
   }
 
   def discardUserInfo() = {
-    user.isLoggedIn.value = false
+    user.isLoggedIn = false
     user.displayName.value = ""
     user.email.value = ""
     user.providerId.value = ""
     user.uid.value = ""
+    user.notifyObservers("userLoggedOut")
   }
 
   def handleClickSignIn() = {
