@@ -16,29 +16,14 @@ object Posts {
   /**
     * A binding post.
     */
-  private case class BPost(
+  case class BPost(
     restEntityLink: Var[String],
     title: Var[String],
     resource: Var[String],
     publishDate: Var[String]
   )
 
-  private val bPosts = Vars.empty[BPost]
-
-  //Firebase
-  //.getPosts()
-  //.onComplete({
-  //case posts: Success[Posts] =>
-  //for (p <- posts.get)
-  //bPosts.value += BPost(
-  //restEntityLink = Var(p.name),
-  //title = Var(p.fields.title.get),
-  //resource = Var(p.fields.resource.get),
-  //publishDate = Var(datetime2Str(p.fields.publishDate))
-  //)
-  //case f: Failure[Posts] =>
-  //println(s"failure getting posts: ${f.exception.getMessage()}")
-  //})
+  val bPosts = Vars.empty[BPost]
 
   @html def apply(): Binding[Node] =
     <div>{postItems()}</div>

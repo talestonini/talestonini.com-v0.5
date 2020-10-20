@@ -10,6 +10,8 @@ object Rapids extends PostPage {
   @html def apply(): Binding[Node] =
     <div>
       <p>Rapids</p>
+
+      {comments()}
     </div>
 
 }

@@ -11,7 +11,6 @@ import io.circe.parser._
 import monix.execution.Scheduler.Implicits.{global => scheduler}
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.language.implicitConversions._
 import scala.util.{Failure, Success}
 
 object Firebase {
@@ -20,13 +19,6 @@ object Firebase {
   private val ProjectId     = "ttdotcom"
   private val Database      = "(default)"
   private val FirestoreHost = "firestore.googleapis.com"
-
-  private val commonHeaders = {
-    "Access-Control-Allow-Origin"  -> "*"
-    "Access-Control-Allow-Headers" -> "Content-Type"
-    "Access-Control-Allow-Methods" -> "POST"
-    "Content-Type"                 -> "application/json"
-  }
 
   def getAuthToken(): Future[String] = {
     val p = Promise[String]()
@@ -37,7 +29,6 @@ object Firebase {
         .withHost("identitytoolkit.googleapis.com")
         .withPath("/v1/accounts:signUp")
         .withQueryParameter("key", ApiKey)
-        .withHeaders(commonHeaders)
         .send()
         .onComplete({
           case rawJson: Success[SimpleHttpResponse] =>
@@ -58,54 +49,19 @@ object Firebase {
     p.future
   }
 
-  //def getOAuth2AccessToken(): Future[String] = {
-  //val p = Promise[String]()
-  //Future {
-  //HttpRequest()
-  //.withMethod(GET)
-  //.withProtocol(HTTPS)
-  //.withHost("accounts.google.com")
-  //.withPath("/o/oauth2/v2/auth")
-  //.withQueryParameter("client_id", ClientID)
-  //.withQueryParameter("redirect_uri", RedirectURI)
-  //.withQueryParameter("response_type", "token")
-  //.withQueryParameter("scope", "https://www.googleapis.com/auth/cloud-platform")
-  //.withQueryParameter("state", "pass-through value")
-  //.withQueryParameter("include_granted_scopes", "true")
-  //.withHeaders(commonHeaders)
-  //.send()
-  //.onComplete({
-  //case rawJson: Success[SimpleHttpResponse] =>
-  //val json = parse(rawJson.get.body).getOrElse(Json.Null)
-  //val token = json.hcursor.get[String]("idToken") match {
-  //case Left(e) =>
-  //println(s"unable to decode POST signUp response: ${e.getMessage()}")
-  //"no token"
-  //case Right(res) =>
-  //res
-  //}
-  //p success token
-  //case f: Failure[SimpleHttpResponse] =>
-  //println(s"POST signUp request failed: ${f.exception.getMessage()}")
-  //p success "no token"
-  //})
-  //}
-  //p.future
-  //}
-
-  def getPosts(accessToken: String): Future[Posts] =
-    get[Post](accessToken, s"/projects/$ProjectId/databases/$Database/documents/posts")
+  def getPosts(token: String): Future[Posts] =
+    get[Post](token, s"/projects/$ProjectId/databases/$Database/documents/posts")
 
   def getPosts(): Future[Posts] =
     get[Post](s"/projects/$ProjectId/databases/$Database/documents/posts")
 
-  def getComments(accessToken: String, postRestEntityLink: String): Future[Comments] =
-    get[Comment](accessToken, s"$postRestEntityLink/comments")
+  def getComments(token: String, postRestEntityLink: String): Future[Comments] =
+    get[Comment](token, s"$postRestEntityLink/comments")
 
   def getComments(postRestEntityLink: String): Future[Comments] =
     get[Comment](s"$postRestEntityLink/comments")
 
-  private def get[D <: DocType](accessToken: String, path: String)(
+  private def get[D <: DocType](token: String, path: String)(
     implicit docsResDecoder: Decoder[DocsRes[D]]
   ): Future[Docs[D]] = {
     val dType = docType(path)
@@ -116,7 +72,7 @@ object Firebase {
         .withProtocol(HTTPS)
         .withHost(FirestoreHost)
         .withPath("/v1" + path)
-        .withHeaders(commonHeaders, "Authorization" -> s"Bearer $accessToken")
+        .withHeader("Authorization", s"Bearer $token")
         .send()
         .onComplete({
           case rawJson: Success[SimpleHttpResponse] =>

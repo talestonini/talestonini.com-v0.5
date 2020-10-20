@@ -1,0 +1,35 @@
+package com.talestonini.utils
+
+package object observer {
+
+  type EventName = String
+
+  trait Observer {
+    def onNotify(e: EventName): Unit
+  }
+
+  trait Observable {
+    def register(o: Observer, es: EventName*): Unit
+    def notifyObservers(e: EventName): Unit
+  }
+
+  abstract class SimpleObservable extends Observable {
+    var observers: Map[EventName, Seq[Observer]] = Map.empty
+
+    def register(o: Observer, es: EventName*): Unit = {
+      for (e <- es) {
+        var os = observers.get(e).getOrElse(Seq.empty)
+        if (os.isEmpty)
+          observers = observers + (e -> (os :+ o))
+        else
+          os = os :+ o
+      }
+    }
+
+    def notifyObservers(e: EventName): Unit = {
+      val os = observers.get(e).getOrElse(Seq.empty)
+      os.foreach(_.onNotify(e))
+    }
+  }
+
+}

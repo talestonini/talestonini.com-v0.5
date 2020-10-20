@@ -1,6 +1,7 @@
 package com.talestonini
 
 import com.talestonini.Routing._
+import com.talestonini.utils.observer.SimpleObservable
 import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding.Var
 import components.{Footer, Logo, Menu}
@@ -38,37 +39,13 @@ object App {
   @JSGlobal("hideSignInProviders")
   def hideSignInProviders(): Unit = js.native
 
-  trait Observer {
-    def onNotify(event: String): Unit
-  }
-
-  trait Observable {
-    def observe(observer: Observer, event: String): Unit
-    def notifyObservers(event: String): Unit
-  }
-
-  case object user extends Observable {
+  case object user extends SimpleObservable {
     var isLoggedIn: Boolean = false
     val displayName         = Var("")
     val email               = Var("")
     val providerId          = Var("")
     val uid                 = Var("")
     var accessToken: String = _
-
-    var observers: Map[String, Seq[Observer]] = Map.empty
-
-    def observe(observer: Observer, event: String): Unit = {
-      var eventObservers = observers.get(event).getOrElse(Seq.empty)
-      if (eventObservers.isEmpty)
-        observers = observers + (event -> (eventObservers :+ observer))
-      else
-        eventObservers = eventObservers :+ observer
-    }
-
-    def notifyObservers(event: String): Unit = {
-      val eventObservers = observers.get(event).getOrElse(Seq.empty)
-      eventObservers.foreach(_.onNotify(event))
-    }
   }
 
   Firebase
@@ -99,7 +76,6 @@ object App {
       .getIdToken()
       .then(
         (accessToken: Any) => {
-          println(accessToken)
           user.accessToken = accessToken.toString
           user.notifyObservers("userLoggedIn")
         },

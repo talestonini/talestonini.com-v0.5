@@ -3,6 +3,8 @@ package com.talestonini
 import com.talestonini.App.user
 import com.talestonini.db.Firebase
 import com.talestonini.db.model._
+import com.talestonini.utils._
+import com.talestonini.utils.observer.{EventName, Observer}
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, Route}
 import org.lrng.binding.html
@@ -14,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Promise
 import scala.util.{Failure, Success}
 
-object Routing extends App.Observer {
+object Routing extends Observer {
 
   val postRestEntityLinkMap: Map[String, Promise[String]] = Map(
     "capstone" -> Capstone.postRestEntityLinkPromise,
@@ -31,19 +33,32 @@ object Routing extends App.Observer {
     "rapids"   -> Rapids()
   )
 
-  user.observe(this, "userLoggedIn")
+  user.register(this, "userLoggedIn")
 
-  def onNotify(event: String): Unit = {
-    if (event == "userLoggedIn")
+  def onNotify(e: EventName): Unit = e match {
+    case "userLoggedIn" =>
       Firebase
         .getPosts(user.accessToken)
         .onComplete({
           case posts: Success[Posts] =>
             for (p <- posts.get) {
               val resource = p.fields.resource.get
+
+              // post REST entity links enable retrieving comments (any entity dependent on posts)
+              val postRestEntityLink = "/" + p.name
               postRestEntityLinkMap
                 .get(resource)
-                .getOrElse(throw new Exception(s"missing entry in postRestEntityLinkMap for $resource")) success p.name
+                .getOrElse(
+                  throw new Exception(s"missing entry in postRestEntityLinkMap for $resource")
+                ) success postRestEntityLink
+
+              // bPosts help build the Posts page
+              Posts.bPosts.value += Posts.BPost(
+                restEntityLink = Var(postRestEntityLink),
+                title = Var(p.fields.title.get),
+                resource = Var(resource),
+                publishDate = Var(datetime2Str(p.fields.publishDate))
+              )
             }
           case f: Failure[Posts] =>
             println(s"failure getting posts: ${f.exception.getMessage()}")
