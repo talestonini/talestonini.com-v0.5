@@ -66,7 +66,7 @@ object App {
       () => {}
     )
 
-  def captureUserInfo(userInfo: User) = {
+  def captureUserInfo(userInfo: User): Unit = {
     user.isLoggedIn = true
     user.displayName.value = userInfo.displayName.toString
     user.email.value = userInfo.email.toString
@@ -83,7 +83,7 @@ object App {
       )
   }
 
-  def discardUserInfo() = {
+  def discardUserInfo(): Unit = {
     user.isLoggedIn = false
     user.displayName.value = ""
     user.email.value = ""
@@ -92,13 +92,9 @@ object App {
     user.notifyObservers("userLoggedOut")
   }
 
-  def handleClickSignIn() = {
-    displaySignInProviders()
-  }
+  def handleClickSignIn(): Unit = displaySignInProviders()
 
-  def handleClickSignOut() = {
-    Firebase.auth().signOut()
-  }
+  def handleClickSignOut(): Unit = Firebase.auth().signOut()
 
   @html def app(): Binding[Node] =
     <div>

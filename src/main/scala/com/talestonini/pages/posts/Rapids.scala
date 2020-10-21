@@ -7,11 +7,10 @@ import org.scalajs.dom.raw.Node
 
 object Rapids extends PostPage {
 
-  @html def apply(): Binding[Node] =
-    <div>
-      <p>Rapids</p>
+  @html def apply(): Binding[Node] = body()
 
-      {comments()}
-    </div>
+  def title() = "Rapids"
+
+  @html def content() = <p>...</p>
 
 }

@@ -7,11 +7,10 @@ import org.scalajs.dom.raw.Node
 
 object Capstone extends PostPage {
 
-  @html def apply(): Binding[Node] =
-    <div>
-      <p>Capstone</p>
+  @html def apply(): Binding[Node] = body()
 
-      {comments()}
-    </div>
+  def title() = "Capstone"
+
+  @html def content() = <p>...</p>
 
 }

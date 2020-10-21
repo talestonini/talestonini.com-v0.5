@@ -1,6 +1,5 @@
 package com.talestonini.pages
 
-import com.talestonini.db.Firebase, com.talestonini.db.Firebase._
 import com.talestonini.db.model._
 import com.talestonini.utils._
 import com.thoughtworks.binding.Binding
