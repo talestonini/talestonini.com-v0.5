@@ -64,29 +64,24 @@
   border: 1px dotted lightgray;
 }
 
-.menu-lang {
+.menu-sign-in-out {
   padding: 10px 20px 10px 0px;
 }
 
-.lang-menu-item {
+.sign-in-out-menu-item {
   font-size: small;
-  padding: 10px 0px 10px 0px;
-  margin: 0px 0px 0px 20px;
+  padding: 0px 0px 10px 0px;
   text-decoration: none;
 }
 
 .pipe {
   font-size: small;
-  padding: 0;
+  padding: 0px 10px 0px 0px;
   text-decoration: none;
 }
 
-.mobile-lang-menu-item {
-  padding: 5px;
-}
-
 .hamburger {
-  margin: 0px 0px 15px 0px;
+  margin: 0px 0px 15px 30px;
 }
 
 .content {
@@ -103,7 +98,7 @@ hr {
 }
 
 .w3-padding-8 {
-  padding: 8px 0px 8px 0px; 
+  padding: 8px 0px 8px 0px;
 }
 
 @media all and (max-width: 768px) {
@@ -121,14 +116,13 @@ hr {
     margin: 0px 20px 0px 20px;
   }
 
-  .menu-lang {
+  .menu-sign-in-out {
     padding: 10px 10px 10px 0px;
   }
 
-  .lang-menu-item {
+  .sign-in-out-menu-item {
     font-size: small;
-    padding: 10px 0px 10px 0px;
-    margin: 0px 0px 0px 10px;
+    padding: 0px 0px 10px 0px;
     text-decoration: none;
   }
 
@@ -139,4 +133,24 @@ hr {
   hr {
     margin: 0px 10px 0px 10px;
   }
+}
+
+.greeting {
+  text-align: center;
+  font-size: x-small;
+}
+
+.greeting p {
+  margin: auto;
+}
+
+.sign-in-providers {
+  text-align: center;
+}
+
+.no-thanks {
+  font-size: small;
+  padding: 10px 0px 10px 0px;
+  margin: auto;
+  text-decoration: none;
 }

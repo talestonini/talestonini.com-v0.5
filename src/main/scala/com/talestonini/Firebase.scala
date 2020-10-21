@@ -1,148 +1,270 @@
-package com.talestonini
+import scala.scalajs.js
+import scala.scalajs.js.annotation._
+import scala.scalajs.js.|
 
-import java.time._
-import java.time.format.DateTimeFormatter.{ofPattern => pattern}
+package firebase {
 
-import cats.syntax.either._
-import fr.hmil.roshttp.HttpRequest
-import fr.hmil.roshttp.Method.{GET, POST}
-import fr.hmil.roshttp.Protocol.HTTPS
-import fr.hmil.roshttp.response.SimpleHttpResponse
-import io.circe._ 
-import io.circe.parser._
-import monix.execution.Scheduler.Implicits.{global => scheduler}
-import scala.concurrent._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.{Failure, Success}
+  @js.native
+  @JSGlobal("firebase.Promise")
+  class Promise[T] extends Promise_Instance[T] {}
 
+  @js.native
+  @JSGlobal("firebase.Promise_Instance")
+  class Promise_Instance[T] protected () extends firebase.Thenable[js.Any] {
+    def this(resolver: js.Function2[js.Function1[T, Unit], js.Function1[Error, Unit], Any]) = this()
+  }
 
-object Firebase {
+  @js.native
+  trait Thenable[T] extends js.Object {
+    def `catch`(onReject: js.Function1[Error, Any] = ???): js.Dynamic = js.native
 
-  // Post, ie Article
-  case class PostFields(title: Option[String],
-                        resource: Option[String],
-                        firstPublishDate: Option[LocalDateTime],
-                        publishDate: Option[LocalDateTime]
+    def then(onResolve: js.Function1[T, Any] = ???,
+      onReject: js.Function1[Error, Any] = ???): firebase.Thenable[js.Any] = js.native
+  }
+
+  @js.native
+  trait User extends firebase.UserInfo {
+    def delete(): firebase.Promise[js.Any] = js.native
+
+    var emailVerified: Boolean = js.native
+
+    def getIdToken(forceRefresh: Boolean = ???): firebase.Promise[js.Any] = js.native
+
+    var isAnonymous: Boolean = js.native
+
+    def link(credential: firebase.auth.AuthCredential): firebase.Promise[js.Any] = js.native
+
+    def linkWithPopup(provider: firebase.auth.AuthProvider): firebase.Promise[js.Any] = js.native
+
+    def linkWithRedirect(provider: firebase.auth.AuthProvider): firebase.Promise[js.Any] = js.native
+
+    var providerData: js.Array[firebase.UserInfo | Null] = js.native
+
+    def reauthenticate(credential: firebase.auth.AuthCredential): firebase.Promise[js.Any] = js.native
+
+    var refreshToken: String = js.native
+
+    def reload(): firebase.Promise[js.Any] = js.native
+
+    def sendEmailVerification(): firebase.Promise[js.Any] = js.native
+
+    def unlink(providerId: String): firebase.Promise[js.Any] = js.native
+
+    def updateEmail(newEmail: String): firebase.Promise[js.Any] = js.native
+
+    def updatePassword(newPassword: String): firebase.Promise[js.Any] = js.native
+
+    def updateProfile(profile: js.Any): firebase.Promise[js.Any] = js.native
+  }
+
+  @js.native
+  trait UserInfo extends js.Object {
+    var displayName: String | Null = js.native
+    var email: String | Null       = js.native
+    var photoURL: String | Null    = js.native
+    var providerId: String         = js.native
+    var uid: String                = js.native
+  }
+
+  package app {
+
+    @js.native
+    trait App extends js.Object {
+      def auth(): firebase.auth.Auth = js.native
+
+      var name: String    = js.native
+      var options: Object = js.native
+    }
+
+  }
+
+  package auth {
+
+    @js.native
+    trait ActionCodeInfo extends js.Object {}
+
+    @js.native
+    trait Auth extends js.Object {
+      var app: firebase.app.App = js.native
+
+      def applyActionCode(code: String): firebase.Promise[js.Any] = js.native
+
+      def checkActionCode(code: String): firebase.Promise[js.Any] = js.native
+
+      def confirmPasswordReset(code: String, newPassword: String): firebase.Promise[js.Any] = js.native
+
+      def createCustomToken(uid: String, developerClaims: Object | Null = ???): String = js.native
+
+      def createUserWithEmailAndPassword(email: String, password: String): firebase.Promise[js.Any] = js.native
+
+      var currentUser: firebase.User | Null = js.native
+
+      def fetchProvidersForEmail(email: String): firebase.Promise[js.Any] = js.native
+
+      def getRedirectResult(): firebase.Promise[js.Any] = js.native
+
+      def onAuthStateChanged(nextOrObserver: js.Function1[User, _], error: js.Function1[firebase.auth.Error, Any] = ???,
+        completed: js.Function0[Any] = ???): js.Function0[Any] = js.native
+
+      def sendPasswordResetEmail(email: String): firebase.Promise[js.Any] = js.native
+
+      def signInAnonymously(): firebase.Promise[js.Any] = js.native
+
+      def signInWithCredential(credential: firebase.auth.AuthCredential): firebase.Promise[js.Any] = js.native
+
+      def signInWithCustomToken(token: String): firebase.Promise[js.Any] = js.native
+
+      def signInWithEmailAndPassword(email: String, password: String): firebase.Promise[js.Any] = js.native
+
+      def signInWithPopup(provider: firebase.auth.AuthProvider): firebase.Promise[js.Any] = js.native
+
+      def signInWithRedirect(provider: firebase.auth.AuthProvider): firebase.Promise[js.Any] = js.native
+
+      def signOut(): firebase.Promise[js.Any] = js.native
+
+      def verifyIdToken(idToken: String): firebase.Promise[js.Any] = js.native
+
+      def verifyPasswordResetCode(code: String): firebase.Promise[js.Any] = js.native
+    }
+
+    @js.native
+    trait AuthCredential extends js.Object {
+      var provider: String = js.native
+    }
+
+    @js.native
+    trait AuthProvider extends js.Object {
+      var providerId: String = js.native
+    }
+
+    @js.native
+    @JSGlobal("firebase.auth.EmailAuthProvider")
+    class EmailAuthProvider extends EmailAuthProvider_Instance {}
+
+    @js.native
+    @JSGlobal("firebase.auth.EmailAuthProvider")
+    object EmailAuthProvider extends js.Object {
+      var PROVIDER_ID: String = js.native
+
+      def credential(email: String, password: String): firebase.auth.AuthCredential = js.native
+    }
+
+    @js.native
+    @JSGlobal("firebase.auth.EmailAuthProvider_Instance")
+    class EmailAuthProvider_Instance extends firebase.auth.AuthProvider {}
+
+    @js.native
+    trait Error extends js.Object {
+      var code: String    = js.native
+      var message: String = js.native
+    }
+
+    @js.native
+    @JSGlobal("firebase.auth.FacebookAuthProvider")
+    class FacebookAuthProvider extends FacebookAuthProvider_Instance {}
+
+    @js.native
+    @JSGlobal("firebase.auth.FacebookAuthProvider")
+    object FacebookAuthProvider extends js.Object {
+      var PROVIDER_ID: String = js.native
+
+      def credential(token: String): firebase.auth.AuthCredential = js.native
+    }
+
+    @js.native
+    @JSGlobal("firebase.auth.FacebookAuthProvider_Instance")
+    class FacebookAuthProvider_Instance extends firebase.auth.AuthProvider {
+      def addScope(scope: String): js.Dynamic = js.native
+
+      def setCustomParameters(customOAuthParameters: Object): js.Dynamic = js.native
+    }
+
+    @js.native
+    @JSGlobal("firebase.auth.GithubAuthProvider")
+    class GithubAuthProvider extends GithubAuthProvider_Instance {}
+
+    @js.native
+    @JSGlobal("firebase.auth.GithubAuthProvider")
+    object GithubAuthProvider extends js.Object {
+      var PROVIDER_ID: String = js.native
+
+      def credential(token: String): firebase.auth.AuthCredential = js.native
+    }
+
+    @js.native
+    @JSGlobal("firebase.auth.GithubAuthProvider_Instance")
+    class GithubAuthProvider_Instance extends firebase.auth.AuthProvider {
+      def addScope(scope: String): js.Dynamic = js.native
+
+      def setCustomParameters(customOAuthParameters: Object): js.Dynamic = js.native
+    }
+
+    @js.native
+    @JSGlobal("firebase.auth.GoogleAuthProvider")
+    class GoogleAuthProvider extends GoogleAuthProvider_Instance {}
+
+    @js.native
+    @JSGlobal("firebase.auth.GoogleAuthProvider")
+    object GoogleAuthProvider extends js.Object {
+      var PROVIDER_ID: String = js.native
+
+      def credential(idToken: String | Null = ???,
+        accessToken: String | Null = ???): firebase.auth.AuthCredential = js.native
+    }
+
+    @js.native
+    @JSGlobal("firebase.auth.GoogleAuthProvider_Instance")
+    class GoogleAuthProvider_Instance extends firebase.auth.AuthProvider {
+      def addScope(scope: String): js.Dynamic = js.native
+
+      def setCustomParameters(customOAuthParameters: Object): js.Dynamic = js.native
+    }
+
+    @js.native
+    @JSGlobal("firebase.auth.TwitterAuthProvider")
+    class TwitterAuthProvider extends TwitterAuthProvider_Instance {}
+
+    @js.native
+    @JSGlobal("firebase.auth.TwitterAuthProvider")
+    object TwitterAuthProvider extends js.Object {
+      var PROVIDER_ID: String = js.native
+
+      def credential(token: String, secret: String): firebase.auth.AuthCredential = js.native
+    }
+
+    @js.native
+    @JSGlobal("firebase.auth.TwitterAuthProvider_Instance")
+    class TwitterAuthProvider_Instance extends firebase.auth.AuthProvider {
+
+      def setCustomParameters(customOAuthParameters: Object): js.Dynamic = js.native
+    }
+
+    @js.native
+    @JSGlobal("firebase.auth")
+    object Auth extends js.Object {
+      type UserCredential = js.Any
+    }
+
+  }
+
+  @js.native
+  @JSGlobal("firebase")
+  object Firebase extends js.Object {
+    var SDK_VERSION: String = js.native
+
+    def app(name: String = ???): firebase.app.App = js.native
+
+    var apps: js.Array[firebase.app.App | Null] = js.native
+
+    def auth(app: firebase.app.App = ???): firebase.auth.Auth = js.native
+
+    def initializeApp(options: FirebaseConfig, name: String = ???): firebase.app.App = js.native
+  }
+
+  @JSExportAll
+  case class FirebaseConfig(
+    apiKey: String,
+    authDomain: String
   )
-  
-  case class CommentFields(author: Option[String], date: Option[LocalDateTime], text: Option[String])
-  
-  case class Doc[D](name: String, fields: D, createTime: String, updateTime: String)
-  
-  case class DocsRes[D](documents: Seq[Doc[D]])
-
-  type Posts = Seq[Doc[PostFields]]
-
-  private val ApiKey = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY"
-  private val ProjectId = "ttdotcom"
-  private val Database = "(default)"
-  private val FirestoreHost = "firestore.googleapis.com"
-
-  private val commonHeaders = {
-    "Access-Control-Allow-Origin" -> "*"
-    "Access-Control-Allow-Headers" -> "Content-Type"
-    "Access-Control-Allow-Methods" -> "POST"
-    "Content-Type" -> "application/json"
-  }
-
-  private val LongDateTimeFormatter = pattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-  private val ShortDateTimeFormatter = pattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
-
-  lazy implicit val decodeLocalDateTime: Decoder[LocalDateTime] = 
-    Decoder.decodeString.emap { str =>
-      // TODO: is a try-catch correct inside catchNonFatal?
-      Either.catchNonFatal(
-        try {
-          LocalDateTime.parse(str, LongDateTimeFormatter)
-        } catch {
-          case _: Exception => LocalDateTime.parse(str, ShortDateTimeFormatter)
-        }
-      ).leftMap(t => "LocalDateTime")
-    }
-
-  lazy implicit val decodePostFields: Decoder[PostFields] = new Decoder[PostFields] {
-    final def apply(c: HCursor): Decoder.Result[PostFields] =
-      for {
-        title            <- c.downField("title").get[String]("stringValue")
-        resource         <- c.downField("resource").get[String]("stringValue")
-        firstPublishDate <- c.downField("first_publish_date").get[LocalDateTime]("timestampValue")
-        publishDate      <- c.downField("publish_date").get[LocalDateTime]("timestampValue")
-      } yield PostFields(Option(title), Option(resource), Option(firstPublishDate), Option(publishDate))
-  }
-
-  lazy implicit val decodePostDoc: Decoder[Doc[PostFields]] = new Decoder[Doc[PostFields]] {
-    final def apply(c: HCursor): Decoder.Result[Doc[PostFields]] = 
-      for {
-        name       <- c.get[String]("name")
-        fields     <- c.get[PostFields]("fields")
-        createTime <- c.get[String]("createTime")
-        updateTime <- c.get[String]("updateTime")
-      } yield Doc(name, fields, createTime, updateTime)
-  }
-
-  lazy implicit val decodePosts: Decoder[DocsRes[PostFields]] = new Decoder[DocsRes[PostFields]] {
-    final def apply(c: HCursor): Decoder.Result[DocsRes[PostFields]] = 
-      for {
-        docs <- c.get[Seq[Doc[PostFields]]]("documents")
-      } yield DocsRes(docs)
-  }
-
-  def getAuthToken(): Future[String] = {
-    val p = Promise[String]()
-    Future {
-      HttpRequest()
-        .withMethod(POST)
-        .withProtocol(HTTPS)
-        .withHost("identitytoolkit.googleapis.com")
-        .withPath("/v1/accounts:signUp")
-        .withQueryParameter("key", Firebase.ApiKey)
-        .withHeaders(Firebase.commonHeaders)
-        .send()
-        .onComplete({
-          case rawJson: Success[SimpleHttpResponse] => 
-            val json = parse(rawJson.get.body).getOrElse(Json.Null)
-            val token = json.hcursor.get[String]("idToken") match {
-              case Left(e) =>
-                println(s"unable to decode POST signUp response: ${e.getMessage()}")
-                "no token"
-              case Right(res) =>
-                res
-            }
-            p success token
-          case f: Failure[SimpleHttpResponse] => 
-            println(s"POST signUp request failed: ${f.exception.getMessage()}")
-            p success "no token"
-        })
-    }
-    p.future
-  }
-
-  def getPosts(token: String): Future[Posts] = {
-    val p = Promise[Posts]()
-    Future {
-      HttpRequest()
-        .withMethod(GET)
-        .withProtocol(HTTPS)
-        .withHost(FirestoreHost)
-        .withPath(s"/v1/projects/$ProjectId/databases/$Database/documents/posts")
-        .withHeader("Authorization", s"Bearer $token")
-        .send()
-        .onComplete({
-          case rawJson: Success[SimpleHttpResponse] =>
-            val posts = decode[DocsRes[PostFields]](rawJson.get.body) match {
-              case Left(e) =>
-                println(s"unable to decode GET posts response: ${e.getMessage()}")
-                Seq.empty
-              case Right(res) =>
-                res.documents
-            }
-            p success posts
-          case f: Failure[SimpleHttpResponse] => 
-            println(s"GET posts request failed: ${f.exception.getMessage()}")
-            p success Seq.empty
-        })
-    }
-    p.future
-  }
 
 }

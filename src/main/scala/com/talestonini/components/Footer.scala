@@ -5,7 +5,6 @@ import com.thoughtworks.binding.Binding.BindingSeq
 import org.lrng.binding.html
 import org.scalajs.dom.raw.Node
 
-
 object Footer {
 
   @html def apply(): Binding[BindingSeq[Node]] = Binding {
@@ -27,7 +26,7 @@ object Footer {
       </a>
     </div>
     <div class="w3-small">
-      <p>© 2019 Tales Tonini</p>
+      <p>© Tales Tonini</p>
     </div>
   }
 

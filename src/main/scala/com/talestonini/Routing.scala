@@ -1,37 +1,79 @@
 package com.talestonini
 
+import com.talestonini.App.user
+import com.talestonini.db.Firebase
+import com.talestonini.db.model._
+import com.talestonini.utils._
+import com.talestonini.utils.observer.{EventName, Observer}
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, Route}
+import org.lrng.binding.html
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.window
 import pages._
-import org.lrng.binding.html
+import pages.posts._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Promise
+import scala.util.{Failure, Success}
 
+object Routing extends Observer {
 
-object Routing {
+  val postRestEntityLinkMap: Map[String, Promise[String]] = Map(
+    "capstone" -> Capstone.postRestEntityLinkPromise,
+    "rapids"   -> Rapids.postRestEntityLinkPromise
+  )
 
-  case class Page(name: String, hash: String, content: Var[Binding[Node]])
-  
-  @html val homeContent: Binding[Node] =
-    <div>
-      <p>Home page content...</p>
-    </div>
-  
-  @html val underConstructionContent: Binding[Node] =
-    <div>
-      <p>Page under construction...</p>
-      <p><a href="#/">Home</a></p>
-    </div>
+  val pageMap: Map[String, Binding[Node]] = Map(
+    ""      -> Home(),
+    "about" -> About(),
+    "posts" -> Posts(),
+    "tags"  -> UnderConstruction(),
+    // posts
+    "capstone" -> Capstone(),
+    "rapids"   -> Rapids()
+  )
 
-  // app pages
-  val home = Page("Home", "#/", Var(homeContent))
-  val postsPage = Page("Posts", "#/posts", Var(PostsPage()))
-  val tagsPage = Page("Tags", "#/tags", Var(underConstructionContent))
-  val about = Page("About", "#/about", Var(AboutPage()))
+  user.register(this, "userLoggedIn")
 
-  val allPages = Vector(home, postsPage, tagsPage, about)
-  val route = Route.Hash(home)(new Route.Format[Page] {
-    override def unapply(hashText: String) = allPages.find(_.hash == window.location.hash)
+  def onNotify(e: EventName): Unit = e match {
+    case "userLoggedIn" =>
+      Firebase
+        .getPosts(user.accessToken)
+        .onComplete({
+          case posts: Success[Posts] =>
+            for (p <- posts.get) {
+              val resource = p.fields.resource.get
+
+              // post REST entity links enable retrieving comments (any entity dependent on posts)
+              val postRestEntityLink = "/" + p.name
+              postRestEntityLinkMap
+                .get(resource)
+                .getOrElse(
+                  throw new Exception(s"missing entry in postRestEntityLinkMap for $resource")
+                ) success postRestEntityLink
+
+              // bPosts (binding posts) help build the Posts page
+              Posts.bPosts.value += Posts.BPost(
+                restEntityLink = Var(postRestEntityLink),
+                title = Var(p.fields.title.get),
+                resource = Var(resource),
+                publishDate = Var(datetime2Str(p.fields.publishDate))
+              )
+            }
+          case f: Failure[Posts] =>
+            println(s"failure getting posts: ${f.exception.getMessage()}")
+        })
+  }
+
+  case class Page(hash: String, content: Var[Binding[Node]])
+
+  def hash2Page(hash: String): Page =
+    Page(s"#/$hash", Var(pageMap.get(hash).getOrElse(throw new Exception("page not found"))))
+
+  var pages = for (hash <- pageMap.keys) yield hash2Page(hash)
+
+  val route = Route.Hash(hash2Page(""))(new Route.Format[Page] {
+    override def unapply(hashText: String) = pages.find(_.hash == window.location.hash)
     override def apply(page: Page): String = page.hash
   })
   route.watch()
