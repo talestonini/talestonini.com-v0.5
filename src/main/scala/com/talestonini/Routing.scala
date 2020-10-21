@@ -52,7 +52,7 @@ object Routing extends Observer {
                   throw new Exception(s"missing entry in postRestEntityLinkMap for $resource")
                 ) success postRestEntityLink
 
-              // bPosts help build the Posts page
+              // bPosts (binding posts) help build the Posts page
               Posts.bPosts.value += Posts.BPost(
                 restEntityLink = Var(postRestEntityLink),
                 title = Var(p.fields.title.get),

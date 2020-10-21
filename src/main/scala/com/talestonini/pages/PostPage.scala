@@ -14,9 +14,18 @@ import scala.util.{Failure, Success}
 
 trait PostPage {
 
-  val postRestEntityLinkPromise = Promise[String]()
+  /**
+    * A binding comment.
+    */
+  case class BComment(
+    author: Var[String],
+    text: Var[String],
+    date: Var[String]
+  )
 
   val bComments = Vars.empty[BComment]
+
+  val postRestEntityLinkPromise = Promise[String]()
 
   postRestEntityLinkPromise.future
     .onComplete({

@@ -38,8 +38,6 @@ libraryDependencies ++= Seq(
   "io.circe"          %%% "circe-generic"   % circeVersion,
   "io.circe"          %%% "circe-parser"    % circeVersion,
   "io.github.cquiroz" %%% "scala-java-time" % "2.0.0",
-  //"org.typelevel"            %%% "cats"            % "0.9.0",
-
   // Test
   "org.scalatest" %%% "scalatest" % "3.2.0" % "test"
 )
