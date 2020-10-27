@@ -7,6 +7,9 @@ import com.talestonini.utils._
 import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import org.lrng.binding.html
+import org.lrng.binding.html.NodeBinding
+import org.scalajs.dom.raw.Event
+import org.scalajs.dom.raw.HTMLTextAreaElement
 import org.scalajs.dom.raw.Node
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -27,6 +30,8 @@ trait PostPage {
   val bComments = Vars.empty[BComment]
 
   val postRestEntityLinkPromise = Promise[String]()
+
+  val newComments = Var("What do you think?")
 
   postRestEntityLinkPromise.future
     .onComplete({
@@ -55,8 +60,34 @@ trait PostPage {
       {content()}
 
       <h3>Comments ({bComments.length.bind.toString})</h3>
+      {commentsInput(newComments)}
       {comments()}
     </div>
+
+  @html def commentsInput(newComments: Var[String]): Binding[Node] = {
+    val inputBinding: NodeBinding[HTMLTextAreaElement] =
+      <textarea rows="5" value={newComments.bind} onfocus={e: Event => newComments.value = ""} />
+    def cleanInput() = {
+      val input = inputBinding.value
+      input.value = ""
+    }
+    val commentButtonHandler = { e: Event =>
+      val input = inputBinding.value
+      if (input.value != "") {
+        newComments.value = input.value
+        cleanInput()
+      }
+    }
+    val cancelButtonHandler = { e: Event =>
+      newComments.value = ""
+      cleanInput()
+    }
+    <div>
+      {inputBinding.bind}
+      <button onclick={commentButtonHandler}>Comment</button>
+      <button onclick={cancelButtonHandler}>Cancel</button>
+    </div>
+  }
 
   def title(): String
 
@@ -64,6 +95,6 @@ trait PostPage {
 
   @html def comments() =
     for (c <- bComments)
-      yield <p>{c.text.bind}</p>
+      yield <p>{c.text.bind} - {c.author.bind}, {c.date.bind}</p>
 
 }

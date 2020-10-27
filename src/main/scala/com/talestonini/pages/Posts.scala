@@ -12,6 +12,9 @@ import scala.util.{Failure, Success}
 
 object Posts {
 
+  @html def apply(): Binding[Node] =
+    <div>{postItems()}</div>
+
   /**
     * A binding post.
     */
@@ -23,9 +26,6 @@ object Posts {
   )
 
   val bPosts = Vars.empty[BPost]
-
-  @html def apply(): Binding[Node] =
-    <div>{postItems()}</div>
 
   @html private def postItems() =
     for (p <- bPosts)

@@ -10,20 +10,6 @@ import scala.scalajs.js.annotation.JSGlobal
 
 object Menu {
 
-  private val commonClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-hide-small"
-
-  @js.native
-  @JSGlobal("toggleSidebar")
-  def toggleSidebar(): Unit = js.native
-
-  case class MenuItem(label: String, hash: String)
-
-  val menuItems: Seq[MenuItem] = Seq(
-    MenuItem("Posts", "#/posts"),
-    MenuItem("Tags", "#/tags"),
-    MenuItem("About", "#/about")
-  )
-
   @html def apply(isMobile: Boolean = false): Binding[BindingSeq[Node]] = Binding {
     val menuElems = {
       <div class="w3-col w3-right w3-hide-small" style="width:100px">
@@ -48,6 +34,32 @@ object Menu {
 
     if (!isMobile) menuElems else mobileMenuElems
   }
+
+  // -------------------------------------------------------------------------------------------------------------------
+
+  private val commonClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-hide-small"
+
+  @html private def greetUser(): Binding[Node] = {
+    val signInOutClasses = s"$commonClasses sign-in-out-menu-item"
+    <div>
+      <div id="greet-signed-in" class="hidden greeting" style="display: none">
+        <p>Hi, {user.displayName.bind}!</p>
+        <a class={signInOutClasses} onclick={e: Event => handleClickSignOut()}>(Sign out)</a>
+      </div>
+      <div id="greet-signed-out" class="hidden greeting" style="display: none">
+        <p>Hi!</p>
+        <a class={signInOutClasses} onclick={e: Event => handleClickSignIn()}>(Sign in)</a>
+      </div>
+    </div>
+  }
+
+  private case class MenuItem(label: String, hash: String)
+
+  private val menuItems: Seq[MenuItem] = Seq(
+    MenuItem("Posts", "#/posts"),
+    MenuItem("Tags", "#/tags"),
+    MenuItem("About", "#/about")
+  )
 
   @html private def menu() =
     for (mi <- menuItems)
@@ -80,18 +92,8 @@ object Menu {
     Seq(signIn, signOut) ++ items
   }
 
-  @html private def greetUser(): Binding[Node] = {
-    val signInOutClasses = s"$commonClasses sign-in-out-menu-item"
-    <div>
-      <div id="greet-signed-in" class="hidden greeting" style="display: none">
-        <p>Hi, {user.displayName.bind}!</p>
-        <a class={signInOutClasses} onclick={e: Event => handleClickSignOut()}>(Sign out)</a>
-      </div>
-      <div id="greet-signed-out" class="hidden greeting" style="display: none">
-        <p>Hi!</p>
-        <a class={signInOutClasses} onclick={e: Event => handleClickSignIn()}>(Sign in)</a>
-      </div>
-    </div>
-  }
+  @js.native
+  @JSGlobal("toggleSidebar")
+  private def toggleSidebar(): Unit = js.native
 
 }
