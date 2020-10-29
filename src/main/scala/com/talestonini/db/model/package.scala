@@ -3,27 +3,16 @@ package com.talestonini.db
 import java.time._
 import java.time.format.DateTimeFormatter.{ofPattern => pattern}
 
-import cats.syntax.either._
+import fr.hmil.roshttp.body.Implicits._
+import fr.hmil.roshttp.body.JSONBody.JSONObject
+import fr.hmil.roshttp.body.JSONBody.JSONValue
 import io.circe._
 
 package object model {
 
-  private val LongDateTimeFormatter  = pattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-  private val ShortDateTimeFormatter = pattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+  private val LongDateTimeFormatter = pattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
-  implicit lazy val decodeLocalDateTime: Decoder[LocalDateTime] =
-    Decoder.decodeString.emap { str =>
-      // TODO: is a try-catch correct inside catchNonFatal?
-      Either
-        .catchNonFatal(
-          try {
-            LocalDateTime.parse(str, LongDateTimeFormatter)
-          } catch {
-            case _: Exception => LocalDateTime.parse(str, ShortDateTimeFormatter)
-          }
-        )
-        .leftMap(t => "LocalDateTime")
-    }
+  implicit lazy val decodeZonedDateTime: Decoder[ZonedDateTime] = Decoder.decodeZonedDateTime
 
   // --- common --------------------------------------------------------------------------------------------------------
 
@@ -59,8 +48,8 @@ package object model {
   case class Post(
     title: Option[String],
     resource: Option[String],
-    firstPublishDate: Option[LocalDateTime],
-    publishDate: Option[LocalDateTime]
+    firstPublishDate: Option[ZonedDateTime],
+    publishDate: Option[ZonedDateTime]
   ) extends DocType
 
   type Posts = Seq[Doc[Post]]
@@ -71,8 +60,8 @@ package object model {
         for {
           title            <- c.downField("title").get[String]("stringValue")
           resource         <- c.downField("resource").get[String]("stringValue")
-          firstPublishDate <- c.downField("first_publish_date").get[LocalDateTime]("timestampValue")
-          publishDate      <- c.downField("publish_date").get[LocalDateTime]("timestampValue")
+          firstPublishDate <- c.downField("first_publish_date").get[ZonedDateTime]("timestampValue")
+          publishDate      <- c.downField("publish_date").get[ZonedDateTime]("timestampValue")
         } yield Post(Option(title), Option(resource), Option(firstPublishDate), Option(publishDate))
     }
 
@@ -80,7 +69,7 @@ package object model {
 
   case class Comment(
     author: Option[String],
-    date: Option[LocalDateTime],
+    date: Option[ZonedDateTime],
     text: Option[String]
   ) extends DocType
 
@@ -91,9 +80,23 @@ package object model {
       final def apply(c: HCursor): Decoder.Result[Comment] =
         for {
           author <- c.downField("author").get[String]("stringValue")
-          date   <- c.downField("date").get[LocalDateTime]("timestampValue")
+          date   <- c.downField("date").get[ZonedDateTime]("timestampValue")
           text   <- c.downField("text").get[String]("stringValue")
         } yield Comment(Option(author), Option(date), Option(text))
     }
+
+  def comment2Body(postName: String, comment: Comment, resId: String): JSONObject =
+    JSONObject(
+      "name" -> stringToJSONString(s"$postName/comments/$resId"),
+      "fields" -> JSONObject(
+        Seq[Option[(String, JSONValue)]](
+          comment.author.map(a => "author" -> JSONObject("stringValue" -> stringToJSONString(a))),
+          comment.date.map(d =>
+            "date" -> JSONObject("timestampValue" -> stringToJSONString(d.format(LongDateTimeFormatter)))
+          ),
+          comment.text.map(t => "text" -> JSONObject("stringValue" -> stringToJSONString(t)))
+        ).filter(_.isDefined).map(_.get): _*
+      )
+    )
 
 }

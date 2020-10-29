@@ -45,7 +45,7 @@ object Routing extends Observer {
               val resource = p.fields.resource.get
 
               // post REST entity links enable retrieving comments (any entity dependent on posts)
-              val postRestEntityLink = "/" + p.name
+              val postRestEntityLink = p.name
               postRestEntityLinkMap
                 .get(resource)
                 .getOrElse(
