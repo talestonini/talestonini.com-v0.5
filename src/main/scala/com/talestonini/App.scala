@@ -77,7 +77,7 @@ object App {
       .then(
         (accessToken: Any) => {
           user.accessToken = accessToken.toString
-          user.notifyObservers("userLoggedIn")
+          user.notifyObservers("UserSignedIn")
         },
         (err: Error) => println("error getting access token")
       )
@@ -89,7 +89,7 @@ object App {
     user.email.value = ""
     user.providerId.value = ""
     user.uid.value = ""
-    user.notifyObservers("userLoggedOut")
+    user.notifyObservers("UserSignedOut")
   }
 
   def handleClickSignIn(): Unit = displaySignInProviders()
