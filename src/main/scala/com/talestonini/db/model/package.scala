@@ -92,8 +92,6 @@ package object model {
     def dbFields: Seq[String] = Seq("title", "resource", "first_publish_date", "publish_date")
   }
 
-  type Posts = Seq[Doc[Post]]
-
   implicit lazy val postFieldsDecoder: Decoder[Post] =
     // title, resource, first_publish_date and publish_date are my database specs
     new Decoder[Post] {
@@ -115,8 +113,6 @@ package object model {
   ) extends Entity {
     def dbFields: Seq[String] = Seq("author", "date", "text")
   }
-
-  type Comments = Seq[Doc[Comment]]
 
   implicit lazy val commentFieldsDecoder: Decoder[Comment] =
     // author, date and text are my database specs

@@ -36,32 +36,31 @@ object CloudFirestore {
         .onComplete({
           case rawJson: Success[SimpleHttpResponse] =>
             val json = parse(rawJson.get.body).getOrElse(Json.Null)
-            val token = json.hcursor.get[String]("idToken") match {
+            json.hcursor.get[String]("idToken") match {
               case Left(e) =>
-                println(s"unable to decode POST signUp response: ${e.getMessage()}")
-                "no token"
-              case Right(res) =>
-                res
+                var errMsg = s"unable to decode response from signUp: ${e.getMessage()}"
+                p failure CloudFirestoreException(errMsg)
+              case Right(token) =>
+                p success token
             }
-            p success token
           case f: Failure[SimpleHttpResponse] =>
-            println(s"POST signUp request failed: ${f.exception.getMessage()}")
-            p success "no token"
+            var errMsg = s"failed requesting signUp token: ${f.exception.getMessage()}"
+            p failure CloudFirestoreException(errMsg)
         })
     }
     p.future
   }
 
-  def getPosts(token: String): Future[Posts] =
+  def getPosts(token: String): Future[Docs[Post]] =
     getDocuments[Post](token, s"projects/$ProjectId/databases/$Database/documents/posts")
 
-  def getPosts(): Future[Posts] =
+  def getPosts(): Future[Docs[Post]] =
     getDocuments[Post](s"projects/$ProjectId/databases/$Database/documents/posts")
 
-  def getComments(token: String, postDocName: String): Future[Comments] =
+  def getComments(token: String, postDocName: String): Future[Docs[Comment]] =
     getDocuments[Comment](token, s"$postDocName/comments")
 
-  def getComments(postDocName: String): Future[Comments] =
+  def getComments(postDocName: String): Future[Docs[Comment]] =
     getDocuments[Comment](s"$postDocName/comments")
 
   def createComment(token: String, postDocName: String, comment: Comment): Future[Doc[Comment]] = {
@@ -86,18 +85,16 @@ object CloudFirestore {
         .send()
         .onComplete({
           case rawJson: Success[SimpleHttpResponse] =>
-            val docs = decode[DocsRes[E]](rawJson.get.body) match {
+            decode[DocsRes[E]](rawJson.get.body) match {
               case Left(e) =>
-                println(s"unable to decode response from get documents: ${e.getMessage()}")
-                Seq.empty
-              case Right(res) =>
-                println(s"successfuly got documents")
-                res.documents
+                val errMsg = s"unable to decode response from get documents: ${e.getMessage()}"
+                p failure CloudFirestoreException(errMsg)
+              case Right(docs) =>
+                p success docs.documents
             }
-            p success docs
           case f: Failure[SimpleHttpResponse] =>
-            println(s"failed getting documents: ${f.exception.getMessage()}")
-            p success Seq.empty
+            val errMsg = s"failed getting documents: ${f.exception.getMessage()}"
+            p failure CloudFirestoreException(errMsg)
         })
     }
     p.future
@@ -112,8 +109,8 @@ object CloudFirestore {
         case token: Success[String] =>
           p completeWith getDocuments[E](token.get, path)
         case f: Failure[String] =>
-          println(s"failed getting auth token: ${f.exception.getMessage()}")
-          p success Seq.empty
+          val errMsg = s"failed getting auth token: ${f.exception.getMessage()}"
+          p failure CloudFirestoreException(errMsg)
       })
     p.future
   }
@@ -134,7 +131,7 @@ object CloudFirestore {
         .send()
         .onComplete({
           case rawJson: Success[SimpleHttpResponse] =>
-            val ret = decode[Doc[E]](rawJson.get.body) match {
+            decode[Doc[E]](rawJson.get.body) match {
               case Left(e) =>
                 val errMsg = s"unable to decode response from patch document: ${e.getMessage()}"
                 p failure CloudFirestoreException(errMsg)

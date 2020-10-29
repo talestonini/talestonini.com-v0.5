@@ -44,14 +44,14 @@ trait PostPage {
         CloudFirestore
           .getComments(user.accessToken, link.get)
           .onComplete({
-            case comments: Success[Comments] =>
+            case comments: Success[Docs[Comment]] =>
               for (c <- comments.get)
                 bComments.value += BComment(
                   author = Var(c.fields.author.get),
                   text = Var(c.fields.text.get),
                   date = Var(datetime2Str(c.fields.date))
                 )
-            case f: Failure[Comments] =>
+            case f: Failure[Docs[Comment]] =>
               println(s"failure getting comments: ${f.exception.getMessage()}")
           })
       case f: Failure[String] =>

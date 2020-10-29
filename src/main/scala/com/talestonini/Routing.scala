@@ -40,7 +40,7 @@ object Routing extends Observer {
       CloudFirestore
         .getPosts(user.accessToken)
         .onComplete({
-          case posts: Success[Posts] =>
+          case posts: Success[Docs[Post]] =>
             for (p <- posts.get) {
               val resource = p.fields.resource.get
 
@@ -60,7 +60,7 @@ object Routing extends Observer {
                 publishDate = Var(datetime2Str(p.fields.publishDate))
               )
             }
-          case f: Failure[Posts] =>
+          case f: Failure[Docs[Post]] =>
             println(s"failure getting posts: ${f.exception.getMessage()}")
         })
   }
