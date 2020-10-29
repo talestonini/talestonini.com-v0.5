@@ -14,12 +14,14 @@ import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 
-object Firebase {
+object CloudFirestore {
 
   private val ApiKey        = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY"
   private val ProjectId     = "ttdotcom"
   private val Database      = "(default)"
   private val FirestoreHost = "firestore.googleapis.com"
+
+  case class CloudFirestoreException(msg: String) extends Exception(msg)
 
   def getAuthToken(): Future[String] = {
     val p = Promise[String]()
@@ -51,27 +53,29 @@ object Firebase {
   }
 
   def getPosts(token: String): Future[Posts] =
-    get[Post](token, s"projects/$ProjectId/databases/$Database/documents/posts")
+    getDocuments[Post](token, s"projects/$ProjectId/databases/$Database/documents/posts")
 
   def getPosts(): Future[Posts] =
-    get[Post](s"projects/$ProjectId/databases/$Database/documents/posts")
+    getDocuments[Post](s"projects/$ProjectId/databases/$Database/documents/posts")
 
-  def getComments(token: String, postRestEntityLink: String): Future[Comments] =
-    get[Comment](token, s"$postRestEntityLink/comments")
+  def getComments(token: String, postDocName: String): Future[Comments] =
+    getDocuments[Comment](token, s"$postDocName/comments")
 
-  def getComments(postRestEntityLink: String): Future[Comments] =
-    get[Comment](s"$postRestEntityLink/comments")
+  def getComments(postDocName: String): Future[Comments] =
+    getDocuments[Comment](s"$postDocName/comments")
 
-  def postComment(token: String, postRestEntityLink: String, comment: Comment) =
-    post[Comment](token, postRestEntityLink, comment)
+  def createComment(token: String, postDocName: String, comment: Comment): Future[Doc[Comment]] = {
+    val newCommentId   = randomAlphaNumericString(20)
+    val commentDocName = s"$postDocName/comments/$newCommentId"
+    upsertDocument[Comment](token, commentDocName, comment)
+  }
 
   // -------------------------------------------------------------------------------------------------------------------
 
-  private def get[D <: DocType](token: String, path: String)(
-    implicit docsResDecoder: Decoder[DocsRes[D]]
-  ): Future[Docs[D]] = {
-    val dType = docType(path)
-    val p     = Promise[Docs[D]]()
+  private def getDocuments[E <: Entity](token: String, path: String)(
+    implicit docsResDecoder: Decoder[DocsRes[E]]
+  ): Future[Docs[E]] = {
+    val p = Promise[Docs[E]]()
     Future {
       HttpRequest()
         .withMethod(GET)
@@ -82,95 +86,67 @@ object Firebase {
         .send()
         .onComplete({
           case rawJson: Success[SimpleHttpResponse] =>
-            val docs = decode[DocsRes[D]](rawJson.get.body) match {
+            val docs = decode[DocsRes[E]](rawJson.get.body) match {
               case Left(e) =>
-                println(s"unable to decode GET $dType response: ${e.getMessage()}")
+                println(s"unable to decode response from get documents: ${e.getMessage()}")
                 Seq.empty
               case Right(res) =>
-                println(s"successfuly retrieved $dType")
+                println(s"successfuly got documents")
                 res.documents
             }
             p success docs
           case f: Failure[SimpleHttpResponse] =>
-            println(s"GET $dType request failed: ${f.exception.getMessage()}")
+            println(s"failed getting documents: ${f.exception.getMessage()}")
             p success Seq.empty
         })
     }
     p.future
   }
 
-  private def get[D <: DocType](path: String)(
-    implicit docsResDecoder: Decoder[DocsRes[D]]
-  ): Future[Docs[D]] = {
-    val p = Promise[Docs[D]]()
+  private def getDocuments[E <: Entity](path: String)(
+    implicit docsResDecoder: Decoder[DocsRes[E]]
+  ): Future[Docs[E]] = {
+    val p = Promise[Docs[E]]()
     getAuthToken()
       .onComplete({
         case token: Success[String] =>
-          p completeWith get[D](token.get, path)
+          p completeWith getDocuments[E](token.get, path)
         case f: Failure[String] =>
-          println(s"failure getting auth token: ${f.exception.getMessage()}")
+          println(s"failed getting auth token: ${f.exception.getMessage()}")
           p success Seq.empty
       })
     p.future
   }
 
-  private def post[D <: DocType](token: String, path: String, body: D)(
-    implicit docsResDecoder: Decoder[DocsRes[D]]
-  ): Future[Docs[D]] = {
-    val dType = docType(path)
-    val p     = Promise[Docs[D]]()
-    val resId = randomAlphaNumericString(20)
+  private def upsertDocument[E <: Entity](token: String, path: String, entity: E)(
+    implicit docDecoder: Decoder[Doc[E]]
+  ): Future[Doc[E]] = {
+    val p = Promise[Doc[E]]()
     Future {
       HttpRequest()
         .withMethod(PATCH)
         .withProtocol(HTTPS)
         .withHost(FirestoreHost)
-        .withPath(s"/v1/$path/comments/$resId")
-        .withQueryParameters(
-            Seq(
-              ("updateMask.fieldPaths", "author"),
-              ("updateMask.fieldPaths", "date"),
-              ("updateMask.fieldPaths", "text")
-            ): _*)
+        .withPath(s"/v1/$path")
+        .withQueryParameters((for (dbField <- entity.dbFields) yield ("updateMask.fieldPaths", dbField)): _*)
         .withHeader("Authorization", s"Bearer $token")
-        .withBody(comment2Body(path, body.asInstanceOf[Comment], resId))
+        .withBody(entityToDocBody(path, entity))
         .send()
         .onComplete({
           case rawJson: Success[SimpleHttpResponse] =>
-            val docs = decode[DocsRes[D]](rawJson.get.body) match {
+            val ret = decode[Doc[E]](rawJson.get.body) match {
               case Left(e) =>
-                println(s"unable to decode POST $dType response: ${e.getMessage()}")
-                Seq.empty
-              case Right(res) =>
-                println(s"successfuly created $dType")
-                res.documents
+                val errMsg = s"unable to decode response from patch document: ${e.getMessage()}"
+                p failure CloudFirestoreException(errMsg)
+              case Right(doc) =>
+                p success doc
             }
-            p success docs
           case f: Failure[SimpleHttpResponse] =>
-            println(s"POST $dType request failed: ${f.exception.getMessage()}")
-            p success Seq.empty
+            val errMsg = s"failed upserting document: ${f.exception.getMessage()}"
+            p failure CloudFirestoreException(errMsg)
         })
     }
     p.future
-  }
-
-  private def docType(path: String) = {
-    val idx = path.lastIndexOf("/")
-    path.substring(idx + 1)
-  }
-
-  private def randomAlphaNumericString(length: Int): String = {
-    def randomStringFromCharList(length: Int, chars: Seq[Char]): String = {
-      val sb = new StringBuilder
-      for (i <- 1 to length) {
-        val randomNum = util.Random.nextInt(chars.length)
-        sb.append(chars(randomNum))
-      }
-      sb.toString
-    }
-
-    val chars = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')
-    randomStringFromCharList(length, chars)
   }
 
 }

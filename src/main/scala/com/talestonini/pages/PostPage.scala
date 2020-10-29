@@ -1,9 +1,10 @@
 package com.talestonini.pages
 
 import java.time.ZonedDateTime
+import java.time.ZoneId
 
 import com.talestonini.App.user
-import com.talestonini.db.Firebase
+import com.talestonini.db.CloudFirestore
 import com.talestonini.db.model._
 import com.talestonini.utils._
 import com.thoughtworks.binding.Binding
@@ -17,7 +18,6 @@ import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Promise
 import scala.util.{Failure, Success}
-import java.time.ZoneId
 
 trait PostPage {
 
@@ -32,16 +32,16 @@ trait PostPage {
 
   val bComments = Vars.empty[BComment]
 
-  val postRestEntityLinkPromise = Promise[String]()
-  val postRestEntityLink        = Var("")
+  val postDocNamePromise = Promise[String]()
+  val postDocName        = Var("")
 
   val newComments = Var("What do you think?")
 
-  postRestEntityLinkPromise.future
+  postDocNamePromise.future
     .onComplete({
       case link: Success[String] =>
-        postRestEntityLink.value = link.get
-        Firebase
+        postDocName.value = link.get
+        CloudFirestore
           .getComments(user.accessToken, link.get)
           .onComplete({
             case comments: Success[Comments] =>
@@ -88,7 +88,18 @@ trait PostPage {
           date = Some(ZonedDateTime.now(ZoneId.of("UTC"))),
           text = Some(newComments.value)
         )
-        Firebase.postComment(user.accessToken, postRestEntityLink.value, c)
+        CloudFirestore
+          .createComment(user.accessToken, postDocName.value, c)
+          .onComplete({
+            case c: Success[Doc[Comment]] =>
+              bComments.value += BComment(
+                author = Var(c.value.fields.author.get),
+                date = Var(datetime2Str(c.value.fields.date)),
+                text = Var(c.value.fields.text.get)
+              )
+            case f: Failure[Doc[Comment]] =>
+              println("failed creating comment")
+          })
 
         cleanInput()
       }

@@ -1,47 +1,85 @@
 package com.talestonini.db
 
 import java.time._
-import java.time.format.DateTimeFormatter.{ofPattern => pattern}
+import java.time.format.DateTimeFormatter.ofPattern
 
 import fr.hmil.roshttp.body.Implicits._
-import fr.hmil.roshttp.body.JSONBody.JSONObject
-import fr.hmil.roshttp.body.JSONBody.JSONValue
+import fr.hmil.roshttp.body.JSONBody.{JSONObject, JSONString, JSONValue}
 import io.circe._
 
 package object model {
 
-  private val LongDateTimeFormatter = pattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+  private val LongDateTimeFormatter = ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
   implicit lazy val decodeZonedDateTime: Decoder[ZonedDateTime] = Decoder.decodeZonedDateTime
 
+  def randomAlphaNumericString(length: Int): String = {
+    def randomStringFromCharList(length: Int, chars: Seq[Char]): String = {
+      val sb = new StringBuilder
+      for (i <- 1 to length) {
+        val randomNum = util.Random.nextInt(chars.length)
+        sb.append(chars(randomNum))
+      }
+      sb.toString
+    }
+
+    val chars = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')
+    randomStringFromCharList(length, chars)
+  }
+
   // --- common --------------------------------------------------------------------------------------------------------
 
-  case class Doc[D](name: String, fields: D, createTime: String, updateTime: String)
+  // follows Cloud Firestore specs
+  case class Doc[E](name: String, fields: E, createTime: String, updateTime: String)
 
-  case class DocsRes[D](documents: Seq[Doc[D]])
+  case class DocsRes[E](documents: Seq[Doc[E]])
 
-  sealed trait DocType
+  sealed trait Entity {
+    def dbFields: Seq[String]
+  }
 
-  type Docs[D] = Seq[Doc[D]]
+  type Docs[E] = Seq[Doc[E]]
 
-  implicit def docDecoder[D <: DocType](implicit fieldsDecoder: Decoder[D]): Decoder[Doc[D]] =
-    new Decoder[Doc[D]] {
-      final def apply(c: HCursor): Decoder.Result[Doc[D]] =
+  implicit def docDecoder[E <: Entity](implicit fieldsDecoder: Decoder[E]): Decoder[Doc[E]] =
+    // name, fields, createTime and updateTime are part of Cloud Firestore specs
+    new Decoder[Doc[E]] {
+      final def apply(c: HCursor): Decoder.Result[Doc[E]] =
         for {
           name       <- c.get[String]("name")
-          fields     <- c.get[D]("fields")
+          fields     <- c.get[E]("fields")
           createTime <- c.get[String]("createTime")
           updateTime <- c.get[String]("updateTime")
         } yield Doc(name, fields, createTime, updateTime)
     }
 
-  implicit def docsResDecoder[D <: DocType](implicit docSeqDecoder: Decoder[Seq[Doc[D]]]): Decoder[DocsRes[D]] =
-    new Decoder[DocsRes[D]] {
-      final def apply(c: HCursor): Decoder.Result[DocsRes[D]] =
+  implicit def docsResDecoder[E <: Entity](implicit docSeqDecoder: Decoder[Seq[Doc[E]]]): Decoder[DocsRes[E]] =
+    new Decoder[DocsRes[E]] {
+      final def apply(c: HCursor): Decoder.Result[DocsRes[E]] =
         for {
-          docs <- c.get[Seq[Doc[D]]]("documents")
+          docs <- c.get[Seq[Doc[E]]]("documents")
         } yield DocsRes(docs)
     }
+
+  def entityToDocBody[E <: Entity](name: String, entity: E): JSONObject = {
+    def field(`type`: String, value: String): JSONObject = JSONObject(`type` -> new JSONString(value))
+
+    JSONObject(
+      "name" -> name,
+      "fields" -> (entity match {
+        // type match is the easiest for now (not keen on reflection)
+        case c: Comment =>
+          JSONObject(
+            Seq[Option[(String, JSONValue)]](
+              c.author.map(a => "author" -> field("stringValue", a)),
+              c.date.map(d => "date"     -> field("timestampValue", d.format(LongDateTimeFormatter))),
+              c.text.map(t => "text"     -> field("stringValue", t))
+            ).filter(_.isDefined).map(_.get): _*
+          )
+        case _ =>
+          throw new Exception(s"unexpected entity type: ${entity.getClass()}")
+      })
+    )
+  }
 
   // --- post (ie article) ---------------------------------------------------------------------------------------------
 
@@ -50,11 +88,14 @@ package object model {
     resource: Option[String],
     firstPublishDate: Option[ZonedDateTime],
     publishDate: Option[ZonedDateTime]
-  ) extends DocType
+  ) extends Entity {
+    def dbFields: Seq[String] = Seq("title", "resource", "first_publish_date", "publish_date")
+  }
 
   type Posts = Seq[Doc[Post]]
 
   implicit lazy val postFieldsDecoder: Decoder[Post] =
+    // title, resource, first_publish_date and publish_date are my database specs
     new Decoder[Post] {
       final def apply(c: HCursor): Decoder.Result[Post] =
         for {
@@ -71,11 +112,14 @@ package object model {
     author: Option[String],
     date: Option[ZonedDateTime],
     text: Option[String]
-  ) extends DocType
+  ) extends Entity {
+    def dbFields: Seq[String] = Seq("author", "date", "text")
+  }
 
   type Comments = Seq[Doc[Comment]]
 
   implicit lazy val commentFieldsDecoder: Decoder[Comment] =
+    // author, date and text are my database specs
     new Decoder[Comment] {
       final def apply(c: HCursor): Decoder.Result[Comment] =
         for {
@@ -84,19 +128,5 @@ package object model {
           text   <- c.downField("text").get[String]("stringValue")
         } yield Comment(Option(author), Option(date), Option(text))
     }
-
-  def comment2Body(postName: String, comment: Comment, resId: String): JSONObject =
-    JSONObject(
-      "name" -> stringToJSONString(s"$postName/comments/$resId"),
-      "fields" -> JSONObject(
-        Seq[Option[(String, JSONValue)]](
-          comment.author.map(a => "author" -> JSONObject("stringValue" -> stringToJSONString(a))),
-          comment.date.map(d =>
-            "date" -> JSONObject("timestampValue" -> stringToJSONString(d.format(LongDateTimeFormatter)))
-          ),
-          comment.text.map(t => "text" -> JSONObject("stringValue" -> stringToJSONString(t)))
-        ).filter(_.isDefined).map(_.get): _*
-      )
-    )
 
 }

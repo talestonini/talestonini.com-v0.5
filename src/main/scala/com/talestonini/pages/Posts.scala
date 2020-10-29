@@ -19,7 +19,7 @@ object Posts {
     * A binding post.
     */
   case class BPost(
-    restEntityLink: Var[String],
+    docName: Var[String],
     title: Var[String],
     resource: Var[String],
     publishDate: Var[String]

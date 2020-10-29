@@ -1,7 +1,7 @@
 package com.talestonini
 
 import com.talestonini.App.user
-import com.talestonini.db.Firebase
+import com.talestonini.db.CloudFirestore
 import com.talestonini.db.model._
 import com.talestonini.utils._
 import com.talestonini.utils.observer.{EventName, Observer}
@@ -18,9 +18,9 @@ import scala.util.{Failure, Success}
 
 object Routing extends Observer {
 
-  val postRestEntityLinkMap: Map[String, Promise[String]] = Map(
-    "capstone" -> Capstone.postRestEntityLinkPromise,
-    "rapids"   -> Rapids.postRestEntityLinkPromise
+  val postDocNameMap: Map[String, Promise[String]] = Map(
+    "capstone" -> Capstone.postDocNamePromise,
+    "rapids"   -> Rapids.postDocNamePromise
   )
 
   val pageMap: Map[String, Binding[Node]] = Map(
@@ -37,7 +37,7 @@ object Routing extends Observer {
 
   def onNotify(e: EventName): Unit = e match {
     case "userLoggedIn" =>
-      Firebase
+      CloudFirestore
         .getPosts(user.accessToken)
         .onComplete({
           case posts: Success[Posts] =>
@@ -45,16 +45,16 @@ object Routing extends Observer {
               val resource = p.fields.resource.get
 
               // post REST entity links enable retrieving comments (any entity dependent on posts)
-              val postRestEntityLink = p.name
-              postRestEntityLinkMap
+              val postDocName = p.name
+              postDocNameMap
                 .get(resource)
                 .getOrElse(
-                  throw new Exception(s"missing entry in postRestEntityLinkMap for $resource")
-                ) success postRestEntityLink
+                  throw new Exception(s"missing entry in postDocNameMap for $resource")
+                ) success postDocName
 
               // bPosts (binding posts) help build the Posts page
               Posts.bPosts.value += Posts.BPost(
-                restEntityLink = Var(postRestEntityLink),
+                docName = Var(postDocName),
                 title = Var(p.fields.title.get),
                 resource = Var(resource),
                 publishDate = Var(datetime2Str(p.fields.publishDate))
