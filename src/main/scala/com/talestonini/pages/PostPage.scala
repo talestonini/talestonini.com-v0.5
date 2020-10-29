@@ -24,25 +24,25 @@ trait PostPage {
   /**
     * A binding comment.
     */
-  case class BComment(
+  private case class BComment(
     author: Var[String],
     text: Var[String],
     date: Var[String]
   )
 
-  val bComments = Vars.empty[BComment]
+  // the comments on the page
+  private val bComments = Vars.empty[BComment]
+
+  // name of the post document to which this page's comments belong
+  private val bPostDocName = Var("")
 
   val postDocNamePromise = Promise[String]()
-  val postDocName        = Var("")
-
-  val newComments = Var("What do you think?")
-
   postDocNamePromise.future
     .onComplete({
-      case link: Success[String] =>
-        postDocName.value = link.get
+      case postDocName: Success[String] =>
+        bPostDocName.value = postDocName.get
         CloudFirestore
-          .getComments(user.accessToken, link.get)
+          .getComments(postDocName.get)
           .onComplete({
             case comments: Success[Docs[Comment]] =>
               for (c <- comments.get)
@@ -52,24 +52,26 @@ trait PostPage {
                   date = Var(datetime2Str(c.fields.date))
                 )
             case f: Failure[Docs[Comment]] =>
-              println(s"failure getting comments: ${f.exception.getMessage()}")
+              println(s"failed getting comments: ${f.exception.getMessage()}")
           })
       case f: Failure[String] =>
-        println(s"failure getting postRestEntityLink: ${f.exception.getMessage()}")
+        println(s"failed getting post document name: ${f.exception.getMessage()}")
     })
+
+  def title(): String
+
+  def content(): Binding[Node]
+
+  private val newComment = Var("What do you think?")
 
   @html def body() =
     <div>
       <h1>{title()}</h1>
       {content()}
       <h3>Comments ({bComments.length.bind.toString})</h3>
-      {commentInput(newComments)}
+      {commentInput(newComment)}
       {comments()}
     </div>
-
-  def title(): String
-
-  def content(): Binding[Node]
 
   @html def commentInput(newComment: Var[String]): Binding[Node] = {
     val inputBinding: NodeBinding[HTMLTextAreaElement] =
@@ -86,10 +88,10 @@ trait PostPage {
         val c = Comment(
           author = Some(user.displayName.value),
           date = Some(ZonedDateTime.now(ZoneId.of("UTC"))),
-          text = Some(newComments.value)
+          text = Some(newComment.value)
         )
         CloudFirestore
-          .createComment(user.accessToken, postDocName.value, c)
+          .createComment(user.accessToken, bPostDocName.value, c)
           .onComplete({
             case c: Success[Doc[Comment]] =>
               bComments.value += BComment(
@@ -105,7 +107,7 @@ trait PostPage {
       }
     }
     val cancelButtonHandler = { e: Event =>
-      newComments.value = ""
+      newComment.value = ""
       cleanInput()
     }
     <div>
