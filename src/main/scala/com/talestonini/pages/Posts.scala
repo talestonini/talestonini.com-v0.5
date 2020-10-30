@@ -15,9 +15,7 @@ object Posts {
   @html def apply(): Binding[Node] =
     <div>{postItems()}</div>
 
-  /**
-    * A binding post.
-    */
+  // a binding post
   case class BPost(
     docName: Var[String],
     title: Var[String],
@@ -26,6 +24,8 @@ object Posts {
   )
 
   val bPosts = Vars.empty[BPost]
+
+  // -------------------------------------------------------------------------------------------------------------------
 
   @html private def postItems() =
     for (p <- bPosts)

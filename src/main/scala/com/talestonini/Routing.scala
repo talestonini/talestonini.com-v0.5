@@ -6,7 +6,6 @@ import com.talestonini.db.model._
 import com.talestonini.utils._
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, Route}
-import org.lrng.binding.html
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.window
 import pages._
@@ -17,12 +16,12 @@ import scala.util.{Failure, Success}
 
 object Routing {
 
-  val postDocNameMap: Map[String, Promise[String]] = Map(
+  private val postDocNameMap: Map[String, Promise[String]] = Map(
     "capstone" -> Capstone.postDocNamePromise,
     "rapids"   -> Rapids.postDocNamePromise
   )
 
-  val pageMap: Map[String, Binding[Node]] = Map(
+  private val pageMap: Map[String, Binding[Node]] = Map(
     ""      -> Home(),
     "about" -> About(),
     "posts" -> Posts(),
@@ -32,6 +31,11 @@ object Routing {
     "rapids"   -> Rapids()
   )
 
+  private val pages = for (hash <- pageMap.keys) yield hash2Page(hash)
+
+  // -------------------------------------------------------------------------------------------------------------------
+
+  // retrieve posts from db at application start
   CloudFirestore
     .getPosts()
     .onComplete({
@@ -63,8 +67,6 @@ object Routing {
 
   def hash2Page(hash: String): Page =
     Page(s"#/$hash", Var(pageMap.get(hash).getOrElse(throw new Exception("page not found"))))
-
-  var pages = for (hash <- pageMap.keys) yield hash2Page(hash)
 
   val route = Route.Hash(hash2Page(""))(new Route.Format[Page] {
     override def unapply(hashText: String) = pages.find(_.hash == window.location.hash)

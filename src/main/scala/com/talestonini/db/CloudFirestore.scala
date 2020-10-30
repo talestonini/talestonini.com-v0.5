@@ -2,6 +2,7 @@ package com.talestonini.db
 
 import cats.syntax.either._
 import com.talestonini.db.model._
+import com.talestonini.utils.randomAlphaNumericString
 import fr.hmil.roshttp.body.Implicits._
 import fr.hmil.roshttp.HttpRequest
 import fr.hmil.roshttp.Method.{GET, PATCH, POST}
