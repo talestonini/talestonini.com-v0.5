@@ -1,6 +1,8 @@
 package com.talestonini.components
 
 import com.talestonini.App.{user, handleClickSignIn, handleClickSignOut}
+import com.talestonini.utils.js.display
+import com.talestonini.utils.observer.Observer
 import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding.{BindingSeq, Vars, Var}
 import org.lrng.binding.html
@@ -8,21 +10,7 @@ import org.scalajs.dom.raw.{Event, Node}
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSGlobal
 
-object Menu {
-
-  private val commonClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-hide-small"
-
-  @js.native
-  @JSGlobal("toggleSidebar")
-  def toggleSidebar(): Unit = js.native
-
-  case class MenuItem(label: String, hash: String)
-
-  val menuItems: Seq[MenuItem] = Seq(
-    MenuItem("Posts", "#/posts"),
-    MenuItem("Tags", "#/tags"),
-    MenuItem("About", "#/about")
-  )
+object Menu extends Observer {
 
   @html def apply(isMobile: Boolean = false): Binding[BindingSeq[Node]] = Binding {
     val menuElems = {
@@ -49,6 +37,40 @@ object Menu {
     if (!isMobile) menuElems else mobileMenuElems
   }
 
+  user.register(this, "UserSignedIn", "UserSignedOut")
+  def onNotify(e: com.talestonini.utils.observer.EventName): Unit = e match {
+    case "UserSignedIn"  => isUserSignedIn.value = true
+    case "UserSignedOut" => isUserSignedIn.value = false
+  }
+
+  // -------------------------------------------------------------------------------------------------------------------
+
+  private val commonClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-hide-small"
+
+  private val isUserSignedIn = Var(false)
+
+  @html private def greetUser(): Binding[Node] = {
+    val signInOutClasses = s"$commonClasses sign-in-out-menu-item"
+    <div>
+      <div id="greet-signed-in" class="hidden greeting" style={s"display:${display(isUserSignedIn.bind)}"}>
+        <p>Hi, {user.displayName.bind}!</p>
+        <a class={signInOutClasses} onclick={e: Event => handleClickSignOut()}>(Sign out)</a>
+      </div>
+      <div id="greet-signed-out" class="hidden greeting" style={s"display:${display(!isUserSignedIn.bind)}"}>
+        <p>Hi!</p>
+        <a class={signInOutClasses} onclick={e: Event => handleClickSignIn()}>(Sign in)</a>
+      </div>
+    </div>
+  }
+
+  private case class MenuItem(label: String, hash: String)
+
+  private val menuItems: Seq[MenuItem] = Seq(
+    MenuItem("Posts", "#/posts"),
+    MenuItem("Tags", "#/tags"),
+    MenuItem("About", "#/about")
+  )
+
   @html private def menu() =
     for (mi <- menuItems)
       yield <a href={mi.hash} class={s"$commonClasses menu-item"}>{mi.label}</a>
@@ -62,13 +84,13 @@ object Menu {
     }
 
     val signOut =
-      <a id="greet-signed-in-mobile" class={signInOutClasses} style="display: none"
+      <a id="greet-signed-in-mobile" class={signInOutClasses} style={s"display:${display(isUserSignedIn.bind)}"}
         onclick={e: Event => onClick(handleClickSignOut)}>
         Hi, {user.displayName.bind}! (Sign out)
       </a>
 
     val signIn =
-      <a id="greet-signed-out-mobile" class={signInOutClasses} style="display: none"
+      <a id="greet-signed-out-mobile" class={signInOutClasses} style={s"display:${display(!isUserSignedIn.bind)}"}
         onclick={e: Event => onClick(handleClickSignIn)}>
         Hi! (Sign in)
       </a>
@@ -80,18 +102,8 @@ object Menu {
     Seq(signIn, signOut) ++ items
   }
 
-  @html private def greetUser(): Binding[Node] = {
-    val signInOutClasses = s"$commonClasses sign-in-out-menu-item"
-    <div>
-      <div id="greet-signed-in" class="hidden greeting" style="display: none">
-        <p>Hi, {user.displayName.bind}!</p>
-        <a class={signInOutClasses} onclick={e: Event => handleClickSignOut()}>(Sign out)</a>
-      </div>
-      <div id="greet-signed-out" class="hidden greeting" style="display: none">
-        <p>Hi!</p>
-        <a class={signInOutClasses} onclick={e: Event => handleClickSignIn()}>(Sign in)</a>
-      </div>
-    </div>
-  }
+  @js.native
+  @JSGlobal("toggleSidebar")
+  private def toggleSidebar(): Unit = js.native
 
 }

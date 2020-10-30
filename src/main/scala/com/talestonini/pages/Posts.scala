@@ -12,11 +12,12 @@ import scala.util.{Failure, Success}
 
 object Posts {
 
-  /**
-    * A binding post.
-    */
+  @html def apply(): Binding[Node] =
+    <div>{postItems()}</div>
+
+  // a binding post
   case class BPost(
-    restEntityLink: Var[String],
+    docName: Var[String],
     title: Var[String],
     resource: Var[String],
     publishDate: Var[String]
@@ -24,8 +25,7 @@ object Posts {
 
   val bPosts = Vars.empty[BPost]
 
-  @html def apply(): Binding[Node] =
-    <div>{postItems()}</div>
+  // -------------------------------------------------------------------------------------------------------------------
 
   @html private def postItems() =
     for (p <- bPosts)

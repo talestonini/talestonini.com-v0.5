@@ -1,78 +1,92 @@
 package com.talestonini.db
 
 import java.time._
-import java.time.format.DateTimeFormatter.{ofPattern => pattern}
+import java.time.format.DateTimeFormatter.ofPattern
 
-import cats.syntax.either._
+import fr.hmil.roshttp.body.Implicits._
+import fr.hmil.roshttp.body.JSONBody.{JSONObject, JSONString, JSONValue}
 import io.circe._
 
 package object model {
 
-  private val LongDateTimeFormatter  = pattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-  private val ShortDateTimeFormatter = pattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+  private val LongDateTimeFormatter = ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
-  implicit lazy val decodeLocalDateTime: Decoder[LocalDateTime] =
-    Decoder.decodeString.emap { str =>
-      // TODO: is a try-catch correct inside catchNonFatal?
-      Either
-        .catchNonFatal(
-          try {
-            LocalDateTime.parse(str, LongDateTimeFormatter)
-          } catch {
-            case _: Exception => LocalDateTime.parse(str, ShortDateTimeFormatter)
-          }
-        )
-        .leftMap(t => "LocalDateTime")
-    }
+  implicit lazy val decodeZonedDateTime: Decoder[ZonedDateTime] = Decoder.decodeZonedDateTime
 
   // --- common --------------------------------------------------------------------------------------------------------
 
-  case class Doc[D](name: String, fields: D, createTime: String, updateTime: String)
+  // follows Cloud Firestore specs
+  case class Doc[E](name: String, fields: E, createTime: String, updateTime: String)
 
-  case class DocsRes[D](documents: Seq[Doc[D]])
+  case class DocsRes[E](documents: Seq[Doc[E]])
 
-  sealed trait DocType
+  sealed trait Entity {
+    def dbFields: Seq[String]
+  }
 
-  type Docs[D] = Seq[Doc[D]]
+  type Docs[E] = Seq[Doc[E]]
 
-  implicit def docDecoder[D <: DocType](implicit fieldsDecoder: Decoder[D]): Decoder[Doc[D]] =
-    new Decoder[Doc[D]] {
-      final def apply(c: HCursor): Decoder.Result[Doc[D]] =
+  implicit def docDecoder[E <: Entity](implicit fieldsDecoder: Decoder[E]): Decoder[Doc[E]] =
+    // name, fields, createTime and updateTime are part of Cloud Firestore specs
+    new Decoder[Doc[E]] {
+      final def apply(c: HCursor): Decoder.Result[Doc[E]] =
         for {
           name       <- c.get[String]("name")
-          fields     <- c.get[D]("fields")
+          fields     <- c.get[E]("fields")
           createTime <- c.get[String]("createTime")
           updateTime <- c.get[String]("updateTime")
         } yield Doc(name, fields, createTime, updateTime)
     }
 
-  implicit def docsResDecoder[D <: DocType](implicit docSeqDecoder: Decoder[Seq[Doc[D]]]): Decoder[DocsRes[D]] =
-    new Decoder[DocsRes[D]] {
-      final def apply(c: HCursor): Decoder.Result[DocsRes[D]] =
+  implicit def docsResDecoder[E <: Entity](implicit docSeqDecoder: Decoder[Seq[Doc[E]]]): Decoder[DocsRes[E]] =
+    new Decoder[DocsRes[E]] {
+      final def apply(c: HCursor): Decoder.Result[DocsRes[E]] =
         for {
-          docs <- c.get[Seq[Doc[D]]]("documents")
+          docs <- c.get[Seq[Doc[E]]]("documents")
         } yield DocsRes(docs)
     }
 
-  // --- post, ie article ----------------------------------------------------------------------------------------------
+  def entityToDocBody[E <: Entity](name: String, entity: E): JSONObject = {
+    def field(`type`: String, value: String): JSONObject = JSONObject(`type` -> new JSONString(value))
+
+    JSONObject(
+      "name" -> name,
+      "fields" -> (entity match {
+        // type match is the easiest for now (not keen on reflection)
+        case c: Comment =>
+          JSONObject(
+            Seq[Option[(String, JSONValue)]](
+              c.author.map(a => "author" -> field("stringValue", a)),
+              c.date.map(d => "date"     -> field("timestampValue", d.format(LongDateTimeFormatter))),
+              c.text.map(t => "text"     -> field("stringValue", t))
+            ).filter(_.isDefined).map(_.get): _*
+          )
+        case _ =>
+          throw new Exception(s"unexpected entity type: ${entity.getClass()}")
+      })
+    )
+  }
+
+  // --- post (ie article) ---------------------------------------------------------------------------------------------
 
   case class Post(
     title: Option[String],
     resource: Option[String],
-    firstPublishDate: Option[LocalDateTime],
-    publishDate: Option[LocalDateTime]
-  ) extends DocType
-
-  type Posts = Seq[Doc[Post]]
+    firstPublishDate: Option[ZonedDateTime],
+    publishDate: Option[ZonedDateTime]
+  ) extends Entity {
+    def dbFields: Seq[String] = Seq("title", "resource", "first_publish_date", "publish_date")
+  }
 
   implicit lazy val postFieldsDecoder: Decoder[Post] =
+    // title, resource, first_publish_date and publish_date are my database specs
     new Decoder[Post] {
       final def apply(c: HCursor): Decoder.Result[Post] =
         for {
           title            <- c.downField("title").get[String]("stringValue")
           resource         <- c.downField("resource").get[String]("stringValue")
-          firstPublishDate <- c.downField("first_publish_date").get[LocalDateTime]("timestampValue")
-          publishDate      <- c.downField("publish_date").get[LocalDateTime]("timestampValue")
+          firstPublishDate <- c.downField("first_publish_date").get[ZonedDateTime]("timestampValue")
+          publishDate      <- c.downField("publish_date").get[ZonedDateTime]("timestampValue")
         } yield Post(Option(title), Option(resource), Option(firstPublishDate), Option(publishDate))
     }
 
@@ -80,18 +94,19 @@ package object model {
 
   case class Comment(
     author: Option[String],
-    date: Option[LocalDateTime],
+    date: Option[ZonedDateTime],
     text: Option[String]
-  ) extends DocType
-
-  type Comments = Seq[Doc[Comment]]
+  ) extends Entity {
+    def dbFields: Seq[String] = Seq("author", "date", "text")
+  }
 
   implicit lazy val commentFieldsDecoder: Decoder[Comment] =
+    // author, date and text are my database specs
     new Decoder[Comment] {
       final def apply(c: HCursor): Decoder.Result[Comment] =
         for {
           author <- c.downField("author").get[String]("stringValue")
-          date   <- c.downField("date").get[LocalDateTime]("timestampValue")
+          date   <- c.downField("date").get[ZonedDateTime]("timestampValue")
           text   <- c.downField("text").get[String]("stringValue")
         } yield Comment(Option(author), Option(date), Option(text))
     }
