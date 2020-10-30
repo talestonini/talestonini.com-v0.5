@@ -60,28 +60,6 @@
     var uiStart = function() {
       ui.start('#firebaseui-auth-container', uiConfig);
     };
-
-    var greetSignedInUser = function() {
-      document.getElementById('greet-signed-in').style.display = 'block';
-      document.getElementById('greet-signed-out').style.display = 'none';
-      document.getElementById('greet-signed-in-mobile').style.display = 'block';
-      document.getElementById('greet-signed-out-mobile').style.display = 'none';
-    };
-
-    var greetSignedOutUser = function() {
-      document.getElementById('greet-signed-in').style.display = 'none';
-      document.getElementById('greet-signed-out').style.display = 'block';
-      document.getElementById('greet-signed-in-mobile').style.display = 'none';
-      document.getElementById('greet-signed-out-mobile').style.display = 'block';
-    };
-
-    var displaySignInProviders = function() {
-      document.getElementById('sign-in-providers').style.display = 'block';
-    }
-
-    var hideSignInProviders = function() {
-      document.getElementById('sign-in-providers').style.display = 'none';
-    }
   </script>
 
   <!-- ============================================================================================================= -->
