@@ -13,4 +13,11 @@ package object utils {
       case None     => "no date"
     }
 
+  object js {
+
+    def display(flag: Boolean): String =
+      if (flag) "block" else "none"
+
+  }
+
 }
