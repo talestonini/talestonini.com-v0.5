@@ -91,15 +91,13 @@ trait PostPage extends Observer {
 
   // widget for inputting a new commment
   @html private def commentInput(): Binding[Node] = {
-    val bText = Var("What do you think?")
+    val initComment = "What do you think?"
+    val bText       = Var(initComment)
 
     val bTextArea: NodeBinding[HTMLTextAreaElement] =
       <textarea rows="5" value={bText.bind} onfocus={e: Event => bText.value = ""} />
 
-    def cleanTextArea() = {
-      val textArea = bTextArea.value
-      textArea.value = ""
-    }
+    def cleanTextArea() = bText.value = initComment
 
     val commentButtonHandler = { e: Event =>
       val textArea = bTextArea.value
@@ -110,10 +108,7 @@ trait PostPage extends Observer {
       }
     }
 
-    val cancelButtonHandler = { e: Event =>
-      bText.value = ""
-      cleanTextArea()
-    }
+    val cancelButtonHandler = { e: Event => cleanTextArea() }
 
     val signInToComment: Binding[Node] =
       <div style={s"display:${display(!isAllowedToComment.bind)}"}>
