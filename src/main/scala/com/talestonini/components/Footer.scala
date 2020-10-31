@@ -9,14 +9,14 @@ object Footer {
 
   @html def apply(): Binding[BindingSeq[Node]] = Binding {
     <div class="w3-xlarge">
-      <a href="https://twitter.com/talestonini" class="no-decoration" target="_blank">
-        <i class="fa fa-twitter w3-hover-opacity"></i>
-      </a>
       <a href="https://au.linkedin.com/in/talestonini" class="no-decoration" target="_blank">
         <i class="fa fa-linkedin w3-hover-opacity"></i>
       </a>
       <a href="https://github.com/talestonini" class="no-decoration" target="_blank">
         <i class="fa fa-github w3-hover-opacity"></i>
+      </a>
+      <a href="https://twitter.com/talestonini" class="no-decoration" target="_blank">
+        <i class="fa fa-twitter w3-hover-opacity"></i>
       </a>
       <a href="https://www.instagram.com/talestonini" class="no-decoration" target="_blank">
         <i class="fa fa-instagram w3-hover-opacity"></i>
@@ -26,7 +26,7 @@ object Footer {
       </a>
     </div>
     <div class="w3-small">
-      <p>© Tales Tonini</p>
+      <p>© Tales Tonini, 2019-2020</p>
     </div>
   }
 
