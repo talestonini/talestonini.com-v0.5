@@ -16,10 +16,6 @@ import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel, JSGlobal}
 @JSExportTopLevel("App")
 object App {
 
-  @js.native
-  @JSGlobal("uiStart")
-  def uiStart(): Unit = js.native
-
   case object user extends SimpleObservable {
     var isLoggedIn: Boolean = false
     val displayName         = Var("")
@@ -102,9 +98,13 @@ object App {
   private def hideSignInProviders()    = isDisplaySignInProviders.value = false
 
   private def captureUserInfo(userInfo: User): Unit = {
+    def firstStr(any: Any): String =
+      if (any != null) any.toString.split(" ")(0)
+      else ""
+
     user.isLoggedIn = true
-    user.displayName.value = userInfo.displayName.toString
-    user.email.value = userInfo.email.toString
+    user.displayName.value = firstStr(userInfo.displayName)
+    user.email.value = firstStr(userInfo.email)
     user.providerId.value = userInfo.providerId
     user.uid.value = userInfo.uid
     userInfo
@@ -126,5 +126,9 @@ object App {
     user.uid.value = ""
     user.notifyObservers("UserSignedOut")
   }
+
+  @js.native
+  @JSGlobal("uiStart")
+  private def uiStart(): Unit = js.native
 
 }
