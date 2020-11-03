@@ -22,6 +22,7 @@ package object model {
 
   sealed trait Entity {
     def dbFields: Seq[String]
+    def content: String
   }
 
   type Docs[E] = Seq[Doc[E]]
@@ -76,6 +77,7 @@ package object model {
     publishDate: Option[ZonedDateTime]
   ) extends Entity {
     def dbFields: Seq[String] = Seq("title", "resource", "first_publish_date", "publish_date")
+    def content: String       = title.getOrElse("") + resource.getOrElse("")
   }
 
   implicit lazy val postFieldsDecoder: Decoder[Post] =
@@ -98,6 +100,7 @@ package object model {
     text: Option[String]
   ) extends Entity {
     def dbFields: Seq[String] = Seq("author", "date", "text")
+    def content: String       = text.getOrElse("")
   }
 
   implicit lazy val commentFieldsDecoder: Decoder[Comment] =

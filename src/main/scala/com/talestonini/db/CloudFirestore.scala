@@ -72,6 +72,9 @@ object CloudFirestore {
 
   // -------------------------------------------------------------------------------------------------------------------
 
+  // map of token -> (last usage time, last usage content)
+  private var antiHackCache: Map[String, (Long, String)] = Map.empty
+
   private def getDocuments[E <: Entity](token: String, path: String)(
     implicit docsResDecoder: Decoder[DocsRes[E]]
   ): Future[Docs[E]] = {
@@ -120,31 +123,48 @@ object CloudFirestore {
     implicit docDecoder: Decoder[Doc[E]]
   ): Future[Doc[E]] = {
     val p = Promise[Doc[E]]()
-    Future {
-      HttpRequest()
-        .withMethod(PATCH)
-        .withProtocol(HTTPS)
-        .withHost(FirestoreHost)
-        .withPath(s"/v1/$path")
-        .withQueryParameters((for (dbField <- entity.dbFields) yield ("updateMask.fieldPaths", dbField)): _*)
-        .withHeader("Authorization", s"Bearer $token")
-        .withBody(entityToDocBody(path, entity))
-        .send()
-        .onComplete({
-          case rawJson: Success[SimpleHttpResponse] =>
-            decode[Doc[E]](rawJson.get.body) match {
-              case Left(e) =>
-                val errMsg = s"unable to decode response from patch document: ${e.getMessage()}"
-                p failure CloudFirestoreException(errMsg)
-              case Right(doc) =>
-                p success doc
-            }
-          case f: Failure[SimpleHttpResponse] =>
-            val errMsg = s"failed upserting document: ${f.exception.getMessage()}"
-            p failure CloudFirestoreException(errMsg)
-        })
-    }
+
+    if (isBadRequest(token, entity.content))
+      p failure CloudFirestoreException("")
+    else
+      Future {
+        HttpRequest()
+          .withMethod(PATCH)
+          .withProtocol(HTTPS)
+          .withHost(FirestoreHost)
+          .withPath(s"/v1/$path")
+          .withQueryParameters((for (dbField <- entity.dbFields) yield ("updateMask.fieldPaths", dbField)): _*)
+          .withHeader("Authorization", s"Bearer $token")
+          .withBody(entityToDocBody(path, entity))
+          .send()
+          .onComplete({
+            case rawJson: Success[SimpleHttpResponse] =>
+              decode[Doc[E]](rawJson.get.body) match {
+                case Left(e) =>
+                  val errMsg = s"unable to decode response from patch document: ${e.getMessage()}"
+                  p failure CloudFirestoreException(errMsg)
+                case Right(doc) =>
+                  p success doc
+              }
+            case f: Failure[SimpleHttpResponse] =>
+              val errMsg = s"failed upserting document: ${f.exception.getMessage()}"
+              p failure CloudFirestoreException(errMsg)
+          })
+      }
+
     p.future
+  }
+
+  private def isBadRequest(token: String, content: String): Boolean = {
+    val now                 = java.lang.System.currentTimeMillis()
+    val (luTime, luContent) = antiHackCache.get(token).getOrElse((0L, ""))
+
+    // update the cache
+    antiHackCache = antiHackCache.updated(token, (now, content))
+
+    val isBadInterval    = luTime > 0L && (now - luTime) < 1000
+    val isSimilarContent = luContent.nonEmpty && content.toSeq.diff(luContent).unwrap.length() < 3
+    isBadInterval || isSimilarContent
   }
 
 }

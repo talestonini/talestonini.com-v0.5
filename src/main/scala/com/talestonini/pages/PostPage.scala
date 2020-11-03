@@ -101,7 +101,7 @@ trait PostPage extends Observer {
 
     val commentButtonHandler = { e: Event =>
       val textArea = bTextArea.value
-      if (textArea.value != "") {
+      if (textArea.value != "" && textArea.value != initComment) {
         bText.value = textArea.value
         persistComment(bText.value)
         cleanTextArea()
