@@ -37,7 +37,7 @@ object App {
           uiStart()
         }
       },
-      (err: firebase.auth.Error) => println("error on auth state changed"),
+      (err: firebase.auth.Error) => println("error capturing auth state change"),
       () => {}
     )
 
@@ -82,12 +82,12 @@ object App {
     </div>
 
   @html private def appContent(): Binding[Node] = {
-    val noThanksClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black no-thanks"
+    val notNowClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black not-now"
     <div>
       <div id="sign-in-providers" class="hidden sign-in-providers"
         style={s"display:${display(isDisplaySignInProviders.bind)}"}>
         <div id="firebaseui-auth-container"></div>
-        <a class={noThanksClasses} onclick={e: Event => hideSignInProviders()}>(no, thanks)</a>
+        <a class={notNowClasses} onclick={e: Event => hideSignInProviders()}>(Not now)</a>
       </div>
       <div class="content">{route.state.bind.content.value.bind}</div>
     </div>
