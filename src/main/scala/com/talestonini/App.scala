@@ -9,6 +9,7 @@ import components.{Footer, Logo, Menu}
 import firebase._
 import org.lrng.binding.html
 import org.scalajs.dom.document
+import org.scalajs.dom.ext.LocalStorage
 import org.scalajs.dom.raw.{Event, Node}
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel, JSGlobal}
@@ -17,7 +18,6 @@ import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel, JSGlobal}
 object App {
 
   case object user extends SimpleObservable {
-    var isLoggedIn: Boolean = false
     val displayName         = Var("")
     val email               = Var("")
     val providerId          = Var("")
@@ -29,27 +29,42 @@ object App {
     .auth()
     .onAuthStateChanged(
       (userInfo: User) => {
+        if (!getFromStorage(userClickedSignOut)) {
+          displayLoadingUserInfo()
+        }
         if (Option(userInfo).isDefined) {
+          hideLoadingUserInfo()
           captureUserInfo(userInfo)
           hideSignInProviders()
+          user.notifyObservers("UserSignedIn")
         } else {
           discardUserInfo()
           uiStart()
+          user.notifyObservers("UserSignedOut")
         }
       },
       (err: firebase.auth.Error) => println("error capturing auth state change"),
       () => {}
     )
 
-  def handleClickSignIn(): Unit = displaySignInProviders()
+  def handleClickSignIn(): Unit = {
+    setInStorage(userClickedSignOut, false)
+    displaySignInProviders()
+  }
 
-  def handleClickSignOut(): Unit = Firebase.auth().signOut()
+  def handleClickSignOut(): Unit = {
+    setInStorage(userClickedSignOut, true)
+    Firebase.auth().signOut()
+  }
 
   @JSExport("main")
   def main(): Unit =
     html.render(document.body, app())
 
   // -------------------------------------------------------------------------------------------------------------------
+
+  // local storage keys
+  private val userClickedSignOut = "userClickedSignOut"
 
   @html private def app(): Binding[Node] =
     <div>
@@ -84,6 +99,10 @@ object App {
   @html private def appContent(): Binding[Node] = {
     val notNowClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black not-now"
     <div>
+      <div id="loding-user-info" class="hidden sign-in-providers"
+        style={s"display:${display(isDisplayLoadingUserInfo.bind)}"}>
+        Loading user info...
+      </div>
       <div id="sign-in-providers" class="hidden sign-in-providers"
         style={s"display:${display(isDisplaySignInProviders.bind)}"}>
         <div id="firebaseui-auth-container"></div>
@@ -92,6 +111,10 @@ object App {
       <div class="content">{route.state.bind.content.value.bind}</div>
     </div>
   }
+
+  private val isDisplayLoadingUserInfo       = Var(false)
+  private def displayLoadingUserInfo(): Unit = isDisplayLoadingUserInfo.value = true
+  private def hideLoadingUserInfo(): Unit    = isDisplayLoadingUserInfo.value = false
 
   private val isDisplaySignInProviders = Var(false)
   private def displaySignInProviders() = isDisplaySignInProviders.value = true
@@ -102,7 +125,6 @@ object App {
       if (any != null) any.toString.split(" ")(0)
       else ""
 
-    user.isLoggedIn = true
     user.displayName.value = firstStr(userInfo.displayName)
     user.email.value = firstStr(userInfo.email)
     user.providerId.value = userInfo.providerId
@@ -110,22 +132,20 @@ object App {
     userInfo
       .getIdToken()
       .then(
-        (accessToken: Any) => {
-          user.accessToken = accessToken.toString
-          user.notifyObservers("UserSignedIn")
-        },
+        (accessToken: Any) => user.accessToken = accessToken.toString,
         (err: Error) => println("error getting access token")
       )
   }
 
   private def discardUserInfo(): Unit = {
-    user.isLoggedIn = false
     user.displayName.value = ""
     user.email.value = ""
     user.providerId.value = ""
     user.uid.value = ""
-    user.notifyObservers("UserSignedOut")
   }
+
+  private def setInStorage(key: String, value: Boolean) = LocalStorage.update(key, value.toString)
+  private def getFromStorage(key: String)               = LocalStorage.apply(key).map(_.toBoolean).getOrElse(false)
 
   @js.native
   @JSGlobal("uiStart")
