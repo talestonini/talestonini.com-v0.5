@@ -2,6 +2,7 @@ package com.talestonini.components
 
 import com.talestonini.App.{user, handleClickSignIn, handleClickSignOut}
 import com.talestonini.utils.js.display
+import com.talestonini.utils.observer.EventName._
 import com.talestonini.utils.observer.Observer
 import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding.{BindingSeq, Vars, Var}
@@ -37,10 +38,10 @@ object Menu extends Observer {
     if (!isMobile) menuElems else mobileMenuElems
   }
 
-  user.register(this, "UserSignedIn", "UserSignedOut")
-  def onNotify(e: com.talestonini.utils.observer.EventName): Unit = e match {
-    case "UserSignedIn"  => isUserSignedIn.value = true
-    case "UserSignedOut" => isUserSignedIn.value = false
+  user.register(this, UserSignedIn, UserSignedOut)
+  def onNotify(e: EventName): Unit = e match {
+    case UserSignedIn  => isUserSignedIn.value = true
+    case UserSignedOut => isUserSignedIn.value = false
   }
 
   // -------------------------------------------------------------------------------------------------------------------

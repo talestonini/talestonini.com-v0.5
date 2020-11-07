@@ -2,6 +2,7 @@ package com.talestonini
 
 import com.talestonini.Routing._
 import com.talestonini.utils.js.display
+import com.talestonini.utils.observer.EventName._
 import com.talestonini.utils.observer.SimpleObservable
 import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding.Var
@@ -33,14 +34,14 @@ object App {
           displayLoadingUserInfo()
         }
         if (Option(userInfo).isDefined) {
-          hideLoadingUserInfo()
           captureUserInfo(userInfo)
           hideSignInProviders()
-          user.notifyObservers("UserSignedIn")
+          hideLoadingUserInfo()
+          user.notifyObservers(UserSignedIn)
         } else {
           discardUserInfo()
           uiStart()
-          user.notifyObservers("UserSignedOut")
+          user.notifyObservers(UserSignedOut)
         }
       },
       (err: firebase.auth.Error) => println("error capturing auth state change"),
@@ -100,11 +101,11 @@ object App {
     val notNowClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black not-now"
     <div>
       <div id="loding-user-info" class="hidden sign-in-providers"
-        style={s"display:${display(isDisplayLoadingUserInfo.bind)}"}>
+        style={s"display:${display(loadingUserInfo.bind)}"}>
         Loading user info...
       </div>
       <div id="sign-in-providers" class="hidden sign-in-providers"
-        style={s"display:${display(isDisplaySignInProviders.bind)}"}>
+        style={s"display:${display(signInProviders.bind)}"}>
         <div id="firebaseui-auth-container"></div>
         <a class={notNowClasses} onclick={e: Event => hideSignInProviders()}>(Not now)</a>
       </div>
@@ -112,13 +113,13 @@ object App {
     </div>
   }
 
-  private val isDisplayLoadingUserInfo       = Var(false)
-  private def displayLoadingUserInfo(): Unit = isDisplayLoadingUserInfo.value = true
-  private def hideLoadingUserInfo(): Unit    = isDisplayLoadingUserInfo.value = false
+  private val loadingUserInfo                = Var(false)
+  private def displayLoadingUserInfo(): Unit = loadingUserInfo.value = true
+  private def hideLoadingUserInfo(): Unit    = loadingUserInfo.value = false
 
-  private val isDisplaySignInProviders = Var(false)
-  private def displaySignInProviders() = isDisplaySignInProviders.value = true
-  private def hideSignInProviders()    = isDisplaySignInProviders.value = false
+  private val signInProviders          = Var(false)
+  private def displaySignInProviders() = signInProviders.value = true
+  private def hideSignInProviders()    = signInProviders.value = false
 
   private def captureUserInfo(userInfo: User): Unit = {
     def firstStr(any: Any): String =
@@ -144,8 +145,11 @@ object App {
     user.uid.value = ""
   }
 
-  private def setInStorage(key: String, value: Boolean) = LocalStorage.update(key, value.toString)
-  private def getFromStorage(key: String)               = LocalStorage.apply(key).map(_.toBoolean).getOrElse(false)
+  private def setInStorage(key: String, value: Boolean) =
+    LocalStorage.update(key, value.toString)
+
+  private def getFromStorage(key: String) =
+    LocalStorage.apply(key).map(_.toBoolean).getOrElse(false)
 
   @js.native
   @JSGlobal("uiStart")

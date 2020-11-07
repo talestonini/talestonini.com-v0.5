@@ -8,7 +8,8 @@ import com.talestonini.db.CloudFirestore
 import com.talestonini.db.model._
 import com.talestonini.utils._
 import com.talestonini.utils.js.display
-import com.talestonini.utils.observer.{EventName, Observer}
+import com.talestonini.utils.observer.EventName._
+import com.talestonini.utils.observer.Observer
 import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import org.lrng.binding.html
@@ -61,10 +62,10 @@ trait PostPage extends Observer {
     })
 
   // observe the user sign in/out to allow or not commenting on the post
-  user.register(this, "UserSignedIn", "UserSignedOut")
+  user.register(this, UserSignedIn, UserSignedOut)
   def onNotify(e: EventName): Unit = e match {
-    case "UserSignedIn"  => isAllowedToComment.value = true
-    case "UserSignedOut" => isAllowedToComment.value = false
+    case UserSignedIn  => isAllowedToComment.value = true
+    case UserSignedOut => isAllowedToComment.value = false
   }
 
   // -------------------------------------------------------------------------------------------------------------------

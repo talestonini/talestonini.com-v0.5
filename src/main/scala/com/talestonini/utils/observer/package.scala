@@ -2,7 +2,11 @@ package com.talestonini.utils
 
 package object observer {
 
-  type EventName = String
+  object EventName extends Enumeration {
+    type EventName = Value
+    val UserSignedIn, UserSignedOut = Value
+  }
+  import EventName.EventName
 
   trait Observer {
     def onNotify(e: EventName): Unit
