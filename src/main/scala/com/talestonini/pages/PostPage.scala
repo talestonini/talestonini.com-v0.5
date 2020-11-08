@@ -50,7 +50,7 @@ trait PostPage extends Observer {
             case comments: Success[Docs[Comment]] =>
               for (c <- comments.get)
                 bComments.value += BComment(
-                  author = Var(c.fields.author.get),
+                  author = Var(c.fields.author.get.name.get),
                   text = Var(c.fields.text.get),
                   date = Var(datetime2Str(c.fields.date))
                 )
@@ -135,17 +135,22 @@ trait PostPage extends Observer {
   // persist new comment into db
   private val Now = ZonedDateTime.now(ZoneId.of("UTC"))
   private def persistComment(comment: String): Unit = {
+    val dbUser = com.talestonini.db.model.User(
+      name = Option(user.displayName.value),
+      email = Option(user.email.value),
+      uid = Option(user.uid.value)
+    )
     val c = Comment(
-      author = Some(user.displayName.value),
-      date = Some(Now),
-      text = Some(comment)
+      author = Option(dbUser),
+      date = Option(Now),
+      text = Option(comment)
     )
     CloudFirestore
       .createComment(user.accessToken, bPostDocName.value, c)
       .onComplete({
         case doc: Success[Doc[Comment]] =>
           bComments.value += BComment(
-            author = Var(doc.value.fields.author.get),
+            author = Var(doc.value.fields.author.get.name.get),
             date = Var(datetime2Str(doc.value.fields.date)),
             text = Var(doc.value.fields.text.get)
           )

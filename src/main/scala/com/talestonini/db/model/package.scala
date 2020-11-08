@@ -47,9 +47,7 @@ package object model {
         } yield DocsRes(docs)
     }
 
-  def entityToDocBody[E <: Entity](name: String, entity: E): JSONObject = {
-    def field(`type`: String, value: String): JSONObject = JSONObject(`type` -> new JSONString(value))
-
+  def entityToDocBody[E <: Entity](name: String, entity: E): JSONObject =
     JSONObject(
       "name" -> name,
       "fields" -> (entity match {
@@ -57,7 +55,7 @@ package object model {
         case c: Comment =>
           JSONObject(
             Seq[Option[(String, JSONValue)]](
-              c.author.map(a => "author" -> field("stringValue", a)),
+              c.author.map(a => "author" -> field("mapValue", userToJsonValue(a))),
               c.date.map(d => "date"     -> field("timestampValue", d.format(LongDateTimeFormatter))),
               c.text.map(t => "text"     -> field("stringValue", t))
             ).filter(_.isDefined).map(_.get): _*
@@ -66,7 +64,6 @@ package object model {
           throw new Exception(s"unexpected entity type: ${entity.getClass()}")
       })
     )
-  }
 
   // --- post (ie article) ---------------------------------------------------------------------------------------------
 
@@ -95,7 +92,7 @@ package object model {
   // --- comment -------------------------------------------------------------------------------------------------------
 
   case class Comment(
-    author: Option[String],
+    author: Option[User],
     date: Option[ZonedDateTime],
     text: Option[String]
   ) extends Entity {
@@ -108,10 +105,44 @@ package object model {
     new Decoder[Comment] {
       final def apply(c: HCursor): Decoder.Result[Comment] =
         for {
-          author <- c.downField("author").get[String]("stringValue")
+          author <- c.downField("author").downField("mapValue").get[User]("fields")
           date   <- c.downField("date").get[ZonedDateTime]("timestampValue")
           text   <- c.downField("text").get[String]("stringValue")
         } yield Comment(Option(author), Option(date), Option(text))
     }
+
+  // --- user ----------------------------------------------------------------------------------------------------------
+
+  case class User(
+    name: Option[String],
+    email: Option[String],
+    uid: Option[String]
+  )
+
+  implicit lazy val userFieldsDecoder: Decoder[User] =
+    new Decoder[User] {
+      def apply(c: HCursor): Decoder.Result[User] =
+        for {
+          name  <- c.downField("name").get[String]("stringValue")
+          email <- c.downField("email").get[String]("stringValue")
+          uid   <- c.downField("uid").get[String]("stringValue")
+        } yield User(Option(name), Option(email), Option(uid))
+    }
+
+  private def userToJsonValue(user: User): JSONValue =
+    JSONObject(
+      "fields" -> JSONObject(
+        Seq[Option[(String, JSONValue)]](
+          user.name.map(n => "name"   -> field("stringValue", n)),
+          user.email.map(e => "email" -> field("stringValue", e)),
+          user.uid.map(u => "uid"     -> field("stringValue", u))
+        ).filter(_.isDefined).map(_.get): _*
+      )
+    )
+
+  // -------------------------------------------------------------------------------------------------------------------
+
+  private def field(`type`: String, value: String): JSONObject    = JSONObject(`type` -> new JSONString(value))
+  private def field(`type`: String, value: JSONValue): JSONObject = JSONObject(`type` -> value)
 
 }

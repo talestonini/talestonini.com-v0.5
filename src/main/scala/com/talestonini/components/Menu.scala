@@ -51,10 +51,12 @@ object Menu extends Observer {
   private val isUserSignedIn = Var(false)
 
   @html private def greetUser(): Binding[Node] = {
+    def firstStr(str: String) = str.split(" ")(0)
+
     val signInOutClasses = s"$commonClasses sign-in-out-menu-item"
     <div>
       <div id="greet-signed-in" class="hidden greeting" style={s"display:${display(isUserSignedIn.bind)}"}>
-        <p>Hi, {user.displayName.bind}!</p>
+        <p>Hi, {firstStr(user.displayName.bind)}!</p>
         <a class={signInOutClasses} onclick={e: Event => handleClickSignOut()}>(Sign out)</a>
       </div>
       <div id="greet-signed-out" class="hidden greeting" style={s"display:${display(!isUserSignedIn.bind)}"}>

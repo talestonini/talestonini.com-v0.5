@@ -122,12 +122,10 @@ object App {
   private def hideSignInProviders()    = signInProviders.value = false
 
   private def captureUserInfo(userInfo: User): Unit = {
-    def firstStr(any: Any): String =
-      if (any != null) any.toString.split(" ")(0)
-      else ""
+    def anyToStr(any: Any): String = if (any != null) any.toString else ""
 
-    user.displayName.value = firstStr(userInfo.displayName)
-    user.email.value = firstStr(userInfo.email)
+    user.displayName.value = anyToStr(userInfo.displayName)
+    user.email.value = anyToStr(userInfo.email)
     user.providerId.value = userInfo.providerId
     user.uid.value = userInfo.uid
     userInfo
