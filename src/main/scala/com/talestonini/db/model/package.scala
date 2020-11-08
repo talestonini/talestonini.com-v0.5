@@ -52,6 +52,17 @@ package object model {
       "name" -> name,
       "fields" -> (entity match {
         // type match is the easiest for now (not keen on reflection)
+        case p: Post =>
+          JSONObject(
+            Seq[Option[(String, JSONValue)]](
+              p.title.map(t => "title"       -> field("stringValue", t)),
+              p.resource.map(r => "resource" -> field("stringValue", r)),
+              p.firstPublishDate.map(fpd =>
+                "first_publish_date" -> field("timestampValue", fpd.format(LongDateTimeFormatter))
+              ),
+              p.publishDate.map(pd => "publish_date" -> field("timestampValue", pd.format(LongDateTimeFormatter)))
+            ).filter(_.isDefined).map(_.get): _*
+          )
         case c: Comment =>
           JSONObject(
             Seq[Option[(String, JSONValue)]](
@@ -117,7 +128,10 @@ package object model {
     name: Option[String],
     email: Option[String],
     uid: Option[String]
-  )
+  ) extends Entity {
+    def dbFields: Seq[String] = Seq("name", "email", "uid")
+    def content: String       = name.getOrElse("")
+  }
 
   implicit lazy val userFieldsDecoder: Decoder[User] =
     new Decoder[User] {

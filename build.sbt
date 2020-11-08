@@ -39,7 +39,7 @@ libraryDependencies ++= Seq(
   "io.circe"          %%% "circe-parser"    % circeVersion,
   "io.github.cquiroz" %%% "scala-java-time" % "2.0.0",
   // Test
-  "org.scalatest" %%% "scalatest" % "3.2.0" % "test"
+  "org.scalatest" %%% "scalatest" % "3.2.2" % "test"
 )
 
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")

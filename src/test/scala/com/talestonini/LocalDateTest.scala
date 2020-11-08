@@ -8,15 +8,16 @@ import org.scalatest._
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers._
 
+class LocalDateSpec extends BaseSpec {
 
-class LocalDateTest extends AnyFunSpec {
+  "a datetime string" should {
 
-  describe("Parsing dates") {
-    it("should parse a date from a datetime string") {
-      val str = "2019-11-10T09:55:34.276Z"
+    "be parseable into a local date" in {
+      val str      = "2019-11-10T09:55:34.276Z"
       val datetime = LocalDateTime.parse(str, ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
-      datetime.format(ofPattern("dd/MM/yyyy")) shouldBe "10/11/2019"
+      datetime.format(ofPattern("dd/MM/yyyy")) shouldEqual "10/11/2019"
     }
+
   }
 
 }
