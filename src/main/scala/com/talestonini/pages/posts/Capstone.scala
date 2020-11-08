@@ -9,8 +9,8 @@ object Capstone extends PostPage {
 
   @html def apply(): Binding[Node] = body()
 
-  def title() = "Capstone"
+  def title(): String = "Capstone"
 
-  @html def content() = <p>...</p>
+  @html def content(): Binding[Node] = <p>...</p>
 
 }

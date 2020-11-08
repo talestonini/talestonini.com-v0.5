@@ -22,6 +22,10 @@ object CloudFirestore {
   private val Database      = "(default)"
   private val FirestoreHost = "firestore.googleapis.com"
 
+  // database paths
+  private val postsPath    = s"projects/$ProjectId/databases/$Database/documents/posts"
+  private val commentsPath = (postDocName: String) => s"$postDocName/comments"
+
   case class CloudFirestoreException(msg: String) extends Exception(msg)
 
   def getAuthToken(): Future[String] = {
@@ -53,16 +57,21 @@ object CloudFirestore {
   }
 
   def getPosts(token: String): Future[Docs[Post]] =
-    getDocuments[Post](token, s"projects/$ProjectId/databases/$Database/documents/posts")
+    getDocuments[Post](token, postsPath)
 
   def getPosts(): Future[Docs[Post]] =
-    getDocuments[Post](s"projects/$ProjectId/databases/$Database/documents/posts")
+    getDocuments[Post](postsPath)
 
   def getComments(token: String, postDocName: String): Future[Docs[Comment]] =
-    getDocuments[Comment](token, s"$postDocName/comments")
+    getDocuments[Comment](token, commentsPath(postDocName))
 
   def getComments(postDocName: String): Future[Docs[Comment]] =
-    getDocuments[Comment](s"$postDocName/comments")
+    getDocuments[Comment](commentsPath(postDocName))
+
+  def createPost(token: String, post: Post): Future[Doc[Post]] = {
+    val newPostId = randomAlphaNumericString(20)
+    upsertDocument[Post](token, postsPath, post)
+  }
 
   def createComment(token: String, postDocName: String, comment: Comment): Future[Doc[Comment]] = {
     val newCommentId   = randomAlphaNumericString(20)

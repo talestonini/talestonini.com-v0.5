@@ -28,7 +28,7 @@ trait PostPage extends Observer {
 
   def content(): Binding[Node]
 
-  @html def body() =
+  @html def body(): Binding[Node] =
     <div>
       <h1>{title()}</h1>
       {content()}
@@ -52,7 +52,7 @@ trait PostPage extends Observer {
                 bComments.value += BComment(
                   author = Var(c.fields.author.get.name.get),
                   text = Var(c.fields.text.get),
-                  date = Var(datetime2Str(c.fields.date))
+                  date = Var(datetimeToStr(c.fields.date))
                 )
             case f: Failure[Docs[Comment]] =>
               println(s"failed getting comments: ${f.exception.getMessage()}")
@@ -151,7 +151,7 @@ trait PostPage extends Observer {
         case doc: Success[Doc[Comment]] =>
           bComments.value += BComment(
             author = Var(doc.value.fields.author.get.name.get),
-            date = Var(datetime2Str(doc.value.fields.date)),
+            date = Var(datetimeToStr(doc.value.fields.date)),
             text = Var(doc.value.fields.text.get)
           )
         case f: Failure[Doc[Comment]] =>

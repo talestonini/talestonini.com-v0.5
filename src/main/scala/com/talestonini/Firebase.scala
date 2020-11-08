@@ -1,5 +1,6 @@
 import scala.scalajs.js
 import scala.scalajs.js.annotation._
+import scala.scalajs.js.annotation.JSImport.Namespace
 import scala.scalajs.js.|
 
 package firebase {
@@ -64,13 +65,21 @@ package firebase {
   }
 
   @js.native
-  @JSGlobal("firebase")
+  @JSImport("firebase", Namespace)
   object Firebase extends js.Object {
     def app(name: String = ???): firebase.app.App = js.native
 
     var apps: js.Array[firebase.app.App | Null] = js.native
 
     def auth(app: firebase.app.App = ???): firebase.auth.Auth = js.native
+
+    def initializeApp(options: FirebaseConfig, name: String = ???): firebase.app.App = js.native
   }
+
+  @JSExportAll
+  case class FirebaseConfig(
+    apiKey: String = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY",
+    authDomain: String = ""
+  )
 
 }

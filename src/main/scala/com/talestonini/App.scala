@@ -26,6 +26,9 @@ object App {
     var accessToken: String = _
   }
 
+  // TODO: this is not needed for the app, but at the moment is needed for tests to run - investigate
+  Firebase.initializeApp(FirebaseConfig(), "[DEFAULT]")
+
   Firebase
     .auth()
     .onAuthStateChanged(
@@ -121,7 +124,7 @@ object App {
   private def displaySignInProviders() = signInProviders.value = true
   private def hideSignInProviders()    = signInProviders.value = false
 
-  private def captureUserInfo(userInfo: User): Unit = {
+  private def captureUserInfo(userInfo: User, printAccessToken: Boolean = true): Unit = {
     def anyToStr(any: Any): String = if (any != null) any.toString else ""
 
     user.displayName.value = anyToStr(userInfo.displayName)
@@ -131,7 +134,11 @@ object App {
     userInfo
       .getIdToken()
       .then(
-        (accessToken: Any) => user.accessToken = accessToken.toString,
+        (accessToken: Any) => {
+          user.accessToken = accessToken.toString
+          if (printAccessToken)
+            println(user.accessToken)
+        },
         (err: Error) => println("error getting access token")
       )
   }

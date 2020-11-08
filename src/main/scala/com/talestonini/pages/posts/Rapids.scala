@@ -9,8 +9,8 @@ object Rapids extends PostPage {
 
   @html def apply(): Binding[Node] = body()
 
-  def title() = "Rapids"
+  def title(): String = "Rapids"
 
-  @html def content() = <p>...</p>
+  @html def content(): Binding[Node] = <p>...</p>
 
 }

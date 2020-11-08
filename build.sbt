@@ -1,4 +1,4 @@
-enablePlugins(ScalaJSPlugin)
+enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
 
 name := "TalesTonini.com"
 scalaVersion := "2.13.1"
@@ -45,3 +45,9 @@ libraryDependencies ++= Seq(
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
 compileScalastyle := scalastyle.in(Compile).toTask("").value
 (compile in Compile) := ((compile in Compile) dependsOn compileScalastyle).value
+
+//scalaJSUseMainModuleInitializer := true
+//mainClass := Some("com.talestonini.App")
+
+npmDependencies in Compile += "firebase"   -> "8.0.1"
+npmDependencies in Compile += "firebaseui" -> "4.7.1"

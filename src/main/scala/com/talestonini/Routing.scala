@@ -56,7 +56,7 @@ object Routing {
             docName = Var(postDocName),
             title = Var(p.fields.title.get),
             resource = Var(resource),
-            publishDate = Var(datetime2Str(p.fields.publishDate))
+            publishDate = Var(datetimeToStr(p.fields.publishDate))
           )
         }
       case f: Failure[Docs[Post]] =>
