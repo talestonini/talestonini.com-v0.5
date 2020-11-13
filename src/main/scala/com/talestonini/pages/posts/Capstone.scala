@@ -4,7 +4,7 @@ import com.thoughtworks.binding.Binding
 import org.lrng.binding.html
 import org.scalajs.dom.raw.Node
 
-object Capstone extends PostPage {
+object Capstone extends BasePostPage {
 
   @html def apply(): Binding[Node] = body()
 

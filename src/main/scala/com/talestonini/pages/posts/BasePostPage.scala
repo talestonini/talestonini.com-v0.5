@@ -22,7 +22,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Promise
 import scala.util.{Failure, Success}
 
-trait PostPage extends Observer {
+trait BasePostPage extends Observer {
 
   // promise for the post document backing this page
   val postDocPromise = Promise[Doc[Post]]()

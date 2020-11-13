@@ -10,7 +10,7 @@ object Posts {
   @html def apply(): Binding[Node] =
     <div>{postLinks()}</div>
 
-  // a binding post
+  // a binding post link
   case class BPostLink(
     title: Var[String],
     resource: Var[String],
