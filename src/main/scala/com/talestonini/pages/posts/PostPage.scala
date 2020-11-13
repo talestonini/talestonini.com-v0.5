@@ -1,4 +1,4 @@
-package com.talestonini.pages
+package com.talestonini.pages.posts
 
 import java.time.ZonedDateTime
 import java.time.ZoneId
@@ -24,28 +24,28 @@ import scala.util.{Failure, Success}
 
 trait PostPage extends Observer {
 
-  def title(): String
+  // promise for the post document backing this page
+  val postDocPromise = Promise[Doc[Post]]()
 
   def content(): Binding[Node]
 
   @html def body() =
     <div>
-      <div>{title()}</div>
+      <div>{bPostDoc.bind.fields.title.get}</div>
       {content()}
       <div>Comments ({bComments.length.bind.toString})</div>
       {commentInput()}
       {comments()}
     </div>
 
-  // when the promise for the name of post document to which this page's comments belong fulfills,
+  // when the promise for the post document which this page's comments belong to fulfills,
   // retrieve the comments from db
-  val postDocNamePromise = Promise[String]()
-  postDocNamePromise.future
+  postDocPromise.future
     .onComplete({
-      case postDocName: Success[String] =>
-        bPostDocName.value = postDocName.get
+      case postDoc: Success[Doc[Post]] =>
+        bPostDoc.value = postDoc.get
         CloudFirestore
-          .getComments(postDocName.get)
+          .getComments(postDoc.get.name)
           .onComplete({
             case comments: Success[Docs[Comment]] =>
               for (c <- comments.get)
@@ -57,7 +57,7 @@ trait PostPage extends Observer {
             case f: Failure[Docs[Comment]] =>
               println(s"failed getting comments: ${f.exception.getMessage()}")
           })
-      case f: Failure[String] =>
+      case f: Failure[Doc[Post]] =>
         println(s"failed getting post document name: ${f.exception.getMessage()}")
     })
 
@@ -69,6 +69,16 @@ trait PostPage extends Observer {
   }
 
   // -------------------------------------------------------------------------------------------------------------------
+
+  // a binding post document
+  private val bPostDoc: Var[Doc[Post]] = Var(Doc("", Post(None, None, None, None), "", ""))
+
+  // a binding comment
+  private case class BComment(
+    author: Var[String],
+    text: Var[String],
+    date: Var[String]
+  )
 
   // the comments on this page
   private val bComments = Vars.empty[BComment]
@@ -139,7 +149,7 @@ trait PostPage extends Observer {
       text = Option(comment)
     )
     CloudFirestore
-      .createComment(user.accessToken, bPostDocName.value, c)
+      .createComment(user.accessToken, bPostDoc.value.name, c)
       .onComplete({
         case doc: Success[Doc[Comment]] =>
           bComments.value += BComment(
