@@ -3,6 +3,7 @@ package com.talestonini
 import com.talestonini.App.user
 import com.talestonini.db.CloudFirestore
 import com.talestonini.db.model._
+import com.talestonini.pages._
 import com.talestonini.utils._
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, Route}
@@ -43,6 +44,14 @@ object Routing {
         for (p <- posts.get) {
           val resource = p.fields.resource.get
 
+          // instantiate a binding post
+          val bPost = BPost(
+            docName = Var(p.name),
+            title = Var(p.fields.title.get),
+            resource = Var(resource),
+            publishDate = Var(datetime2Str(p.fields.publishDate))
+          )
+
           // post document names are needed to retrieve their (child) comments
           val postDocName = p.name
           postDocNameMap
@@ -51,13 +60,7 @@ object Routing {
               throw new Exception(s"missing entry in postDocNameMap for $resource")
             ) success postDocName
 
-          // bPosts (binding posts) help build the Posts page
-          Posts.bPosts.value += Posts.BPost(
-            docName = Var(postDocName),
-            title = Var(p.fields.title.get),
-            resource = Var(resource),
-            publishDate = Var(datetime2Str(p.fields.publishDate))
-          )
+          Posts.bPosts.value += bPost
         }
       case f: Failure[Docs[Post]] =>
         println(s"failed getting posts: ${f.exception.getMessage()}")

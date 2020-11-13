@@ -99,7 +99,7 @@ object App {
 
   @html private def appContent(): Binding[Node] = {
     val notNowClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black not-now"
-    <div>
+    <div class="content">
       <div id="loding-user-info" class="hidden sign-in-providers"
         style={s"display:${display(loadingUserInfo.bind)}"}>
         Loading user info...
@@ -109,7 +109,7 @@ object App {
         <div id="firebaseui-auth-container"></div>
         <a class={notNowClasses} onclick={e: Event => hideSignInProviders()}>(Not now)</a>
       </div>
-      <div class="content">{route.state.bind.content.value.bind}</div>
+      <div>{route.state.bind.content.value.bind}</div>
     </div>
   }
 

@@ -30,9 +30,9 @@ trait PostPage extends Observer {
 
   @html def body() =
     <div>
-      <h1>{title()}</h1>
+      <div>{title()}</div>
       {content()}
-      <h3>Comments ({bComments.length.bind.toString})</h3>
+      <div>Comments ({bComments.length.bind.toString})</div>
       {commentInput()}
       {comments()}
     </div>
@@ -70,19 +70,12 @@ trait PostPage extends Observer {
 
   // -------------------------------------------------------------------------------------------------------------------
 
-  // a binding comment
-  private case class BComment(
-    author: Var[String],
-    text: Var[String],
-    date: Var[String]
-  )
-
   // the comments on this page
   private val bComments = Vars.empty[BComment]
 
   @html private def comments() =
     for (c <- bComments)
-      yield <p>{c.text.bind} ({c.author.bind}, {c.date.bind})</p>
+      yield <div>{c.text.bind} ({c.author.bind}, {c.date.bind})</div>
 
   // name of the post document to which this page's comments belong
   private val bPostDocName = Var("")

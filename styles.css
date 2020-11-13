@@ -34,7 +34,7 @@
 }
 
 .logo .pronunciation a {
-  font-family: 'Roboto', sans-serif;
+  font-family: Roboto, sans-serif;
   font-style: italic;
   font-size: 16px;
   padding-left: 10px;
@@ -85,6 +85,9 @@
 }
 
 .content {
+  font-family: Roboto, sans-serif;
+  font-style: normal;
+  font-weight: 200;
   padding: 20px;
 }
 
