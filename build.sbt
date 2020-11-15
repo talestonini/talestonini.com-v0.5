@@ -62,3 +62,7 @@ laikaHTML2Scala := {
       f.renameTo(new File(prefix + ".scala"))
     })
 }
+
+lazy val laikaPrep = taskKey[Unit]("Runs all Laika-related tasks at once.")
+laikaPrep := Def.sequential(laikaHTML, laikaHTML2Scala).value
+(compile in Compile) := ((compile in Compile) dependsOn laikaPrep).value
