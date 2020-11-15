@@ -1,4 +1,4 @@
-enablePlugins(ScalaJSPlugin)
+enablePlugins(ScalaJSPlugin, LaikaPlugin)
 
 name := "TalesTonini.com"
 scalaVersion := "2.13.1"
@@ -45,3 +45,20 @@ libraryDependencies ++= Seq(
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
 compileScalastyle := scalastyle.in(Compile).toTask("").value
 (compile in Compile) := ((compile in Compile) dependsOn compileScalastyle).value
+
+Laika / sourceDirectories := Seq(sourceDirectory.value / "main/resources/posts")
+laikaSite / target := sourceDirectory.value / "main/scala/com/talestonini/pages/posts"
+laikaTheme := laika.theme.Theme.empty
+laikaExtensions := Seq(laika.markdown.github.GitHubFlavor)
+
+lazy val laikaHTML2Scala = taskKey[Unit]("Renames Laika's .html outputs to .scala")
+laikaHTML2Scala := {
+  val laikaHTMLTargetDir = sourceDirectory.value / "main/scala/com/talestonini/pages/posts"
+  file(laikaHTMLTargetDir.getAbsolutePath)
+    .listFiles()
+    .map(f => {
+      val filename = f.getAbsolutePath()
+      val prefix   = filename.substring(0, filename.lastIndexOf("."))
+      f.renameTo(new File(prefix + ".scala"))
+    })
+}

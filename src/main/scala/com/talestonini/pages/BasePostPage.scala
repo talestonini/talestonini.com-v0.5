@@ -1,4 +1,4 @@
-package com.talestonini.pages.posts
+package com.talestonini.pages
 
 import java.time.ZonedDateTime
 import java.time.ZoneId

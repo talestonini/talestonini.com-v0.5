@@ -16,8 +16,9 @@ import scala.util.{Failure, Success}
 object Routing {
 
   private val postDocMap: Map[String, Promise[Doc[Post]]] = Map(
-    "capstone" -> Capstone.postDocPromise,
-    "rapids"   -> Rapids.postDocPromise
+    "funProgCapstone"      -> FunProgCapstone.postDocPromise,
+    "morseCodeChallenge"   -> MorseCodeChallenge.postDocPromise,
+    "urbanForestChallenge" -> UrbanForestChallenge.postDocPromise
   )
 
   private val pageMap: Map[String, Binding[Node]] = Map(
@@ -26,8 +27,9 @@ object Routing {
     "posts" -> Posts(),
     "tags"  -> UnderConstruction(),
     // posts
-    "capstone" -> Capstone(),
-    "rapids"   -> Rapids()
+    "funProgCapstone"      -> FunProgCapstone(),
+    "morseCodeChallenge"   -> MorseCodeChallenge(),
+    "urbanForestChallenge" -> UrbanForestChallenge()
   )
 
   private val pages = for (hash <- pageMap.keys) yield hash2Page(hash)
