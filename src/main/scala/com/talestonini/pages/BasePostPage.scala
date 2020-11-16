@@ -35,8 +35,8 @@ trait BasePostPage extends Observer {
       <div class="post-date">{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd)).getOrElse("")}</div>
       <div class="post-content">{content()}</div>
       <div class="post-comments">
-        Comments ({bComments.length.bind.toString})
-        {commentInput()}
+        <div class="header">Comments ({bComments.length.bind.toString})</div>
+        <div class="input">{commentInput()}</div>
         {comments()}
       </div>
     </div>
@@ -88,7 +88,7 @@ trait BasePostPage extends Observer {
 
   @html private def comments() =
     for (c <- bComments)
-      yield <div>{c.text.bind} ({c.author.bind}, {c.date.bind})</div>
+      yield <div class="comment">{c.text.bind} ({c.author.bind}, {c.date.bind})</div>
 
   // name of the post document to which this page's comments belong
   private val bPostDocName = Var("")

@@ -1,4 +1,4 @@
 {%
   class.name = MorseCodeChallenge
 %}
-This is a **Apache Kafka**-based code challenge.
+This is an **Apache Kafka**-based code challenge.

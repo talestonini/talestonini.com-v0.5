@@ -9,6 +9,6 @@ object MorseCodeChallenge extends BasePostPage {
 
   @html def apply(): Binding[Node] = body()
 
-  @html def content(): Binding[Node] = <p>This is a <strong>Apache Kafka</strong>-based code challenge.</p>
+  @html def content(): Binding[Node] = <p>This is an <strong>Apache Kafka</strong>-based code challenge.</p>
 
 }

@@ -1,4 +1,4 @@
 {%
   class.name = UrbanForestChallenge
 %}
-This is a **Apache Spark**-based code challenge.
+This is an **Apache Spark**-based code challenge.
