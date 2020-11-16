@@ -7,12 +7,11 @@ package object utils {
 
   private val SimpleDateFormatter = pattern("dd LLL yyyy")
 
-  def datetime2Str(datetime: ZonedDateTime): String = {
+  def datetime2Str(datetime: ZonedDateTime): String =
     datetime
       .toInstant()
       .atZone(ZoneId.systemDefault())
       .format(SimpleDateFormatter)
-  }
 
   def datetime2Str(datetime: Option[ZonedDateTime], default: String = "no date"): String =
     datetime match {

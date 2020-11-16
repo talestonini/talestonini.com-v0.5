@@ -87,8 +87,31 @@
 .content {
   font-family: Roboto, sans-serif;
   font-style: normal;
-  font-weight: 200;
+  font-weight: 350;
+  font-size: large;
   padding: 20px;
+}
+
+.content .post-title {
+  font-family: roboto-condensed, sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: xx-large;
+  margin: 0px 0px 10px 0px;
+}
+
+.content .post-date {
+  font-size: small;
+  font-style: italic;
+  margin: 0px 0px 30px 0px;
+}
+
+.content .post-content {
+  margin: 0px 0px 30px 0px;
+}
+
+.content .post-comments {
+  font-size: smaller;
 }
 
 hr {

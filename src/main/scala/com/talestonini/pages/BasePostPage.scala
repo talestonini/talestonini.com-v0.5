@@ -31,12 +31,14 @@ trait BasePostPage extends Observer {
 
   @html def body() =
     <div>
-      <div>{bPostDoc.bind.fields.title.getOrElse("")}</div>
-      <div>{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd)).getOrElse("")}</div>
-      {content()}
-      <div>Comments ({bComments.length.bind.toString})</div>
-      {commentInput()}
-      {comments()}
+      <div class="post-title">{bPostDoc.bind.fields.title.getOrElse("")}</div>
+      <div class="post-date">{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd)).getOrElse("")}</div>
+      <div class="post-content">{content()}</div>
+      <div class="post-comments">
+        Comments ({bComments.length.bind.toString})
+        {commentInput()}
+        {comments()}
+      </div>
     </div>
 
   // when the promise for the post document which this page's comments belong to fulfills,
