@@ -80,9 +80,9 @@ package object model {
 
   case class Post(
     title: Option[String],
-    resource: Option[String],
     firstPublishDate: Option[ZonedDateTime],
-    publishDate: Option[ZonedDateTime]
+    publishDate: Option[ZonedDateTime],
+    resource: Option[String]
   ) extends Entity {
     def dbFields: Seq[String] = Seq("title", "resource", "first_publish_date", "publish_date")
     def content: String       = title.getOrElse("") + resource.getOrElse("")
@@ -94,10 +94,10 @@ package object model {
       final def apply(c: HCursor): Decoder.Result[Post] =
         for {
           title            <- c.downField("title").get[String]("stringValue")
-          resource         <- c.downField("resource").get[String]("stringValue")
           firstPublishDate <- c.downField("first_publish_date").get[ZonedDateTime]("timestampValue")
           publishDate      <- c.downField("publish_date").get[ZonedDateTime]("timestampValue")
-        } yield Post(Option(title), Option(resource), Option(firstPublishDate), Option(publishDate))
+          resource         <- c.downField("resource").get[String]("stringValue")
+        } yield Post(Option(title), Option(firstPublishDate), Option(publishDate), Option(resource))
     }
 
   // --- comment -------------------------------------------------------------------------------------------------------

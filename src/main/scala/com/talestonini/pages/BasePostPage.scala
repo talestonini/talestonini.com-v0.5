@@ -31,7 +31,8 @@ trait BasePostPage extends Observer {
 
   @html def body() =
     <div>
-      <div>{bPostDoc.bind.fields.title.get}</div>
+      <div>{bPostDoc.bind.fields.title.getOrElse("")}</div>
+      <div>{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd)).getOrElse("")}</div>
       {content()}
       <div>Comments ({bComments.length.bind.toString})</div>
       {commentInput()}
@@ -51,8 +52,8 @@ trait BasePostPage extends Observer {
               for (c <- comments.get)
                 bComments.value += BComment(
                   author = Var(c.fields.author.get.name.get),
-                  text = Var(c.fields.text.get),
-                  date = Var(datetime2Str(c.fields.date))
+                  date = Var(datetime2Str(c.fields.date)),
+                  text = Var(c.fields.text.get)
                 )
             case f: Failure[Docs[Comment]] =>
               println(s"failed getting comments: ${f.exception.getMessage()}")
@@ -76,8 +77,8 @@ trait BasePostPage extends Observer {
   // a binding comment
   private case class BComment(
     author: Var[String],
-    text: Var[String],
-    date: Var[String]
+    date: Var[String],
+    text: Var[String]
   )
 
   // the comments on this page

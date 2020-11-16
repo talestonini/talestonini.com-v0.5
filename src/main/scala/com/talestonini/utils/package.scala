@@ -5,12 +5,19 @@ import java.time.format.DateTimeFormatter.{ofPattern => pattern}
 
 package object utils {
 
-  private val SimpleDateFormatter = pattern("dd/MM/yyyy")
+  private val SimpleDateFormatter = pattern("dd LLL yyyy")
 
-  def datetime2Str(datetime: Option[ZonedDateTime]): String =
+  def datetime2Str(datetime: ZonedDateTime): String = {
+    datetime
+      .toInstant()
+      .atZone(ZoneId.systemDefault())
+      .format(SimpleDateFormatter)
+  }
+
+  def datetime2Str(datetime: Option[ZonedDateTime], default: String = "no date"): String =
     datetime match {
-      case Some(dt) => dt.format(SimpleDateFormatter)
-      case None     => "no date"
+      case Some(dt) => datetime2Str(dt)
+      case None     => default
     }
 
   def randomAlphaNumericString(length: Int): String = {

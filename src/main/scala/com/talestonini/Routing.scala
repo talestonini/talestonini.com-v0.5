@@ -47,8 +47,8 @@ object Routing {
           // to build the posts page, with the list of posts
           Posts.bPostLinks.value += Posts.BPostLink(
             title = Var(p.fields.title.get),
-            resource = Var(resource),
-            publishDate = Var(datetime2Str(p.fields.publishDate))
+            publishDate = Var(datetime2Str(p.fields.publishDate)),
+            resource = Var(resource)
           )
 
           // to build each post page
