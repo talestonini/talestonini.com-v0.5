@@ -30,7 +30,11 @@ object App {
     .auth()
     .onAuthStateChanged(
       (userInfo: User) => {
-        if (!getFromStorage(userClickedSignOut)) startLoadingAnimation() else stopLoadingAnimation()
+        if (!getFromStorage(userClickedSignOut))
+          startLoadingAnimation()
+        else
+          stopLoadingAnimation()
+
         if (Option(userInfo).isDefined) {
           captureUserInfo(userInfo)
           hideSignInProviders()

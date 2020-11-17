@@ -146,7 +146,7 @@ hr {
 }
 
 #animated-top {
-  animation: changeWidth 0.5s infinite alternate;
+  animation: changeWidth 0.2s infinite alternate;
   margin: auto;
 }
 
@@ -155,7 +155,7 @@ hr {
 }
 
 #animated-mobile {
-  animation: changeWidth 0.5s infinite alternate;
+  animation: changeWidth 0.2s infinite alternate;
   margin: auto;
 }
 
@@ -164,7 +164,7 @@ hr {
 }
 
 #animated-bottom {
-  animation: changeWidth 0.5s infinite alternate;
+  animation: changeWidth 0.2s infinite alternate;
   margin: auto;
 }
 
