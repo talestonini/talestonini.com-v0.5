@@ -30,14 +30,10 @@ object App {
     .auth()
     .onAuthStateChanged(
       (userInfo: User) => {
-        if (!getFromStorage(userClickedSignOut)) {
-          displayLoadingUserInfo()
-          startLoadingAnimation()
-        }
+        if (!getFromStorage(userClickedSignOut)) startLoadingAnimation() else stopLoadingAnimation()
         if (Option(userInfo).isDefined) {
           captureUserInfo(userInfo)
           hideSignInProviders()
-          hideLoadingUserInfo()
           stopLoadingAnimation()
           user.notifyObservers(UserSignedIn)
         } else {
@@ -76,21 +72,19 @@ object App {
           {Logo().bind}
           {Menu().bind}
         </div>
-        <div id="animated">
-          <hr></hr>
-        </div>
+        <div id="animated-top"><hr></hr></div>
       </div>
       <div class="w3-content w3-row w3-hide-large w3-hide-medium">
         <div class="w3-padding-8">
           {Logo().bind}
           {Menu(isMobile = true).bind}
         </div>
-        <hr class=""></hr>
+        <div id="animated-mobile"><hr></hr></div>
       </div>
 
       <div class="w3-content">
         {appContent()}
-        <hr class=""></hr>
+        <div id="animated-bottom"><hr></hr></div>
       </div>
 
       <footer class="w3-container w3-padding-16 w3-center w3-hide-small">
@@ -104,10 +98,6 @@ object App {
   @html private def appContent(): Binding[Node] = {
     val notNowClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black not-now"
     <div class="content">
-      <div id="loding-user-info" class="hidden sign-in-providers"
-        style={s"display:${display(loadingUserInfo.bind)}"}>
-        Loading user info...
-      </div>
       <div id="sign-in-providers" class="hidden sign-in-providers"
         style={s"display:${display(signInProviders.bind)}"}>
         <div id="firebaseui-auth-container"></div>
@@ -116,10 +106,6 @@ object App {
       <div>{route.state.bind.content.value.bind}</div>
     </div>
   }
-
-  private val loadingUserInfo                = Var(false)
-  private def displayLoadingUserInfo(): Unit = loadingUserInfo.value = true
-  private def hideLoadingUserInfo(): Unit    = loadingUserInfo.value = false
 
   private val signInProviders          = Var(false)
   private def displaySignInProviders() = signInProviders.value = true

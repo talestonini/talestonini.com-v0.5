@@ -145,12 +145,30 @@ hr {
   width: 95%;
 }
 
-#animated {
+#animated-top {
   animation: changeWidth 0.5s infinite alternate;
   margin: auto;
 }
 
-#animated.off {
+#animated-top.off {
+  animation-name: none;
+}
+
+#animated-mobile {
+  animation: changeWidth 0.5s infinite alternate;
+  margin: auto;
+}
+
+#animated-mobile.off {
+  animation-name: none;
+}
+
+#animated-bottom {
+  animation: changeWidth 0.5s infinite alternate;
+  margin: auto;
+}
+
+#animated-bottom.off {
   animation-name: none;
 }
 
