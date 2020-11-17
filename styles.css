@@ -135,11 +135,30 @@
   font-size: 15px;
 }
 
+.content .post-comments .header {
+  font-size: 20px;
+  font-weight: bold;
+  padding-bottom: 5px;
+}
+
+.content .post-comments .input {
+  padding-bottom: 5px;
+}
+
 .content .post-comments .comment {
   margin: 0px 0px 10px 0px;
 }
 
-hr {
+.content button {
+  width: 120px;
+}
+
+.content hr {
+  border-top: 1px dotted;
+  color: lightgray;
+}
+
+.main-hr hr {
   border-top: 4px dotted;
   margin: auto;
   width: 95%;

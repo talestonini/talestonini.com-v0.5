@@ -8,6 +8,7 @@ import com.talestonini.utils.javascript.display
 import com.talestonini.utils.observer.EventName._
 import com.talestonini.utils.observer.Observer
 import com.thoughtworks.binding.Binding
+import com.thoughtworks.binding.Binding.BindingSeq
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import org.lrng.binding.html
 import org.lrng.binding.html.NodeBinding
@@ -31,9 +32,10 @@ trait BasePostPage extends Observer {
       <div class="post-title">{bPostDoc.bind.fields.title.getOrElse("")}</div>
       <div class="post-date">{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd)).getOrElse("")}</div>
       <div class="post-content">{content()}</div>
+      <hr></hr>
       <div class="post-comments">
         <div class="header">Comments ({bComments.length.bind.toString})</div>
-        <div class="input">{commentInput()}</div>
+        <div class="comment">{commentInput()}</div>
         {comments()}
       </div>
     </div>
@@ -84,8 +86,13 @@ trait BasePostPage extends Observer {
   private val bComments = Vars.empty[BComment]
 
   @html private def comments() =
-    for (c <- bComments)
-      yield <div class="comment">{c.text.bind} ({c.author.bind}, {c.date.bind})</div>
+    for (c <- bComments) yield aComment(c)
+
+  @html private def aComment(c: BComment): Binding[Node] =
+    <div>
+      <hr></hr>
+      <div>{c.text.bind} ({c.author.bind}, {c.date.bind})</div>
+    </div>
 
   // name of the post document to which this page's comments belong
   private val bPostDocName = Var("")
@@ -99,7 +106,7 @@ trait BasePostPage extends Observer {
     val bText       = Var(initComment)
 
     val bTextArea: NodeBinding[HTMLTextAreaElement] =
-      <textarea rows="5" value={bText.bind} onfocus={e: Event => bText.value = ""} />
+      <textarea class="w3-input w3-border" rows="3" value={bText.bind} onfocus={e: Event => bText.value = ""} />
 
     def cleanTextArea() = bText.value = initComment
 
@@ -119,15 +126,16 @@ trait BasePostPage extends Observer {
         <p>Please sign in to comment</p>
       </div>
 
+    val buttonClasses = "w3-btn w3-padding w3-black comment-button"
     val commentWidgets: Binding[Node] =
       <div style={s"display:${display(isAllowedToComment.bind)}"}>
-        {bTextArea.bind}
-        <button onclick={commentButtonHandler}>Comment</button>
-        <button onclick={cancelButtonHandler}>Cancel</button>
+        <div class="input">{bTextArea.bind}</div>
+        <button type="button" class={buttonClasses} onclick={commentButtonHandler}>Comment</button>
+        <button type="button" class={buttonClasses} onclick={cancelButtonHandler}>Cancel</button>
       </div>
 
     val div =
-      <div>
+      <div class="comment">
         {signInToComment}
         {commentWidgets}
       </div>

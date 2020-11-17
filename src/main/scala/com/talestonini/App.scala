@@ -76,19 +76,25 @@ object App {
           {Logo().bind}
           {Menu().bind}
         </div>
-        <div id="animated-top"><hr></hr></div>
+        <div id="animated-top" class="main-hr">
+          <hr></hr>
+        </div>
       </div>
       <div class="w3-content w3-row w3-hide-large w3-hide-medium">
         <div class="w3-padding-8">
           {Logo().bind}
           {Menu(isMobile = true).bind}
         </div>
-        <div id="animated-mobile"><hr></hr></div>
+        <div id="animated-mobile" class="main-hr">
+          <hr></hr>
+        </div>
       </div>
 
       <div class="w3-content">
         {appContent()}
-        <div id="animated-bottom"><hr></hr></div>
+        <div id="animated-bottom" class="main-hr">
+          <hr></hr>
+        </div>
       </div>
 
       <footer class="w3-container w3-padding-16 w3-center w3-hide-small">
