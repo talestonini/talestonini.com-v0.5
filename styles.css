@@ -142,16 +142,25 @@
 hr {
   border-top: 4px dotted;
   margin: auto;
-}
-
-.trans-grow {
-  -webkit-transition: width 1s ease-out; /* For Safari 3.1 to 6.0 */
-  transition: width 1s ease-out;
-  width: 0;
-}
-
-.grow{
   width: 95%;
+}
+
+#animated {
+  animation: changeWidth 0.5s infinite alternate;
+  margin: auto;
+}
+
+#animated.off {
+  animation-name: none;
+}
+
+@keyframes changeWidth {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 .no-decoration {

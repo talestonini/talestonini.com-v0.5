@@ -43,8 +43,12 @@ package object utils {
       if (flag) "block" else "none"
 
     @js.native
-    @JSGlobal("displayLoadingAnimation")
-    def displayLoadingAnimation(): Unit = js.native
+    @JSGlobal("startLoadingAnimation")
+    def startLoadingAnimation(): Unit = js.native
+
+    @js.native
+    @JSGlobal("stopLoadingAnimation")
+    def stopLoadingAnimation(): Unit = js.native
 
   }
 
