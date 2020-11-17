@@ -74,19 +74,19 @@ object App {
           {Logo().bind}
           {Menu().bind}
         </div>
-        <hr></hr>
+        <hr class="trans-grow"></hr>
       </div>
       <div class="w3-content w3-row w3-hide-large w3-hide-medium">
         <div class="w3-padding-8">
           {Logo().bind}
           {Menu(isMobile = true).bind}
         </div>
-        <hr></hr>
+        <hr class="trans-grow"></hr>
       </div>
 
       <div class="w3-content">
         {appContent()}
-        <hr></hr>
+        <hr class="trans-grow"></hr>
       </div>
 
       <footer class="w3-container w3-padding-16 w3-center w3-hide-small">

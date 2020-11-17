@@ -141,7 +141,17 @@
 
 hr {
   border-top: 4px dotted;
-  margin: 5px 20px 5px 20px;
+  margin: auto;
+}
+
+.trans-grow {
+  -webkit-transition: width 1s ease-out; /* For Safari 3.1 to 6.0 */
+  transition: width 1s ease-out;
+  width: 0;
+}
+
+.grow{
+  width: 95%;
 }
 
 .no-decoration {
@@ -163,15 +173,15 @@ hr {
     padding: 10px 5px 10px 10px;
   }
 
-  .menu-item {
-    margin: 0px 20px 0px 20px;
-  }
-
   .menu-sign-in-out {
     padding: 10px 10px 10px 0px;
   }
 
-  .sign-in-out-menu-item {
+  .menu-item {
+    margin: 0px 20px 0px 20px;
+  }
+
+  .menu-item-sign-in-out {
     font-size: small;
     padding: 0px 0px 10px 0px;
     text-decoration: none;
@@ -179,9 +189,5 @@ hr {
 
   .content {
     padding: 10px;
-  }
-
-  hr {
-    margin: 0px 10px 0px 10px;
   }
 }

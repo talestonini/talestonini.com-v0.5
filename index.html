@@ -73,6 +73,9 @@
   <!-- Google Fonts -->
   <link rel="stylesheet" href="https://use.typekit.net/upj2xek.css">
 
+  <!-- jQuery -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
   <!-- Favicom -->
   <link rel="apple-touch-icon" sizes="180x180" href="./favicom/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="./favicom/favicon-32x32.png">
@@ -97,9 +100,16 @@
         document.getElementById("sidebar").style.display = "none";
       }
     }
+
     function closeSidebar() {
       document.getElementById("sidebar").style.display = "none";
     }
+
+    jQuery(document).ready(function($){
+      setTimeout(function(){
+        $('.trans-grow').addClass('grow');
+      }, 275);
+    });
   </script>
 
   <script type="text/javascript">
