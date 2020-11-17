@@ -1,8 +1,5 @@
 package com.talestonini.pages
 
-import java.time.ZonedDateTime
-import java.time.ZoneId
-
 import com.talestonini.App.user
 import com.talestonini.db.CloudFirestore
 import com.talestonini.db.model._
@@ -139,7 +136,6 @@ trait BasePostPage extends Observer {
   }
 
   // persist new comment into db
-  private val Now = ZonedDateTime.now(ZoneId.of("UTC"))
   private def persistComment(comment: String): Unit = {
     val dbUser = com.talestonini.db.model.User(
       name = Option(user.displayName.value),
@@ -148,7 +144,7 @@ trait BasePostPage extends Observer {
     )
     val c = Comment(
       author = Option(dbUser),
-      date = Option(Now),
+      date = Option(now()),
       text = Option(comment)
     )
     CloudFirestore

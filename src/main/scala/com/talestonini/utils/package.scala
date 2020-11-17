@@ -19,6 +19,8 @@ package object utils {
       case None     => default
     }
 
+  def now() = ZonedDateTime.now(ZoneId.of("UTC"))
+
   def randomAlphaNumericString(length: Int): String = {
     def randomStringFromCharList(length: Int, chars: Seq[Char]): String = {
       val sb = new StringBuilder
