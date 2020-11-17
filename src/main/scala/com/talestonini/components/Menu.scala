@@ -53,7 +53,7 @@ object Menu extends Observer {
   @html private def greetUser(): Binding[Node] = {
     def firstStr(str: String) = str.split(" ")(0)
 
-    val signInOutClasses = s"$commonClasses sign-in-out-menu-item"
+    val signInOutClasses = s"$commonClasses menu-item-sign-in-out"
     <div>
       <div id="greet-signed-in" class="hidden greeting" style={s"display:${display(isUserSignedIn.bind)}"}>
         <p>Hi, {firstStr(user.displayName.bind)}!</p>
