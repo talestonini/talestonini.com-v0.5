@@ -4,7 +4,7 @@ import com.talestonini.App.user
 import com.talestonini.db.CloudFirestore
 import com.talestonini.db.model._
 import com.talestonini.utils._
-import com.talestonini.utils.js.display
+import com.talestonini.utils.javascript.display
 import com.talestonini.utils.observer.EventName._
 import com.talestonini.utils.observer.Observer
 import com.thoughtworks.binding.Binding

@@ -2,6 +2,8 @@ package com.talestonini
 
 import java.time._
 import java.time.format.DateTimeFormatter.{ofPattern => pattern}
+import scala.scalajs.js
+import scala.scalajs.js.annotation.JSGlobal
 
 package object utils {
 
@@ -35,10 +37,14 @@ package object utils {
     randomStringFromCharList(length, chars)
   }
 
-  object js {
+  object javascript {
 
     def display(flag: Boolean): String =
       if (flag) "block" else "none"
+
+    @js.native
+    @JSGlobal("displayLoadingAnimation")
+    def displayLoadingAnimation(): Unit = js.native
 
   }
 

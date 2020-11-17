@@ -1,7 +1,7 @@
 package com.talestonini
 
 import com.talestonini.Routing._
-import com.talestonini.utils.js.display
+import com.talestonini.utils.javascript._
 import com.talestonini.utils.observer.EventName._
 import com.talestonini.utils.observer.SimpleObservable
 import com.thoughtworks.binding.Binding
@@ -32,11 +32,13 @@ object App {
       (userInfo: User) => {
         if (!getFromStorage(userClickedSignOut)) {
           displayLoadingUserInfo()
+          displayLoadingAnimation()
         }
         if (Option(userInfo).isDefined) {
           captureUserInfo(userInfo)
           hideSignInProviders()
           hideLoadingUserInfo()
+          displayLoadingAnimation()
           user.notifyObservers(UserSignedIn)
         } else {
           discardUserInfo()

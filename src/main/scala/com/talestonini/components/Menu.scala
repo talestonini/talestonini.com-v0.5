@@ -1,7 +1,7 @@
 package com.talestonini.components
 
 import com.talestonini.App.{user, handleClickSignIn, handleClickSignOut}
-import com.talestonini.utils.js.display
+import com.talestonini.utils.javascript.display
 import com.talestonini.utils.observer.EventName._
 import com.talestonini.utils.observer.Observer
 import com.thoughtworks.binding.Binding
