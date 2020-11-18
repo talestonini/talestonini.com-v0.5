@@ -7,8 +7,6 @@ import org.scalajs.dom.raw.Node
 
 object MorseCodeChallenge extends BasePostPage {
 
-  @html def apply(): Binding[Node] = body()
-
   @html def postContent(): Binding[Node] = <p>This is an <strong>Apache Kafka</strong>-based code challenge.</p>
 
 }

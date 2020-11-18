@@ -18,56 +18,7 @@ import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel, JSGlobal}
 @JSExportTopLevel("App")
 object App {
 
-  case object user extends SimpleObservable {
-    val displayName         = Var("")
-    val email               = Var("")
-    val providerId          = Var("")
-    val uid                 = Var("")
-    var accessToken: String = _
-  }
-
-  Firebase
-    .auth()
-    .onAuthStateChanged(
-      (userInfo: User) => {
-        if (!getFromStorage(userClickedSignOut))
-          startLoadingAnimation()
-        else
-          stopLoadingAnimation()
-
-        if (Option(userInfo).isDefined) {
-          captureUserInfo(userInfo)
-          hideSignInProviders()
-          stopLoadingAnimation()
-          user.notifyObservers(UserSignedIn)
-        } else {
-          discardUserInfo()
-          uiStart()
-          user.notifyObservers(UserSignedOut)
-        }
-      },
-      (err: firebase.auth.Error) => println("error capturing auth state change"),
-      () => {}
-    )
-
-  def handleClickSignIn(): Unit = {
-    setInStorage(userClickedSignOut, false)
-    displaySignInProviders()
-  }
-
-  def handleClickSignOut(): Unit = {
-    setInStorage(userClickedSignOut, true)
-    Firebase.auth().signOut()
-  }
-
-  @JSExport("main")
-  def main(): Unit =
-    html.render(document.body, app())
-
-  // -------------------------------------------------------------------------------------------------------------------
-
-  // local storage keys
-  private val userClickedSignOut = "userClickedSignOut"
+  // --- UI ------------------------------------------------------------------------------------------------------------
 
   @html private def app(): Binding[Node] =
     <div>
@@ -108,7 +59,8 @@ object App {
   @html private def appContent(): Binding[Node] = {
     val notNowClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black not-now"
     <div class="content">
-      <div id="sign-in-providers" class="hidden sign-in-providers" style={s"display:${display(signInProviders.bind)}"}>
+      <div id="sign-in-providers" class="hidden sign-in-providers"
+        style={s"display:${display(signInProvidersVisible.bind)}"}>
         <div id="firebaseui-auth-container"></div>
         <a class={notNowClasses} onclick={e: Event => hideSignInProviders()}>(Not now)</a>
       </div>
@@ -116,9 +68,68 @@ object App {
     </div>
   }
 
-  private val signInProviders          = Var(false)
-  private def displaySignInProviders() = signInProviders.value = true
-  private def hideSignInProviders()    = signInProviders.value = false
+  @JSExport("main")
+  def main(): Unit = html.render(document.body, app())
+
+  // Firebase UI (auth stuff)
+  @js.native
+  @JSGlobal("uiStart")
+  private def uiStart(): Unit = js.native
+
+  // --- public --------------------------------------------------------------------------------------------------------
+
+  // signed in user info
+  case object user extends SimpleObservable {
+    val displayName         = Var("")
+    val email               = Var("")
+    val providerId          = Var("")
+    val uid                 = Var("")
+    var accessToken: String = _
+  }
+
+  // react to user signing in/out
+  Firebase
+    .auth()
+    .onAuthStateChanged(
+      (userInfo: User) => {
+        if (!getFromStorage(userClickedSignOut))
+          startLoadingAnimation()
+        else
+          stopLoadingAnimation()
+
+        if (Option(userInfo).isDefined) {
+          captureUserInfo(userInfo)
+          hideSignInProviders()
+          stopLoadingAnimation()
+          user.notifyObservers(UserSignedIn)
+        } else {
+          discardUserInfo()
+          uiStart()
+          user.notifyObservers(UserSignedOut)
+        }
+      },
+      (err: firebase.auth.Error) => println("error capturing auth state change"),
+      () => {}
+    )
+
+  def handleClickSignIn(): Unit = {
+    setInStorage(userClickedSignOut, false)
+    displaySignInProviders()
+  }
+
+  def handleClickSignOut(): Unit = {
+    setInStorage(userClickedSignOut, true)
+    Firebase.auth().signOut()
+  }
+
+  // --- private -------------------------------------------------------------------------------------------------------
+
+  // local storage keys
+  private val userClickedSignOut = "userClickedSignOut"
+
+  private val signInProvidersVisible   = Var(false)
+  private def displaySignInProviders() = signInProvidersVisible.value = true
+  private def hideSignInProviders()    = signInProvidersVisible.value = false
 
   private def captureUserInfo(userInfo: User): Unit = {
     def anyToStr(any: Any): String = if (any != null) any.toString else ""
@@ -142,14 +153,8 @@ object App {
     user.uid.value = ""
   }
 
-  private def setInStorage(key: String, value: Boolean) =
-    LocalStorage.update(key, value.toString)
-
-  private def getFromStorage(key: String) =
-    LocalStorage.apply(key).map(_.toBoolean).getOrElse(false)
-
-  @js.native
-  @JSGlobal("uiStart")
-  private def uiStart(): Unit = js.native
+  // browser local storage use
+  private def setInStorage(key: String, value: Boolean) = LocalStorage.update(key, value.toString)
+  private def getFromStorage(key: String)               = LocalStorage.apply(key).map(_.toBoolean).getOrElse(false)
 
 }

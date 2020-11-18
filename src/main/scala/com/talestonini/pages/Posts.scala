@@ -19,8 +19,6 @@ object Posts {
 
   val bPostLinks = Vars.empty[BPostLink]
 
-  // -------------------------------------------------------------------------------------------------------------------
-
   @html private def postLinks() =
     for (p <- bPostLinks)
       yield <p><a href={s"#/${p.resource.bind}"}>{p.title.bind}</a> ({p.publishDate.bind})</p>

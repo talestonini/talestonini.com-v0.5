@@ -32,8 +32,6 @@ object Logo {
       </a>
     </div>
 
-  // -------------------------------------------------------------------------------------------------------------------
-
   @html private def pronunciation(p: String): Binding[Node] =
     <td class="pronunciation">
       <a href="https://www.oxfordlearnersdictionaries.com/about/english/pronunciation_english" target="_blank">

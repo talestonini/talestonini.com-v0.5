@@ -34,8 +34,6 @@ object Routing {
 
   private val pages = for (hash <- pageMap.keys) yield hash2Page(hash)
 
-  // -------------------------------------------------------------------------------------------------------------------
-
   // retrieve posts from db at application start
   CloudFirestore
     .getPosts()

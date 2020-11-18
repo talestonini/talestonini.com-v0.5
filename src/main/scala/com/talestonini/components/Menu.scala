@@ -13,6 +13,14 @@ import scala.scalajs.js.annotation.JSGlobal
 
 object Menu extends Observer {
 
+  private case class MenuItem(label: String, hash: String)
+
+  private val menuItems: Seq[MenuItem] = Seq(
+    MenuItem("Posts", "#/posts"),
+    MenuItem("Tags", "#/tags"),
+    MenuItem("About", "#/about")
+  )
+
   @html def apply(isMobile: Boolean = false): Binding[BindingSeq[Node]] = Binding {
     val menuElems = {
       <div class="w3-col w3-right w3-hide-small" style="width:100px">
@@ -38,18 +46,6 @@ object Menu extends Observer {
     if (!isMobile) menuElems else mobileMenuElems
   }
 
-  user.register(this, UserSignedIn, UserSignedOut)
-  def onNotify(e: EventName): Unit = e match {
-    case UserSignedIn  => isUserSignedIn.value = true
-    case UserSignedOut => isUserSignedIn.value = false
-  }
-
-  // -------------------------------------------------------------------------------------------------------------------
-
-  private val commonClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-hide-small"
-
-  private val isUserSignedIn = Var(false)
-
   @html private def greetUser(): Binding[Node] = {
     def firstStr(str: String) = str.split(" ")(0)
 
@@ -65,14 +61,6 @@ object Menu extends Observer {
       </div>
     </div>
   }
-
-  private case class MenuItem(label: String, hash: String)
-
-  private val menuItems: Seq[MenuItem] = Seq(
-    MenuItem("Posts", "#/posts"),
-    MenuItem("Tags", "#/tags"),
-    MenuItem("About", "#/about")
-  )
 
   @html private def menu() =
     for (mi <- menuItems)
@@ -105,8 +93,18 @@ object Menu extends Observer {
     Seq(signIn, signOut) ++ items
   }
 
+  // react to user signing in/out
+  private val isUserSignedIn = Var(false)
+  user.register(this, UserSignedIn, UserSignedOut)
+  def onNotify(e: EventName): Unit = e match {
+    case UserSignedIn  => isUserSignedIn.value = true
+    case UserSignedOut => isUserSignedIn.value = false
+  }
+
   @js.native
   @JSGlobal("toggleSidebar")
   private def toggleSidebar(): Unit = js.native
+
+  private val commonClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-hide-small"
 
 }

@@ -25,9 +25,10 @@ trait BasePostPage extends Observer {
   // promise for the post document backing this page
   val postDocPromise = Promise[Doc[Post]]()
 
+  // where each post builds its content, converted from MarkDown to HTML by Laika
   def postContent(): Binding[Node]
 
-  @html def body() =
+  @html def apply(): Binding[Node] =
     <div>
       <div class="post-title">{bPostDoc.bind.fields.title.getOrElse("")}</div>
       <div class="post-date">{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd)).getOrElse("")}</div>
