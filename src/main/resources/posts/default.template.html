@@ -9,6 +9,6 @@ object ${class.name} extends BasePostPage {
 
   @html def apply(): Binding[Node] = body()
 
-  @html def content(): Binding[Node] = ${cursor.currentDocument.content}
+  @html def postContent(): Binding[Node] = ${cursor.currentDocument.content}
 
 }

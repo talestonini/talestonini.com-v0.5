@@ -25,13 +25,13 @@ trait BasePostPage extends Observer {
   // promise for the post document backing this page
   val postDocPromise = Promise[Doc[Post]]()
 
-  def content(): Binding[Node]
+  def postContent(): Binding[Node]
 
   @html def body() =
     <div>
       <div class="post-title">{bPostDoc.bind.fields.title.getOrElse("")}</div>
       <div class="post-date">{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd)).getOrElse("")}</div>
-      <div class="post-content">{content()}</div>
+      <div class="post-content">{postContent()}</div>
       <hr></hr>
       <div class="post-comments">
         <div class="header">Comments ({bComments.length.bind.toString})</div>

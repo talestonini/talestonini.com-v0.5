@@ -9,6 +9,6 @@ object UrbanForestChallenge extends BasePostPage {
 
   @html def apply(): Binding[Node] = body()
 
-  @html def content(): Binding[Node] = <p>This is an <strong>Apache Spark</strong>-based code challenge.</p>
+  @html def postContent(): Binding[Node] = <p>This is an <strong>Apache Spark</strong>-based code challenge.</p>
 
 }
