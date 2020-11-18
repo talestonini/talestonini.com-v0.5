@@ -1,7 +1,7 @@
 package com.talestonini
 
 import com.talestonini.Routing._
-import com.talestonini.utils.js.display
+import com.talestonini.utils.javascript._
 import com.talestonini.utils.observer.EventName._
 import com.talestonini.utils.observer.SimpleObservable
 import com.thoughtworks.binding.Binding
@@ -18,6 +18,67 @@ import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel, JSGlobal}
 @JSExportTopLevel("App")
 object App {
 
+  // --- UI ------------------------------------------------------------------------------------------------------------
+
+  @html private def app(): Binding[Node] =
+    <div>
+      <div class="w3-content w3-row w3-hide-small">
+        <div class="w3-padding-16">
+          {Logo().bind}
+          {Menu().bind}
+        </div>
+        <div id="animated-top" class="main-hr">
+          <hr></hr>
+        </div>
+      </div>
+      <div class="w3-content w3-row w3-hide-large w3-hide-medium">
+        <div class="w3-padding-8">
+          {Logo().bind}
+          {Menu(isMobile = true).bind}
+        </div>
+        <div id="animated-mobile" class="main-hr">
+          <hr></hr>
+        </div>
+      </div>
+
+      <div class="w3-content">
+        {appContent()}
+        <div id="animated-bottom" class="main-hr">
+          <hr></hr>
+        </div>
+      </div>
+
+      <footer class="w3-container w3-padding-16 w3-center w3-hide-small">
+        {Footer().bind}
+      </footer>
+      <footer class="w3-container w3-padding-8 w3-center w3-hide-large w3-hide-medium">
+        {Footer().bind}
+      </footer>
+    </div>
+
+  @html private def appContent(): Binding[Node] = {
+    val notNowClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black not-now"
+    <div class="content">
+      <div id="sign-in-providers" class="hidden sign-in-providers"
+        style={s"display:${display(isSignInProvidersVisible.bind)}"}>
+        <div id="firebaseui-auth-container"></div>
+        <a class={notNowClasses} onclick={e: Event => hideSignInProviders()}>(Not now)</a>
+      </div>
+      <div>{route.state.bind.content.value.bind}</div>
+    </div>
+  }
+
+  @JSExport("main")
+  def main(): Unit = html.render(document.body, app())
+
+  // Firebase UI (auth stuff)
+  @js.native
+  @JSGlobal("uiStart")
+  private def uiStart(): Unit = js.native
+
+  // --- public --------------------------------------------------------------------------------------------------------
+
+  // signed in user info
   case object user extends SimpleObservable {
     val displayName         = Var("")
     val email               = Var("")
@@ -26,17 +87,20 @@ object App {
     var accessToken: String = _
   }
 
+  // react to user signing in/out
   Firebase
     .auth()
     .onAuthStateChanged(
       (userInfo: User) => {
-        if (!getFromStorage(userClickedSignOut)) {
-          displayLoadingUserInfo()
-        }
+        if (!getFromStorage(userClickedSignOut))
+          startLoadingAnimation()
+        else
+          stopLoadingAnimation()
+
         if (Option(userInfo).isDefined) {
           captureUserInfo(userInfo)
           hideSignInProviders()
-          hideLoadingUserInfo()
+          stopLoadingAnimation()
           user.notifyObservers(UserSignedIn)
         } else {
           discardUserInfo()
@@ -58,68 +122,14 @@ object App {
     Firebase.auth().signOut()
   }
 
-  @JSExport("main")
-  def main(): Unit =
-    html.render(document.body, app())
-
-  // -------------------------------------------------------------------------------------------------------------------
+  // --- private -------------------------------------------------------------------------------------------------------
 
   // local storage keys
   private val userClickedSignOut = "userClickedSignOut"
 
-  @html private def app(): Binding[Node] =
-    <div>
-      <div class="w3-content w3-row w3-hide-small">
-        <div class="w3-padding-16">
-          {Logo().bind}
-          {Menu().bind}
-        </div>
-        <hr></hr>
-      </div>
-      <div class="w3-content w3-row w3-hide-large w3-hide-medium">
-        <div class="w3-padding-8">
-          {Logo().bind}
-          {Menu(isMobile = true).bind}
-        </div>
-        <hr></hr>
-      </div>
-
-      <div class="w3-content">
-        {appContent()}
-        <hr></hr>
-      </div>
-
-      <footer class="w3-container w3-padding-16 w3-center w3-hide-small">
-        {Footer().bind}
-      </footer>
-      <footer class="w3-container w3-padding-8 w3-center w3-hide-large w3-hide-medium">
-        {Footer().bind}
-      </footer>
-    </div>
-
-  @html private def appContent(): Binding[Node] = {
-    val notNowClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black not-now"
-    <div>
-      <div id="loding-user-info" class="hidden sign-in-providers"
-        style={s"display:${display(loadingUserInfo.bind)}"}>
-        Loading user info...
-      </div>
-      <div id="sign-in-providers" class="hidden sign-in-providers"
-        style={s"display:${display(signInProviders.bind)}"}>
-        <div id="firebaseui-auth-container"></div>
-        <a class={notNowClasses} onclick={e: Event => hideSignInProviders()}>(Not now)</a>
-      </div>
-      <div class="content">{route.state.bind.content.value.bind}</div>
-    </div>
-  }
-
-  private val loadingUserInfo                = Var(false)
-  private def displayLoadingUserInfo(): Unit = loadingUserInfo.value = true
-  private def hideLoadingUserInfo(): Unit    = loadingUserInfo.value = false
-
-  private val signInProviders          = Var(false)
-  private def displaySignInProviders() = signInProviders.value = true
-  private def hideSignInProviders()    = signInProviders.value = false
+  private val isSignInProvidersVisible = Var(false)
+  private def displaySignInProviders() = isSignInProvidersVisible.value = true
+  private def hideSignInProviders()    = isSignInProvidersVisible.value = false
 
   private def captureUserInfo(userInfo: User): Unit = {
     def anyToStr(any: Any): String = if (any != null) any.toString else ""
@@ -143,14 +153,8 @@ object App {
     user.uid.value = ""
   }
 
-  private def setInStorage(key: String, value: Boolean) =
-    LocalStorage.update(key, value.toString)
-
-  private def getFromStorage(key: String) =
-    LocalStorage.apply(key).map(_.toBoolean).getOrElse(false)
-
-  @js.native
-  @JSGlobal("uiStart")
-  private def uiStart(): Unit = js.native
+  // browser local storage use
+  private def setInStorage(key: String, value: Boolean) = LocalStorage.update(key, value.toString)
+  private def getFromStorage(key: String)               = LocalStorage.apply(key).map(_.toBoolean).getOrElse(false)
 
 }

@@ -24,6 +24,24 @@ object CloudFirestore {
 
   case class CloudFirestoreException(msg: String) extends Exception(msg)
 
+  def getPosts(token: String): Future[Docs[Post]] =
+    getDocuments[Post](token, s"projects/$ProjectId/databases/$Database/documents/posts")
+
+  def getPosts(): Future[Docs[Post]] =
+    getDocuments[Post](s"projects/$ProjectId/databases/$Database/documents/posts")
+
+  def getComments(token: String, postDocName: String): Future[Docs[Comment]] =
+    getDocuments[Comment](token, s"$postDocName/comments")
+
+  def getComments(postDocName: String): Future[Docs[Comment]] =
+    getDocuments[Comment](s"$postDocName/comments")
+
+  def createComment(token: String, postDocName: String, comment: Comment): Future[Doc[Comment]] = {
+    val newCommentId   = randomAlphaNumericString(20)
+    val commentDocName = s"$postDocName/comments/$newCommentId"
+    upsertDocument[Comment](token, commentDocName, comment)
+  }
+
   def getAuthToken(): Future[String] = {
     val p = Promise[String]()
     Future {
@@ -52,28 +70,7 @@ object CloudFirestore {
     p.future
   }
 
-  def getPosts(token: String): Future[Docs[Post]] =
-    getDocuments[Post](token, s"projects/$ProjectId/databases/$Database/documents/posts")
-
-  def getPosts(): Future[Docs[Post]] =
-    getDocuments[Post](s"projects/$ProjectId/databases/$Database/documents/posts")
-
-  def getComments(token: String, postDocName: String): Future[Docs[Comment]] =
-    getDocuments[Comment](token, s"$postDocName/comments")
-
-  def getComments(postDocName: String): Future[Docs[Comment]] =
-    getDocuments[Comment](s"$postDocName/comments")
-
-  def createComment(token: String, postDocName: String, comment: Comment): Future[Doc[Comment]] = {
-    val newCommentId   = randomAlphaNumericString(20)
-    val commentDocName = s"$postDocName/comments/$newCommentId"
-    upsertDocument[Comment](token, commentDocName, comment)
-  }
-
   // -------------------------------------------------------------------------------------------------------------------
-
-  // map of token -> (last usage time, last usage content)
-  private var antiHackCache: Map[String, (Long, String)] = Map.empty
 
   private def getDocuments[E <: Entity](token: String, path: String)(
     implicit docsResDecoder: Decoder[DocsRes[E]]
@@ -154,6 +151,9 @@ object CloudFirestore {
 
     p.future
   }
+
+  // map of token -> (last usage time, last usage content)
+  private var antiHackCache: Map[String, (Long, String)] = Map.empty
 
   private def isBadRequest(token: String, content: String): Boolean = {
     val now                 = java.lang.System.currentTimeMillis()

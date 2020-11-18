@@ -34,7 +34,7 @@
 }
 
 .logo .pronunciation a {
-  font-family: 'Roboto', sans-serif;
+  font-family: Roboto, sans-serif;
   font-style: italic;
   font-size: 16px;
   padding-left: 10px;
@@ -52,6 +52,10 @@
   align-items: center;
 }
 
+.menu-sign-in-out {
+  padding: 10px 20px 10px 0px;
+}
+
 .menu-item {
   text-align: center;
   padding: 10px 0px 10px 0px;
@@ -59,19 +63,15 @@
   text-decoration: none;
 }
 
-.mobile-menu {
-  font-family: 'Open Sans', sans-serif;
-  border: 1px dotted lightgray;
-}
-
-.menu-sign-in-out {
-  padding: 10px 20px 10px 0px;
-}
-
-.sign-in-out-menu-item {
+.menu-item-sign-in-out {
   font-size: small;
   padding: 0px 0px 10px 0px;
   text-decoration: none;
+}
+
+.mobile-menu {
+  font-family: 'Open Sans', sans-serif;
+  border: 1px dotted lightgray;
 }
 
 .pipe {
@@ -84,13 +84,120 @@
   margin: 0px 0px 15px 30px;
 }
 
-.content {
-  padding: 20px;
+.greeting {
+  text-align: center;
+  font-size: x-small;
 }
 
-hr {
-  border-top: 1px dotted lightgray;
-  margin: 0px 20px 0px 20px;
+.greeting p {
+  margin: auto;
+}
+
+.sign-in-providers {
+  text-align: center;
+  padding: 0px 0px 30px 0px;
+}
+
+.not-now {
+  font-size: small;
+  padding: 10px 0px 10px 0px;
+  margin: auto;
+  text-decoration: none;
+}
+
+.content {
+  font-family: 'Open Sans', sans-serif;
+  font-style: normal;
+  font-weight: 350;
+  font-size: 20px;
+  padding: 20px 140px 20px 140px;
+}
+
+.content .post-title {
+  font-family: roboto-condensed, sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 40px;
+  margin: 0px 0px 10px 0px;
+}
+
+.content .post-date {
+  font-size: 15px;
+  font-style: italic;
+  margin: 0px 0px 30px 0px;
+}
+
+.content .post-content {
+  margin: 0px 0px 30px 0px;
+}
+
+.content .post-comments {
+  font-size: 15px;
+}
+
+.content .post-comments .header {
+  font-size: 20px;
+  font-weight: bold;
+  padding-bottom: 5px;
+}
+
+.content .post-comments .input {
+  padding-bottom: 5px;
+}
+
+.content .post-comments .comment {
+  margin: 0px 0px 10px 0px;
+}
+
+.content button {
+  width: 120px;
+}
+
+.content hr {
+  border-top: 1px dotted;
+  color: lightgray;
+}
+
+.main-hr hr {
+  border-top: 4px dotted;
+  margin: auto;
+  width: 95%;
+}
+
+#animated-top {
+  animation: changeWidth 0.2s infinite alternate;
+  margin: auto;
+}
+
+#animated-top.off {
+  animation-name: none;
+}
+
+#animated-mobile {
+  animation: changeWidth 0.2s infinite alternate;
+  margin: auto;
+}
+
+#animated-mobile.off {
+  animation-name: none;
+}
+
+#animated-bottom {
+  animation: changeWidth 0.2s infinite alternate;
+  margin: auto;
+}
+
+#animated-bottom.off {
+  animation-name: none;
+}
+
+@keyframes changeWidth {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 .no-decoration {
@@ -112,15 +219,15 @@ hr {
     padding: 10px 5px 10px 10px;
   }
 
-  .menu-item {
-    margin: 0px 20px 0px 20px;
-  }
-
   .menu-sign-in-out {
     padding: 10px 10px 10px 0px;
   }
 
-  .sign-in-out-menu-item {
+  .menu-item {
+    margin: 0px 20px 0px 20px;
+  }
+
+  .menu-item-sign-in-out {
     font-size: small;
     padding: 0px 0px 10px 0px;
     text-decoration: none;
@@ -129,28 +236,4 @@ hr {
   .content {
     padding: 10px;
   }
-
-  hr {
-    margin: 0px 10px 0px 10px;
-  }
-}
-
-.greeting {
-  text-align: center;
-  font-size: x-small;
-}
-
-.greeting p {
-  margin: auto;
-}
-
-.sign-in-providers {
-  text-align: center;
-}
-
-.not-now {
-  font-size: small;
-  padding: 10px 0px 10px 0px;
-  margin: auto;
-  text-decoration: none;
 }

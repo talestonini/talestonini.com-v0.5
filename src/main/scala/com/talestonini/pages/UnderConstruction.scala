@@ -8,7 +8,7 @@ object UnderConstruction {
 
   @html def apply(): Binding[Node] =
     <div>
-      <p>Page under construction...</p>
+      <p>Under construction...</p>
     </div>
 
 }

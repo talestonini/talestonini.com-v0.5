@@ -1,15 +1,14 @@
-.idea
 .bloop
+.bsp
+.idea
 .metals
 coursier
-node_modules
 project/.bloop
+Session.vim
 target
 
-temp*
-package-lock.json
-Session.vim
-
-public*
 .firebase/hosting.cHVibGlj.cache
 firebase-debug.log
+node_modules
+package-lock.json
+public*

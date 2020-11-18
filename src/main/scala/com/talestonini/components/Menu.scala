@@ -1,7 +1,7 @@
 package com.talestonini.components
 
 import com.talestonini.App.{user, handleClickSignIn, handleClickSignOut}
-import com.talestonini.utils.js.display
+import com.talestonini.utils.javascript.display
 import com.talestonini.utils.observer.EventName._
 import com.talestonini.utils.observer.Observer
 import com.thoughtworks.binding.Binding
@@ -12,6 +12,14 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.JSGlobal
 
 object Menu extends Observer {
+
+  private case class MenuItem(label: String, hash: String)
+
+  private val menuItems: Seq[MenuItem] = Seq(
+    MenuItem("Posts", "#/posts"),
+    MenuItem("Tags", "#/tags"),
+    MenuItem("About", "#/about")
+  )
 
   @html def apply(isMobile: Boolean = false): Binding[BindingSeq[Node]] = Binding {
     val menuElems = {
@@ -38,22 +46,10 @@ object Menu extends Observer {
     if (!isMobile) menuElems else mobileMenuElems
   }
 
-  user.register(this, UserSignedIn, UserSignedOut)
-  def onNotify(e: EventName): Unit = e match {
-    case UserSignedIn  => isUserSignedIn.value = true
-    case UserSignedOut => isUserSignedIn.value = false
-  }
-
-  // -------------------------------------------------------------------------------------------------------------------
-
-  private val commonClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-hide-small"
-
-  private val isUserSignedIn = Var(false)
-
   @html private def greetUser(): Binding[Node] = {
     def firstStr(str: String) = str.split(" ")(0)
 
-    val signInOutClasses = s"$commonClasses sign-in-out-menu-item"
+    val signInOutClasses = s"$commonClasses menu-item-sign-in-out"
     <div>
       <div id="greet-signed-in" class="hidden greeting" style={s"display:${display(isUserSignedIn.bind)}"}>
         <p>Hi, {firstStr(user.displayName.bind)}!</p>
@@ -65,14 +61,6 @@ object Menu extends Observer {
       </div>
     </div>
   }
-
-  private case class MenuItem(label: String, hash: String)
-
-  private val menuItems: Seq[MenuItem] = Seq(
-    MenuItem("Posts", "#/posts"),
-    MenuItem("Tags", "#/tags"),
-    MenuItem("About", "#/about")
-  )
 
   @html private def menu() =
     for (mi <- menuItems)
@@ -105,8 +93,18 @@ object Menu extends Observer {
     Seq(signIn, signOut) ++ items
   }
 
+  // react to user signing in/out
+  private val isUserSignedIn = Var(false)
+  user.register(this, UserSignedIn, UserSignedOut)
+  def onNotify(e: EventName): Unit = e match {
+    case UserSignedIn  => isUserSignedIn.value = true
+    case UserSignedOut => isUserSignedIn.value = false
+  }
+
   @js.native
   @JSGlobal("toggleSidebar")
   private def toggleSidebar(): Unit = js.native
+
+  private val commonClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-hide-small"
 
 }

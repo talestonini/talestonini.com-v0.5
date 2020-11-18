@@ -2,16 +2,26 @@ package com.talestonini
 
 import java.time._
 import java.time.format.DateTimeFormatter.{ofPattern => pattern}
+import scala.scalajs.js
+import scala.scalajs.js.annotation.JSGlobal
 
 package object utils {
 
-  private val SimpleDateFormatter = pattern("dd/MM/yyyy")
+  private val SimpleDateFormatter = pattern("dd LLL yyyy")
 
-  def datetime2Str(datetime: Option[ZonedDateTime]): String =
+  def datetime2Str(datetime: ZonedDateTime): String =
+    datetime
+      .toInstant()
+      .atZone(ZoneId.systemDefault())
+      .format(SimpleDateFormatter)
+
+  def datetime2Str(datetime: Option[ZonedDateTime], default: String = "no date"): String =
     datetime match {
-      case Some(dt) => dt.format(SimpleDateFormatter)
-      case None     => "no date"
+      case Some(dt) => datetime2Str(dt)
+      case None     => default
     }
+
+  def now() = ZonedDateTime.now(ZoneId.of("UTC"))
 
   def randomAlphaNumericString(length: Int): String = {
     def randomStringFromCharList(length: Int, chars: Seq[Char]): String = {
@@ -27,10 +37,18 @@ package object utils {
     randomStringFromCharList(length, chars)
   }
 
-  object js {
+  object javascript {
 
     def display(flag: Boolean): String =
       if (flag) "block" else "none"
+
+    @js.native
+    @JSGlobal("startLoadingAnimation")
+    def startLoadingAnimation(): Unit = js.native
+
+    @js.native
+    @JSGlobal("stopLoadingAnimation")
+    def stopLoadingAnimation(): Unit = js.native
 
   }
 

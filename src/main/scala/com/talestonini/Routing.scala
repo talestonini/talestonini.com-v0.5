@@ -1,6 +1,5 @@
 package com.talestonini
 
-import com.talestonini.App.user
 import com.talestonini.db.CloudFirestore
 import com.talestonini.db.model._
 import com.talestonini.utils._
@@ -16,9 +15,10 @@ import scala.util.{Failure, Success}
 
 object Routing {
 
-  private val postDocNameMap: Map[String, Promise[String]] = Map(
-    "capstone" -> Capstone.postDocNamePromise,
-    "rapids"   -> Rapids.postDocNamePromise
+  private val postDocMap: Map[String, Promise[Doc[Post]]] = Map(
+    "funProgCapstone"      -> FunProgCapstone.postDocPromise,
+    "morseCodeChallenge"   -> MorseCodeChallenge.postDocPromise,
+    "urbanForestChallenge" -> UrbanForestChallenge.postDocPromise
   )
 
   private val pageMap: Map[String, Binding[Node]] = Map(
@@ -27,13 +27,12 @@ object Routing {
     "posts" -> Posts(),
     "tags"  -> UnderConstruction(),
     // posts
-    "capstone" -> Capstone(),
-    "rapids"   -> Rapids()
+    "funProgCapstone"      -> FunProgCapstone(),
+    "morseCodeChallenge"   -> MorseCodeChallenge(),
+    "urbanForestChallenge" -> UrbanForestChallenge()
   )
 
   private val pages = for (hash <- pageMap.keys) yield hash2Page(hash)
-
-  // -------------------------------------------------------------------------------------------------------------------
 
   // retrieve posts from db at application start
   CloudFirestore
@@ -43,21 +42,19 @@ object Routing {
         for (p <- posts.get) {
           val resource = p.fields.resource.get
 
-          // post document names are needed to retrieve their (child) comments
-          val postDocName = p.name
-          postDocNameMap
+          // to build the posts page, with the list of posts
+          Posts.bPostLinks.value += Posts.BPostLink(
+            title = Var(p.fields.title.get),
+            publishDate = Var(datetime2Str(p.fields.publishDate)),
+            resource = Var(resource)
+          )
+
+          // to build each post page
+          postDocMap
             .get(resource)
             .getOrElse(
-              throw new Exception(s"missing entry in postDocNameMap for $resource")
-            ) success postDocName
-
-          // bPosts (binding posts) help build the Posts page
-          Posts.bPosts.value += Posts.BPost(
-            docName = Var(postDocName),
-            title = Var(p.fields.title.get),
-            resource = Var(resource),
-            publishDate = Var(datetime2Str(p.fields.publishDate))
-          )
+              throw new Exception(s"missing entry in postDocMap for $resource")
+            ) success p
         }
       case f: Failure[Docs[Post]] =>
         println(s"failed getting posts: ${f.exception.getMessage()}")
