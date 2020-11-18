@@ -22,8 +22,7 @@ import scala.util.{Failure, Success}
 
 trait BasePostPage extends Observer {
 
-  // promise for the post document backing this page
-  val postDocPromise = Promise[Doc[Post]]()
+  // --- UI ------------------------------------------------------------------------------------------------------------
 
   // where each post builds its content, converted from MarkDown to HTML by Laika
   def postContent(): Binding[Node]
@@ -40,66 +39,6 @@ trait BasePostPage extends Observer {
         {comments()}
       </div>
     </div>
-
-  // when the promise for the post document which this page's comments belong to fulfills,
-  // retrieve the comments from db
-  postDocPromise.future
-    .onComplete({
-      case postDoc: Success[Doc[Post]] =>
-        bPostDoc.value = postDoc.get
-        CloudFirestore
-          .getComments(postDoc.get.name)
-          .onComplete({
-            case comments: Success[Docs[Comment]] =>
-              for (c <- comments.get)
-                bComments.value += BComment(
-                  author = Var(c.fields.author.get.name.get),
-                  date = Var(datetime2Str(c.fields.date)),
-                  text = Var(c.fields.text.get)
-                )
-            case f: Failure[Docs[Comment]] =>
-              println(s"failed getting comments: ${f.exception.getMessage()}")
-          })
-      case f: Failure[Doc[Post]] =>
-        println(s"failed getting post document name: ${f.exception.getMessage()}")
-    })
-
-  // observe the user sign in/out to allow or not commenting on the post
-  user.register(this, UserSignedIn, UserSignedOut)
-  def onNotify(e: EventName): Unit = e match {
-    case UserSignedIn  => isAllowedToComment.value = true
-    case UserSignedOut => isAllowedToComment.value = false
-  }
-
-  // -------------------------------------------------------------------------------------------------------------------
-
-  // a binding post document
-  private val bPostDoc: Var[Doc[Post]] = Var(Doc("", Post(None, None, None, None), "", ""))
-
-  // a binding comment
-  private case class BComment(
-    author: Var[String],
-    date: Var[String],
-    text: Var[String]
-  )
-
-  // the comments on this page
-  private val bComments = Vars.empty[BComment]
-
-  @html private def comments() =
-    for (c <- bComments) yield aComment(c)
-
-  @html private def aComment(c: BComment): Binding[Node] =
-    <div>
-      <hr></hr>
-      <div>{c.text.bind} ({c.author.bind}, {c.date.bind})</div>
-    </div>
-
-  // name of the post document to which this page's comments belong
-  private val bPostDocName = Var("")
-
-  // commenting is only allowed if the user is signed in
-  private var isAllowedToComment = Var(false)
 
   // widget for inputting a new commment
   @html private def commentInput(): Binding[Node] = {
@@ -143,6 +82,64 @@ trait BasePostPage extends Observer {
 
     div
   }
+
+  @html private def comments() =
+    for (c <- bComments) yield aComment(c)
+
+  @html private def aComment(c: BComment): Binding[Node] =
+    <div>
+      <hr></hr>
+      <div>{c.text.bind} ({c.author.bind}, {c.date.bind})</div>
+    </div>
+
+  // --- public --------------------------------------------------------------------------------------------------------
+
+  // retrieve the comments from db
+  // when the promise for the post document which this page's comments belong to fulfills
+  val postDocPromise = Promise[Doc[Post]]() // promise for the post document backing this page
+  postDocPromise.future
+    .onComplete({
+      case postDoc: Success[Doc[Post]] =>
+        bPostDoc.value = postDoc.get
+        CloudFirestore
+          .getComments(postDoc.get.name)
+          .onComplete({
+            case comments: Success[Docs[Comment]] =>
+              for (c <- comments.get)
+                bComments.value += BComment(
+                  author = Var(c.fields.author.get.name.get),
+                  date = Var(datetime2Str(c.fields.date)),
+                  text = Var(c.fields.text.get)
+                )
+            case f: Failure[Docs[Comment]] =>
+              println(s"failed getting comments: ${f.exception.getMessage()}")
+          })
+      case f: Failure[Doc[Post]] =>
+        println(s"failed getting post document name: ${f.exception.getMessage()}")
+    })
+
+  // observe user signing in/out to allow or not commenting on the post
+  private var isAllowedToComment = Var(false)
+  user.register(this, UserSignedIn, UserSignedOut)
+  def onNotify(e: EventName): Unit = e match {
+    case UserSignedIn  => isAllowedToComment.value = true
+    case UserSignedOut => isAllowedToComment.value = false
+  }
+
+  // --- private -------------------------------------------------------------------------------------------------------
+
+  // the binding post document backing this post page
+  private val bPostDoc: Var[Doc[Post]] = Var(Doc("", Post(None, None, None, None), "", ""))
+
+  // a binding comment
+  private case class BComment(
+    author: Var[String],
+    date: Var[String],
+    text: Var[String]
+  )
+
+  // the comments on this page
+  private val bComments = Vars.empty[BComment]
 
   // persist new comment into db
   private def persistComment(comment: String): Unit = {

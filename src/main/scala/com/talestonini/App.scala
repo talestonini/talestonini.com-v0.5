@@ -60,7 +60,7 @@ object App {
     val notNowClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black not-now"
     <div class="content">
       <div id="sign-in-providers" class="hidden sign-in-providers"
-        style={s"display:${display(signInProvidersVisible.bind)}"}>
+        style={s"display:${display(isSignInProvidersVisible.bind)}"}>
         <div id="firebaseui-auth-container"></div>
         <a class={notNowClasses} onclick={e: Event => hideSignInProviders()}>(Not now)</a>
       </div>
@@ -127,9 +127,9 @@ object App {
   // local storage keys
   private val userClickedSignOut = "userClickedSignOut"
 
-  private val signInProvidersVisible   = Var(false)
-  private def displaySignInProviders() = signInProvidersVisible.value = true
-  private def hideSignInProviders()    = signInProvidersVisible.value = false
+  private val isSignInProvidersVisible = Var(false)
+  private def displaySignInProviders() = isSignInProvidersVisible.value = true
+  private def hideSignInProviders()    = isSignInProvidersVisible.value = false
 
   private def captureUserInfo(userInfo: User): Unit = {
     def anyToStr(any: Any): String = if (any != null) any.toString else ""
