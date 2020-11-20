@@ -1,6 +1,6 @@
 package com.talestonini.pages
 
-import com.talestonini.App.user
+import com.talestonini.App.{user, handleClickSignIn}
 import com.talestonini.db.CloudFirestore
 import com.talestonini.db.model._
 import com.talestonini.utils._
@@ -15,6 +15,7 @@ import org.lrng.binding.html.NodeBinding
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.raw.HTMLTextAreaElement
 import org.scalajs.dom.raw.Node
+import org.scalajs.dom.window
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Promise
@@ -29,13 +30,13 @@ trait BasePostPage extends Observer {
 
   @html def apply(): Binding[Node] =
     <div>
-      <div class="post-title">{bPostDoc.bind.fields.title.getOrElse("")}</div>
-      <div class="post-date">{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd)).getOrElse("")}</div>
-      <div class="post-content">{postContent()}</div>
+      <div class="post-title w3-padding-8">{bPostDoc.bind.fields.title.getOrElse("")}</div>
+      <div><i>{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd)).getOrElse("")}</i></div>
+      <div class="post-content w3-padding-16">{postContent()}</div>
       <hr></hr>
       <div class="post-comments">
         <div class="header">Comments ({bComments.length.bind.toString})</div>
-        <div class="comment">{commentInput()}</div>
+        <div class="">{commentInput()}</div>
         {comments()}
       </div>
     </div>
@@ -61,12 +62,18 @@ trait BasePostPage extends Observer {
 
     val cancelButtonHandler = { e: Event => cleanTextArea() }
 
+    val signInToCommentHandler = { e: Event =>
+      handleClickSignIn()
+      window.scrollTo(0, 0)
+    }
+
     val signInToComment: Binding[Node] =
       <div style={s"display:${display(!isAllowedToComment.bind)}"}>
-        <p>Please sign in to comment</p>
+        <p>Please <a style="text-decoration: underline; cursor: pointer"
+          onclick={signInToCommentHandler}>sign in</a> to comment</p>
       </div>
 
-    val buttonClasses = "w3-btn w3-padding w3-black comment-button"
+    val buttonClasses = "w3-btn w3-padding w3-black"
     val commentWidgets: Binding[Node] =
       <div style={s"display:${display(isAllowedToComment.bind)}"}>
         <div class="input">{bTextArea.bind}</div>
@@ -75,7 +82,7 @@ trait BasePostPage extends Observer {
       </div>
 
     val div =
-      <div class="comment">
+      <div class="">
         {signInToComment}
         {commentWidgets}
       </div>
@@ -87,9 +94,9 @@ trait BasePostPage extends Observer {
     for (c <- bComments) yield aComment(c)
 
   @html private def aComment(c: BComment): Binding[Node] =
-    <div>
-      <hr></hr>
-      <div>{c.text.bind} ({c.author.bind}, {c.date.bind})</div>
+    <div class="w3-panel w3-light-grey w3-leftbar">
+      <p><i>"{c.text.bind}"</i></p>
+      <p>{c.author.bind} - <i>{c.date.bind}</i></p>
     </div>
 
   // --- public --------------------------------------------------------------------------------------------------------

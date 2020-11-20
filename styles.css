@@ -95,22 +95,19 @@
 
 .sign-in-providers {
   text-align: center;
-  padding: 0px 0px 30px 0px;
 }
 
 .not-now {
   font-size: small;
-  padding: 10px 0px 10px 0px;
   margin: auto;
   text-decoration: none;
 }
 
 .content {
   font-family: 'Open Sans', sans-serif;
-  font-style: normal;
-  font-weight: 350;
-  font-size: 20px;
-  padding: 20px 140px 20px 140px;
+  padding-left: 140px;
+  padding-right: 140px;
+  font-size: 15px;
 }
 
 .content .post-title {
@@ -118,35 +115,17 @@
   font-style: normal;
   font-weight: 700;
   font-size: 40px;
-  margin: 0px 0px 10px 0px;
-}
-
-.content .post-date {
-  font-size: 15px;
-  font-style: italic;
-  margin: 0px 0px 30px 0px;
 }
 
 .content .post-content {
-  margin: 0px 0px 30px 0px;
-}
-
-.content .post-comments {
-  font-size: 15px;
+  font-style: normal;
+  font-weight: 350;
+  font-size: 20px;
 }
 
 .content .post-comments .header {
   font-size: 20px;
   font-weight: bold;
-  padding-bottom: 5px;
-}
-
-.content .post-comments .input {
-  padding-bottom: 5px;
-}
-
-.content .post-comments .comment {
-  margin: 0px 0px 10px 0px;
 }
 
 .content button {
@@ -155,7 +134,6 @@
 
 .content hr {
   border-top: 1px dotted;
-  color: lightgray;
 }
 
 .main-hr hr {

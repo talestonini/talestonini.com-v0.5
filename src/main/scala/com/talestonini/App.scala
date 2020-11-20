@@ -42,7 +42,15 @@ object App {
       </div>
 
       <div class="w3-content">
-        {appContent()}
+        <div id="sign-in-providers w3-padding-16" class="hidden sign-in-providers"
+          style={s"display:${display(isSignInProvidersVisible.bind)}"}>
+          <div id="firebaseui-auth-container"></div>
+          <a class="w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-padding-8"
+            onclick={e: Event => hideSignInProviders()}>(Not now)</a>
+        </div>
+        <div class="content w3-padding-16">
+          {route.state.bind.content.value.bind}
+        </div>
         <div id="animated-bottom" class="main-hr">
           <hr></hr>
         </div>
@@ -55,18 +63,6 @@ object App {
         {Footer().bind}
       </footer>
     </div>
-
-  @html private def appContent(): Binding[Node] = {
-    val notNowClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black not-now"
-    <div class="content">
-      <div id="sign-in-providers" class="hidden sign-in-providers"
-        style={s"display:${display(isSignInProvidersVisible.bind)}"}>
-        <div id="firebaseui-auth-container"></div>
-        <a class={notNowClasses} onclick={e: Event => hideSignInProviders()}>(Not now)</a>
-      </div>
-      <div>{route.state.bind.content.value.bind}</div>
-    </div>
-  }
 
   @JSExport("main")
   def main(): Unit = html.render(document.body, app())
@@ -94,8 +90,6 @@ object App {
       (userInfo: User) => {
         if (!getFromStorage(userClickedSignOut))
           startLoadingAnimation()
-        else
-          stopLoadingAnimation()
 
         if (Option(userInfo).isDefined) {
           captureUserInfo(userInfo)
