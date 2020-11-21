@@ -1,6 +1,6 @@
 package com.talestonini.pages
 
-import com.talestonini.App.{user, handleClickSignIn}
+import com.talestonini.App.{user, handleClickSignIn, displayLoading, hideLoading}
 import com.talestonini.db.CloudFirestore
 import com.talestonini.db.model._
 import com.talestonini.utils._
@@ -126,6 +126,7 @@ trait BasePostPage extends Observer {
     .onComplete({
       case postDoc: Success[Doc[Post]] =>
         bPostDoc.value = postDoc.get
+        displayLoading()
         CloudFirestore
           .getComments(postDoc.get.name)
           .onComplete({
@@ -136,8 +137,10 @@ trait BasePostPage extends Observer {
                   date = Var(datetime2Str(c.fields.date)),
                   text = Var(c.fields.text.get)
                 )
+              hideLoading()
             case f: Failure[Docs[Comment]] =>
               println(s"failed getting comments: ${f.exception.getMessage()}")
+              hideLoading()
           })
       case f: Failure[Doc[Post]] =>
         println(s"failed getting post document name: ${f.exception.getMessage()}")

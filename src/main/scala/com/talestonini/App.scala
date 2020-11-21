@@ -125,9 +125,9 @@ object App {
   // local storage keys
   private val userClickedSignOut = "userClickedSignOut"
 
-  private val isLoading        = Var(false)
-  private def displayLoading() = isLoading.value = true
-  private def hideLoading()    = isLoading.value = false
+  private val isLoading = Var(false)
+  def displayLoading()  = isLoading.value = true
+  def hideLoading()     = isLoading.value = false
 
   private val isSignInProvidersVisible = Var(false)
   private def displaySignInProviders() = isSignInProvidersVisible.value = true
