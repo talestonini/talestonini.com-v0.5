@@ -27,22 +27,14 @@ object App {
           {Logo().bind}
           {Menu().bind}
         </div>
-        <div class="app-hr">
-          <hr></hr>
-        </div>
+        <hr></hr>
       </div>
       <div class="w3-content w3-row w3-hide-large w3-hide-medium">
         <div class="w3-padding-8">
           {Logo().bind}
           {Menu(isMobile = true).bind}
         </div>
-        <div class="app-hr">
-          <hr></hr>
-        </div>
-      </div>
-
-      <div class="w3-center" style={s"display:${display(isLoading.bind)}"}>
-        <p><i class="fa fa-spinner w3-spin" style="font-size:50px"></i></p>
+        <hr></hr>
       </div>
 
       <div class="w3-content">
@@ -56,11 +48,12 @@ object App {
           <hr></hr>
         </div>
         <div class="content w3-padding-16">
+          <div class="w3-center" style={s"display:${display(isLoading.bind)}"}>
+            <p><i class="fa fa-spinner w3-spin" style="font-size:50px"></i></p>
+          </div>
           {route.state.bind.content.value.bind}
         </div>
-        <div class="app-hr">
-          <hr></hr>
-        </div>
+        <hr></hr>
       </div>
 
       <footer class="w3-container w3-padding-16 w3-center w3-hide-small">
