@@ -31,7 +31,9 @@ trait BasePostPage extends Observer {
   @html def apply(): Binding[Node] =
     <div>
       <div class="post-title w3-padding-8">{bPostDoc.bind.fields.title.getOrElse("")}</div>
-      <div><i>{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd)).getOrElse("")}</i></div>
+      <div class="post-date">
+        <i>{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd)).getOrElse("")}</i>
+      </div>
       <div class="post-content w3-padding-16">{postContent()}</div>
       <hr></hr>
       <div class="post-comments">

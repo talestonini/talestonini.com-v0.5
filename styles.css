@@ -107,7 +107,7 @@
   font-family: 'Open Sans', sans-serif;
   padding-left: 140px;
   padding-right: 140px;
-  font-size: 15px;
+  font-size: 20px;
 }
 
 .content .post-title {
@@ -120,7 +120,10 @@
 .content .post-content {
   font-style: normal;
   font-weight: 350;
-  font-size: 20px;
+}
+
+.content .post-comments {
+  font-size: 15px;
 }
 
 .content .post-comments .header {
