@@ -147,46 +147,10 @@
   border-top: 1px dotted;
 }
 
-.main-hr hr {
+.app-hr hr {
   border-top: 4px dotted;
   margin: auto;
   width: 95%;
-}
-
-#animated-top {
-  animation: changeWidth 0.2s infinite alternate;
-  margin: auto;
-}
-
-#animated-top.off {
-  animation-name: none;
-}
-
-#animated-mobile {
-  animation: changeWidth 0.2s infinite alternate;
-  margin: auto;
-}
-
-#animated-mobile.off {
-  animation-name: none;
-}
-
-#animated-bottom {
-  animation: changeWidth 0.2s infinite alternate;
-  margin: auto;
-}
-
-#animated-bottom.off {
-  animation-name: none;
-}
-
-@keyframes changeWidth {
-  from {
-    width: 0;
-  }
-  to {
-    width: 100%;
-  }
 }
 
 .no-decoration {

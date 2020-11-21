@@ -27,7 +27,7 @@ object App {
           {Logo().bind}
           {Menu().bind}
         </div>
-        <div id="animated-top" class="main-hr">
+        <div class="app-hr">
           <hr></hr>
         </div>
       </div>
@@ -36,9 +36,13 @@ object App {
           {Logo().bind}
           {Menu(isMobile = true).bind}
         </div>
-        <div id="animated-mobile" class="main-hr">
+        <div class="app-hr">
           <hr></hr>
         </div>
+      </div>
+
+      <div class="w3-center" style={s"display:${display(isLoading.bind)}"}>
+        <p><i class="fa fa-spinner w3-spin" style="font-size:50px"></i></p>
       </div>
 
       <div class="w3-content">
@@ -51,7 +55,7 @@ object App {
         <div class="content w3-padding-16">
           {route.state.bind.content.value.bind}
         </div>
-        <div id="animated-bottom" class="main-hr">
+        <div class="app-hr">
           <hr></hr>
         </div>
       </div>
@@ -89,12 +93,12 @@ object App {
     .onAuthStateChanged(
       (userInfo: User) => {
         if (!getFromStorage(userClickedSignOut))
-          startLoadingAnimation()
+          displayLoading()
 
         if (Option(userInfo).isDefined) {
           captureUserInfo(userInfo)
           hideSignInProviders()
-          stopLoadingAnimation()
+          hideLoading()
           user.notifyObservers(UserSignedIn)
         } else {
           discardUserInfo()
@@ -120,6 +124,10 @@ object App {
 
   // local storage keys
   private val userClickedSignOut = "userClickedSignOut"
+
+  private val isLoading        = Var(false)
+  private def displayLoading() = isLoading.value = true
+  private def hideLoading()    = isLoading.value = false
 
   private val isSignInProvidersVisible = Var(false)
   private def displaySignInProviders() = isSignInProvidersVisible.value = true

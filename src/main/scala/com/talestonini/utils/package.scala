@@ -42,14 +42,6 @@ package object utils {
     def display(flag: Boolean): String =
       if (flag) "block" else "none"
 
-    @js.native
-    @JSGlobal("startLoadingAnimation")
-    def startLoadingAnimation(): Unit = js.native
-
-    @js.native
-    @JSGlobal("stopLoadingAnimation")
-    def stopLoadingAnimation(): Unit = js.native
-
   }
 
 }
