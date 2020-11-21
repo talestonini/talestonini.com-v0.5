@@ -49,8 +49,11 @@ object App {
         <div id="sign-in-providers w3-padding-16" class="hidden sign-in-providers"
           style={s"display:${display(isSignInProvidersVisible.bind)}"}>
           <div id="firebaseui-auth-container"></div>
-          <a class="w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-padding-8"
-            onclick={e: Event => hideSignInProviders()}>(Not now)</a>
+          <div class="not-now">
+            <a class="menu-item w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black"
+              onclick={e: Event => hideSignInProviders()}>(Not now)</a>
+          </div>
+          <hr></hr>
         </div>
         <div class="content w3-padding-16">
           {route.state.bind.content.value.bind}
