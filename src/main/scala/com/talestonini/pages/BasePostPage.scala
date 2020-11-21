@@ -42,18 +42,28 @@ trait BasePostPage extends Observer {
     </div>
 
   // widget for inputting a new commment
+  private val isInputtingComment = Var(false)
   @html private def commentInput(): Binding[Node] = {
     val initComment = "What do you think?"
     val bText       = Var(initComment)
 
-    val bTextArea: NodeBinding[HTMLTextAreaElement] =
-      <textarea class="w3-input w3-border" rows="3" value={bText.bind} onfocus={e: Event => bText.value = ""} />
+    val focusHandler = { e: Event =>
+      bText.value = ""
+      isInputtingComment.value = true
+    }
 
-    def cleanTextArea() = bText.value = initComment
+    val bTextArea: NodeBinding[HTMLTextAreaElement] =
+      <textarea class="w3-input w3-border" placeholder={initComment} rows="1" value={bText.bind}
+        onfocus={focusHandler} />
+
+    def cleanTextArea() = {
+      bText.value = initComment
+      isInputtingComment.value = false
+    }
 
     val commentButtonHandler = { e: Event =>
       val textArea = bTextArea.value
-      if (textArea.value != "" && textArea.value != initComment) {
+      if (textArea.value.nonEmpty) {
         bText.value = textArea.value
         persistComment(bText.value)
         cleanTextArea()
@@ -78,7 +88,7 @@ trait BasePostPage extends Observer {
       <div class="w3-panel w3-light-grey w3-leftbar w3-padding-16"
         style={s"display:${display(isAllowedToComment.bind)}"}>
         {bTextArea.bind}
-        <div class="button-bar w3-right">
+        <div class="button-bar w3-right" style={s"display:${display(isInputtingComment.bind)}"}>
           <div class="w3-bar">
             <button type="button" class={buttonClasses} onclick={commentButtonHandler}>Comment</button>
             <button type="button" class={buttonClasses} onclick={cancelButtonHandler}>Cancel</button>
