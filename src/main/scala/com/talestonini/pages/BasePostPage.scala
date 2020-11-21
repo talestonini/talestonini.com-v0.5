@@ -83,7 +83,7 @@ trait BasePostPage extends Observer {
     val signInToComment: Binding[Node] =
       <div style={s"display:${display(!isAllowedToComment.bind)}"}>
         <p>Please <a style="text-decoration: underline; cursor: pointer"
-          onclick={signInToCommentHandler}>sign in</a> to comment</p>
+          onclick={signInToCommentHandler}>sign in</a> to leave your comments.</p>
       </div>
 
     val buttonClasses = "w3-button w3-ripple w3-padding w3-black"
