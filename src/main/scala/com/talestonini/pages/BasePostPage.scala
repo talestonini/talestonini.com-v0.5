@@ -54,11 +54,12 @@ trait BasePostPage extends Observer {
 
     val bTextArea: NodeBinding[HTMLTextAreaElement] =
       <textarea class="w3-input w3-border" placeholder={initComment} rows="1" value={bText.bind}
-        onfocus={focusHandler} />
+        onclick="this.rows = '5'" onfocus={focusHandler} />
 
     def cleanTextArea() = {
       bText.value = initComment
       isInputtingComment.value = false
+      bTextArea.value.rows = 1
     }
 
     val commentButtonHandler = { e: Event =>
