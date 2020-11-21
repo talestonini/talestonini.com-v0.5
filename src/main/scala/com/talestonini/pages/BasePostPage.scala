@@ -36,7 +36,7 @@ trait BasePostPage extends Observer {
       <hr></hr>
       <div class="post-comments">
         <div class="header">Comments ({bComments.length.bind.toString})</div>
-        <div class="">{commentInput()}</div>
+        {commentInput()}
         {comments()}
       </div>
     </div>
@@ -73,21 +73,26 @@ trait BasePostPage extends Observer {
           onclick={signInToCommentHandler}>sign in</a> to comment</p>
       </div>
 
-    val buttonClasses = "w3-btn w3-padding w3-black"
-    val commentWidgets: Binding[Node] =
-      <div style={s"display:${display(isAllowedToComment.bind)}"}>
-        <div class="input">{bTextArea.bind}</div>
-        <button type="button" class={buttonClasses} onclick={commentButtonHandler}>Comment</button>
-        <button type="button" class={buttonClasses} onclick={cancelButtonHandler}>Cancel</button>
-      </div>
+    val buttonClasses = "w3-button w3-ripple w3-padding w3-black"
+    val commentInputControls: Binding[Node] =
+      <div class="w3-panel w3-light-grey w3-leftbar w3-padding-16"
+        style={s"display:${display(isAllowedToComment.bind)}"}>
+        {bTextArea.bind}
+        <div class="button-bar w3-right">
+          <div class="w3-bar">
+            <button type="button" class={buttonClasses} onclick={commentButtonHandler}>Comment</button>
+            <button type="button" class={buttonClasses} onclick={cancelButtonHandler}>Cancel</button>
+          </div>
+        </div>
+      </div >
 
-    val div =
-      <div class="">
+    val res =
+      <div>
         {signInToComment}
-        {commentWidgets}
+        {commentInputControls}
       </div>
 
-    div
+    res
   }
 
   @html private def comments() =
@@ -95,7 +100,7 @@ trait BasePostPage extends Observer {
 
   @html private def aComment(c: BComment): Binding[Node] =
     <div class="w3-panel w3-light-grey w3-leftbar">
-      <p><i>"{c.text.bind}"</i></p>
+      <p><i>{c.text.bind}</i></p>
       <p>{c.author.bind} - <i>{c.date.bind}</i></p>
     </div>
 
