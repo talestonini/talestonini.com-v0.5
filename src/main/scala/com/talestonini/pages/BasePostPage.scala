@@ -34,7 +34,7 @@ trait BasePostPage extends Observer {
       <div class="post-date">
         <i>{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd)).getOrElse("")}</i>
       </div>
-      <div class="post-content w3-padding-16">{postContent()}</div>
+      <div class="w3-padding-16">{postContent()}</div>
       <hr></hr>
       <div class="post-comments">
         <div class="header">Comments ({bComments.length.bind.toString})</div>
