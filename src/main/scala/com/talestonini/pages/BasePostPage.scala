@@ -35,7 +35,7 @@ trait BasePostPage extends Observer {
         <i>{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd)).getOrElse("")}</i>
       </div>
       <div class="w3-padding-16">{postContent()}</div>
-      <hr></hr>
+      <hr />
       <div class="post-comments">
         <div class="header">Comments ({bComments.length.bind.toString})</div>
         {commentInput()}
@@ -97,7 +97,7 @@ trait BasePostPage extends Observer {
             <button type="button" class={buttonClasses} onclick={cancelButtonHandler}>Cancel</button>
           </div>
         </div>
-      </div >
+      </div>
 
     val res =
       <div>

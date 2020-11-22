@@ -17,16 +17,16 @@ object Logo {
             {pronunciation("/tɑː \u2022 les/").bind}
           </tr>
           <tr>
-            <td></td>
+            <td />
             <td class="tonini_t">T</td>
             <td class="onini">onini</td>
             {pronunciation("/toʊ \u2022 niː \u2022 nɪ/").bind}
           </tr>
           <tr>
-            <td></td>
+            <td />
             <td class="dot">&#x2022;</td>
             <td class="com">com</td>
-            <td></td>
+            <td />
           </tr>
         </table>
       </a>
