@@ -27,39 +27,38 @@ object App {
           {Logo().bind}
           {Menu().bind}
         </div>
-        <hr></hr>
+        <hr />
       </div>
       <div class="w3-content w3-row w3-hide-large w3-hide-medium">
         <div class="w3-padding-8">
           {Logo().bind}
           {Menu(isMobile = true).bind}
         </div>
-        <hr></hr>
+        <hr />
       </div>
 
       <div class="w3-content">
-        <div id="sign-in-providers w3-padding-16" class="hidden sign-in-providers"
-          style={s"display:${display(isSignInProvidersVisible.bind)}"}>
+        <div class="hidden" style={s"display: ${display(isSignInProvidersVisible.bind)}"}>
           <div id="firebaseui-auth-container"></div>
           <div class="not-now">
-            <a class="menu-item w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black"
+            <a class="w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black menu-item"
               onclick={e: Event => hideSignInProviders()}>(Not now)</a>
           </div>
-          <hr></hr>
+          <hr />
         </div>
         <div class="content w3-padding-16">
-          <div class="w3-center" style={s"display:${display(isLoading.bind)}"}>
-            <p><i class="fa fa-spinner w3-spin" style="font-size:50px"></i></p>
+          <div class="w3-center" style={s"display: ${display(isLoading.bind)}"}>
+            <p><i class="w3-xxxlarge fa fa-spinner w3-spin" /></p>
           </div>
           {route.state.bind.content.value.bind}
         </div>
-        <hr></hr>
+        <hr />
       </div>
 
       <footer class="w3-container w3-padding-16 w3-center w3-hide-small">
         {Footer().bind}
       </footer>
-      <footer class="w3-container w3-padding-8 w3-center w3-hide-large w3-hide-medium">
+      <footer class="w3-container w3-padding-16 w3-center w3-hide-large w3-hide-medium">
         {Footer().bind}
       </footer>
     </div>

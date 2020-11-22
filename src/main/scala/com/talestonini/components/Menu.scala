@@ -23,7 +23,7 @@ object Menu extends Observer {
 
   @html def apply(isMobile: Boolean = false): Binding[BindingSeq[Node]] = Binding {
     val menuElems = {
-      <div class="w3-col w3-right w3-hide-small" style="width:100px">
+      <div class="w3-col w3-right w3-hide-small" style="width: 100px">
         <div class="menu menu-sign-in-out">
           <p class="w3-button w3-hover-none w3-border-white w3-bottombar w3-hide-small pipe">|</p>
           {greetUser()}
@@ -35,12 +35,16 @@ object Menu extends Observer {
     }
 
     val mobileMenuElems = {
-      <div class="w3-rest w3-hide-large w3-hide-medium">
-        <div class="menu menu-sign-in-out">
-          <a class="w3-button w3-xxxlarge hamburger" data:onclick="toggleSidebar()">☰</a>
+      <div class="w3-hide-large w3-hide-medium">
+        <div class="hamburger">
+          <a class="w3-button w3-xxxlarge fa fa-bars" data:onclick="toggleSidebar()" />
         </div>
       </div>
-      <div class="w3-sidebar w3-bar-block mobile-menu" style="display: none" id="sidebar">{mobileMenu()}</div>
+      <div id="sidebar" class="w3-sidebar w3-bar-block w3-animate-top mobile-menu"
+        style="display: none; padding-top: 8px">
+        {mobileMenu()}
+      </div>
+      <div id="overlay" class="w3-overlay" data:onclick="toggleSidebar()" style="cursor: pointer" />
     }
 
     if (!isMobile) menuElems else mobileMenuElems
@@ -51,11 +55,11 @@ object Menu extends Observer {
 
     val signInOutClasses = s"$commonClasses menu-item-sign-in-out"
     <div>
-      <div id="greet-signed-in" class="hidden greeting" style={s"display:${display(isUserSignedIn.bind)}"}>
+      <div id="greet-signed-in" class="greeting hidden" style={s"display: ${display(isUserSignedIn.bind)}"}>
         <p>Hi, {firstStr(user.displayName.bind)}!</p>
         <a class={signInOutClasses} onclick={e: Event => handleClickSignOut()}>(Sign out)</a>
       </div>
-      <div id="greet-signed-out" class="hidden greeting" style={s"display:${display(!isUserSignedIn.bind)}"}>
+      <div id="greet-signed-out" class="greeting hidden" style={s"display: ${display(!isUserSignedIn.bind)}"}>
         <p>Hi!</p>
         <a class={signInOutClasses} onclick={e: Event => handleClickSignIn()}>(Sign in)</a>
       </div>
@@ -67,7 +71,11 @@ object Menu extends Observer {
       yield <a href={mi.hash} class={s"$commonClasses menu-item"}>{mi.label}</a>
 
   @html private def mobileMenu() = {
-    val signInOutClasses = "w3-bar-item w3-button"
+    val commonClasses = "w3-bar-item w3-button"
+
+    val close =
+      <a class={s"$commonClasses w3-xxxlarge fa fa-close"} style="padding-bottom: 23px; text-align: right"
+        data:onclick="toggleSidebar()" />
 
     def onClick(handler: () => Unit) = {
       handler()
@@ -75,22 +83,25 @@ object Menu extends Observer {
     }
 
     val signOut =
-      <a id="greet-signed-in-mobile" class={signInOutClasses} style={s"display:${display(isUserSignedIn.bind)}"}
-        onclick={e: Event => onClick(handleClickSignOut)}>
+      <a id="greet-signed-in-mobile" class={s"$commonClasses w3-xlarge w3-light-grey"}
+        style={s"display: ${display(isUserSignedIn.bind)}"} onclick={e: Event => onClick(handleClickSignOut)}>
         Hi, {user.displayName.bind}! (Sign out)
       </a>
 
     val signIn =
-      <a id="greet-signed-out-mobile" class={signInOutClasses} style={s"display:${display(!isUserSignedIn.bind)}"}
-        onclick={e: Event => onClick(handleClickSignIn)}>
+      <a id="greet-signed-out-mobile" class={s"$commonClasses w3-xlarge w3-light-grey"}
+        style={s"display: ${display(!isUserSignedIn.bind)}"} onclick={e: Event => onClick(handleClickSignIn)}>
         Hi! (Sign in)
       </a>
 
+    def w3Color(n: Int): String = if (n % 2 == 0) "w3-white" else "w3-light-grey"
     val items =
-      for (mi <- menuItems)
-        yield <a href={mi.hash} class={signInOutClasses} data:onclick="toggleSidebar()">{mi.label}</a>
+      for ((mi, i) <- menuItems.zipWithIndex)
+        yield <a href={mi.hash} class={s"$commonClasses w3-xlarge ${w3Color(i)}"} data:onclick="toggleSidebar()">
+                {mi.label}
+              </a>
 
-    Seq(signIn, signOut) ++ items
+    Seq(close, signIn, signOut) ++ items
   }
 
   // react to user signing in/out

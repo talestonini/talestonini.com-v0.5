@@ -7,8 +7,8 @@ import org.scalajs.dom.raw.Node
 object Logo {
 
   @html def apply(): Binding[Node] =
-    <div class="w3-col w3-left logo" style="width:245px">
-      <a href="#/" data:onclick="closeSidebar()">
+    <div class="w3-col w3-left logo" style="width: 245px">
+      <a href="#/">
         <table>
           <tr>
             <td class="symbol">&#x276F;</td>
@@ -17,16 +17,16 @@ object Logo {
             {pronunciation("/tɑː \u2022 les/").bind}
           </tr>
           <tr>
-            <td></td>
+            <td />
             <td class="tonini_t">T</td>
             <td class="onini">onini</td>
             {pronunciation("/toʊ \u2022 niː \u2022 nɪ/").bind}
           </tr>
           <tr>
-            <td></td>
+            <td />
             <td class="dot">&#x2022;</td>
             <td class="com">com</td>
-            <td></td>
+            <td />
           </tr>
         </table>
       </a>
