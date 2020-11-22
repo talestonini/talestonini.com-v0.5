@@ -25,7 +25,7 @@ object Menu extends Observer {
     val menuElems = {
       <div class="w3-col w3-right w3-hide-small" style="width: 100px">
         <div class="menu menu-sign-in-out">
-          <p class="pipe w3-button w3-hover-none w3-border-white w3-bottombar w3-hide-small">|</p>
+          <p class="w3-button w3-hover-none w3-border-white w3-bottombar w3-hide-small pipe">|</p>
           {greetUser()}
         </div>
       </div>
@@ -37,10 +37,10 @@ object Menu extends Observer {
     val mobileMenuElems = {
       <div class="w3-rest w3-hide-large w3-hide-medium">
         <div class="menu menu-sign-in-out">
-          <a class="hamburger w3-button w3-xxxlarge" data:onclick="toggleSidebar()">☰</a>
+          <a class="w3-button w3-xxxlarge hamburger" data:onclick="toggleSidebar()">☰</a>
         </div>
       </div>
-      <div class="mobile-menu w3-sidebar w3-bar-block" style="display: none" id="sidebar">{mobileMenu()}</div>
+      <div id="sidebar" class="w3-sidebar w3-bar-block mobile-menu" style="display: none">{mobileMenu()}</div>
     }
 
     if (!isMobile) menuElems else mobileMenuElems
