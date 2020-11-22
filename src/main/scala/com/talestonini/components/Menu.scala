@@ -35,12 +35,13 @@ object Menu extends Observer {
     }
 
     val mobileMenuElems = {
-      <div class="w3-rest w3-hide-large w3-hide-medium">
-        <div class="menu menu-sign-in-out">
-          <a class="w3-button w3-xxxlarge fa fa-bars hamburger" data:onclick="toggleSidebar()" />
+      <div class="w3-hide-large w3-hide-medium">
+        <div class="hamburger">
+          <a class="w3-button w3-xxxlarge fa fa-bars" data:onclick="toggleSidebar()" />
         </div>
       </div>
-      <div id="sidebar" class="w3-sidebar w3-bar-block w3-animate-top mobile-menu" style="display: none">
+      <div id="sidebar" class="w3-sidebar w3-bar-block w3-animate-top mobile-menu"
+        style="display: none; padding-top: 8px">
         {mobileMenu()}
       </div>
       <div id="overlay" class="w3-overlay" data:onclick="toggleSidebar()" style="cursor: pointer" />
@@ -73,7 +74,8 @@ object Menu extends Observer {
     val commonClasses = "w3-bar-item w3-button"
 
     val close =
-      <a class={s"$commonClasses w3-xxxlarge fa fa-close"} style="text-align: right" data:onclick="toggleSidebar()" />
+      <a class={s"$commonClasses w3-xxxlarge fa fa-close"} style="padding-bottom: 20px; text-align: right"
+        data:onclick="toggleSidebar()" />
 
     def onClick(handler: () => Unit) = {
       handler()
@@ -81,20 +83,23 @@ object Menu extends Observer {
     }
 
     val signOut =
-      <a id="greet-signed-in-mobile" class={commonClasses} style={s"display: ${display(isUserSignedIn.bind)}"}
-        onclick={e: Event => onClick(handleClickSignOut)}>
+      <a id="greet-signed-in-mobile" class={s"$commonClasses w3-xlarge w3-light-grey"}
+        style={s"display: ${display(isUserSignedIn.bind)}"} onclick={e: Event => onClick(handleClickSignOut)}>
         Hi, {user.displayName.bind}! (Sign out)
       </a>
 
     val signIn =
-      <a id="greet-signed-out-mobile" class={commonClasses} style={s"display: ${display(!isUserSignedIn.bind)}"}
-        onclick={e: Event => onClick(handleClickSignIn)}>
+      <a id="greet-signed-out-mobile" class={s"$commonClasses w3-xlarge w3-light-grey"}
+        style={s"display: ${display(!isUserSignedIn.bind)}"} onclick={e: Event => onClick(handleClickSignIn)}>
         Hi! (Sign in)
       </a>
 
+    def w3Color(n: Int): String = if (n % 2 == 0) "w3-white" else "w3-light-grey"
     val items =
-      for (mi <- menuItems)
-        yield <a href={mi.hash} class={commonClasses} data:onclick="toggleSidebar()">{mi.label}</a>
+      for ((mi, i) <- menuItems.zipWithIndex)
+        yield <a href={mi.hash} class={s"$commonClasses w3-xlarge ${w3Color(i)}"} data:onclick="toggleSidebar()">
+                {mi.label}
+              </a>
 
     Seq(close, signIn, signOut) ++ items
   }

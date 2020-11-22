@@ -85,7 +85,9 @@
 }
 
 .hamburger {
-  margin: 0 0 15px 30px;
+  /* positions the hr below the hamburger */
+  padding: 0 0 20px 0;
+  text-align: right;
 }
 
 .greeting {
@@ -158,10 +160,6 @@
 @media all and (max-width: 600px) {
   .logo {
     padding: 10px 5px 10px 10px;
-  }
-
-  .menu-sign-in-out {
-    padding: 10px 10px 10px 0;
   }
 
   .menu-item {
