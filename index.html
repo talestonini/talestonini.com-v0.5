@@ -88,18 +88,20 @@
 <body>
   <script>
     function toggleSidebar() {
-      var state = document.getElementById("sidebar").style.display;
+      var sidebar = document.getElementById("sidebar")
+      var state = sidebar.style.display;
       if (state == 'none') {
-        document.getElementById("sidebar").style.width = "75%";
-        document.getElementById("sidebar").style.right = 0;
-        document.getElementById("sidebar").style.display = "block";
+        sidebar.style.width = "75%";
+        sidebar.style.right = 0;
+        sidebar.style.display = "block";
       } else {
-        document.getElementById("sidebar").style.display = "none";
+        sidebar.style.display = "none";
       }
     }
 
     function closeSidebar() {
-      document.getElementById("sidebar").style.display = "none";
+      var sidebar = document.getElementById("sidebar")
+      sidebar.style.display = "none";
     }
   </script>
 

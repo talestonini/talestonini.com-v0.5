@@ -7,7 +7,7 @@ import org.scalajs.dom.raw.Node
 object Logo {
 
   @html def apply(): Binding[Node] =
-    <div class="w3-col w3-left logo" style="width:245px">
+    <div class="w3-col w3-left logo" style="width: 245px">
       <a href="#/" data:onclick="closeSidebar()">
         <table>
           <tr>

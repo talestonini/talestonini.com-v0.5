@@ -39,7 +39,7 @@ object App {
 
       <div class="w3-content">
         <div id="sign-in-providers w3-padding-16" class="hidden sign-in-providers"
-          style={s"display:${display(isSignInProvidersVisible.bind)}"}>
+          style={s"display: ${display(isSignInProvidersVisible.bind)}"}>
           <div id="firebaseui-auth-container"></div>
           <div class="not-now">
             <a class="menu-item w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black"
@@ -48,8 +48,8 @@ object App {
           <hr></hr>
         </div>
         <div class="content w3-padding-16">
-          <div class="w3-center" style={s"display:${display(isLoading.bind)}"}>
-            <p><i class="fa fa-spinner w3-spin" style="font-size:50px"></i></p>
+          <div class="w3-center" style={s"display: ${display(isLoading.bind)}"}>
+            <p><i class="fa fa-spinner w3-spin" style="font-size: 40px"></i></p>
           </div>
           {route.state.bind.content.value.bind}
         </div>

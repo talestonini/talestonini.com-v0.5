@@ -23,7 +23,7 @@ object Menu extends Observer {
 
   @html def apply(isMobile: Boolean = false): Binding[BindingSeq[Node]] = Binding {
     val menuElems = {
-      <div class="w3-col w3-right w3-hide-small" style="width:100px">
+      <div class="w3-col w3-right w3-hide-small" style="width: 100px">
         <div class="menu menu-sign-in-out">
           <p class="w3-button w3-hover-none w3-border-white w3-bottombar w3-hide-small pipe">|</p>
           {greetUser()}
@@ -51,11 +51,11 @@ object Menu extends Observer {
 
     val signInOutClasses = s"$commonClasses menu-item-sign-in-out"
     <div>
-      <div id="greet-signed-in" class="hidden greeting" style={s"display:${display(isUserSignedIn.bind)}"}>
+      <div id="greet-signed-in" class="hidden greeting" style={s"display: ${display(isUserSignedIn.bind)}"}>
         <p>Hi, {firstStr(user.displayName.bind)}!</p>
         <a class={signInOutClasses} onclick={e: Event => handleClickSignOut()}>(Sign out)</a>
       </div>
-      <div id="greet-signed-out" class="hidden greeting" style={s"display:${display(!isUserSignedIn.bind)}"}>
+      <div id="greet-signed-out" class="hidden greeting" style={s"display: ${display(!isUserSignedIn.bind)}"}>
         <p>Hi!</p>
         <a class={signInOutClasses} onclick={e: Event => handleClickSignIn()}>(Sign in)</a>
       </div>
@@ -75,13 +75,13 @@ object Menu extends Observer {
     }
 
     val signOut =
-      <a id="greet-signed-in-mobile" class={signInOutClasses} style={s"display:${display(isUserSignedIn.bind)}"}
+      <a id="greet-signed-in-mobile" class={signInOutClasses} style={s"display: ${display(isUserSignedIn.bind)}"}
         onclick={e: Event => onClick(handleClickSignOut)}>
         Hi, {user.displayName.bind}! (Sign out)
       </a>
 
     val signIn =
-      <a id="greet-signed-out-mobile" class={signInOutClasses} style={s"display:${display(!isUserSignedIn.bind)}"}
+      <a id="greet-signed-out-mobile" class={signInOutClasses} style={s"display: ${display(!isUserSignedIn.bind)}"}
         onclick={e: Event => onClick(handleClickSignIn)}>
         Hi! (Sign in)
       </a>

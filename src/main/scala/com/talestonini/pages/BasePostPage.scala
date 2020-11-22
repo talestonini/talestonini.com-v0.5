@@ -81,7 +81,7 @@ trait BasePostPage extends Observer {
     }
 
     val signInToComment: Binding[Node] =
-      <div style={s"display:${display(!isAllowedToComment.bind)}"}>
+      <div style={s"display: ${display(!isAllowedToComment.bind)}"}>
         <p>Please <a style="text-decoration: underline; cursor: pointer"
           onclick={signInToCommentHandler}>sign in</a> to leave your comments.</p>
       </div>
@@ -89,9 +89,9 @@ trait BasePostPage extends Observer {
     val buttonClasses = "w3-button w3-ripple w3-padding w3-black"
     val commentInputControls: Binding[Node] =
       <div class="w3-panel w3-light-grey w3-leftbar w3-padding-16"
-        style={s"display:${display(isAllowedToComment.bind)}"}>
+        style={s"display: ${display(isAllowedToComment.bind)}"}>
         {bTextArea.bind}
-        <div class="button-bar w3-right" style={s"display:${display(isInputtingComment.bind)}"}>
+        <div class="button-bar w3-right" style={s"display: ${display(isInputtingComment.bind)}"}>
           <div class="w3-bar">
             <button type="button" class={buttonClasses} onclick={commentButtonHandler}>Comment</button>
             <button type="button" class={buttonClasses} onclick={cancelButtonHandler}>Cancel</button>
