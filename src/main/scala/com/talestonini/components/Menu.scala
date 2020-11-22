@@ -74,7 +74,7 @@ object Menu extends Observer {
     val commonClasses = "w3-bar-item w3-button"
 
     val close =
-      <a class={s"$commonClasses w3-xxxlarge fa fa-close"} style="padding-bottom: 20px; text-align: right"
+      <a class={s"$commonClasses w3-xxxlarge fa fa-close"} style="padding-bottom: 23px; text-align: right"
         data:onclick="toggleSidebar()" />
 
     def onClick(handler: () => Unit) = {

@@ -58,7 +58,7 @@ object App {
       <footer class="w3-container w3-padding-16 w3-center w3-hide-small">
         {Footer().bind}
       </footer>
-      <footer class="w3-container w3-padding-8 w3-center w3-hide-large w3-hide-medium">
+      <footer class="w3-container w3-padding-16 w3-center w3-hide-large w3-hide-medium">
         {Footer().bind}
       </footer>
     </div>
