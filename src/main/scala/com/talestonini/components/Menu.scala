@@ -40,10 +40,10 @@ object Menu extends Observer {
           <a class="w3-button w3-xxxlarge hamburger" data:onclick="toggleSidebar()">☰</a>
         </div>
       </div>
-      <div id="sidebar" class="w3-sidebar w3-bar-block w3-animate-right mobile-menu" style="display: none">
+      <div id="sidebar" class="w3-sidebar w3-bar-block w3-animate-top mobile-menu" style="display: none">
         {mobileMenu()}
       </div>
-      <div id="overlay" class="w3-overlay w3-animate-opacity" data:onclick="toggleSidebar()" style="cursor: pointer" />
+      <div id="overlay" class="w3-overlay" data:onclick="toggleSidebar()" style="cursor: pointer" />
     }
 
     if (!isMobile) menuElems else mobileMenuElems
