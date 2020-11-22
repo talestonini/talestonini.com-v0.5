@@ -37,7 +37,7 @@ object Menu extends Observer {
     val mobileMenuElems = {
       <div class="w3-rest w3-hide-large w3-hide-medium">
         <div class="menu menu-sign-in-out">
-          <a class="w3-button w3-xxxlarge hamburger" data:onclick="toggleSidebar()">☰</a>
+          <a class="w3-button w3-xxxlarge fa fa-bars hamburger" data:onclick="toggleSidebar()" />
         </div>
       </div>
       <div id="sidebar" class="w3-sidebar w3-bar-block w3-animate-top mobile-menu" style="display: none">
@@ -70,7 +70,10 @@ object Menu extends Observer {
       yield <a href={mi.hash} class={s"$commonClasses menu-item"}>{mi.label}</a>
 
   @html private def mobileMenu() = {
-    val signInOutClasses = "w3-bar-item w3-button"
+    val commonClasses = "w3-bar-item w3-button"
+
+    val close =
+      <a class={s"$commonClasses w3-xxxlarge fa fa-close"} style="text-align: right" data:onclick="toggleSidebar()" />
 
     def onClick(handler: () => Unit) = {
       handler()
@@ -78,22 +81,22 @@ object Menu extends Observer {
     }
 
     val signOut =
-      <a id="greet-signed-in-mobile" class={signInOutClasses} style={s"display: ${display(isUserSignedIn.bind)}"}
+      <a id="greet-signed-in-mobile" class={commonClasses} style={s"display: ${display(isUserSignedIn.bind)}"}
         onclick={e: Event => onClick(handleClickSignOut)}>
         Hi, {user.displayName.bind}! (Sign out)
       </a>
 
     val signIn =
-      <a id="greet-signed-out-mobile" class={signInOutClasses} style={s"display: ${display(!isUserSignedIn.bind)}"}
+      <a id="greet-signed-out-mobile" class={commonClasses} style={s"display: ${display(!isUserSignedIn.bind)}"}
         onclick={e: Event => onClick(handleClickSignIn)}>
         Hi! (Sign in)
       </a>
 
     val items =
       for (mi <- menuItems)
-        yield <a href={mi.hash} class={signInOutClasses} data:onclick="toggleSidebar()">{mi.label}</a>
+        yield <a href={mi.hash} class={commonClasses} data:onclick="toggleSidebar()">{mi.label}</a>
 
-    Seq(signIn, signOut) ++ items
+    Seq(close, signIn, signOut) ++ items
   }
 
   // react to user signing in/out
