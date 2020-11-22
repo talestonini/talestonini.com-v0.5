@@ -38,8 +38,7 @@ object App {
       </div>
 
       <div class="w3-content">
-        <div id="sign-in-providers w3-padding-16" class="hidden sign-in-providers"
-          style={s"display: ${display(isSignInProvidersVisible.bind)}"}>
+        <div class="hidden" style={s"display: ${display(isSignInProvidersVisible.bind)}"}>
           <div id="firebaseui-auth-container"></div>
           <div class="not-now">
             <a class="menu-item w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black"

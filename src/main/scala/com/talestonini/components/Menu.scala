@@ -25,7 +25,7 @@ object Menu extends Observer {
     val menuElems = {
       <div class="w3-col w3-right w3-hide-small" style="width: 100px">
         <div class="menu menu-sign-in-out">
-          <p class="w3-button w3-hover-none w3-border-white w3-bottombar w3-hide-small pipe">|</p>
+          <p class="pipe w3-button w3-hover-none w3-border-white w3-bottombar w3-hide-small">|</p>
           {greetUser()}
         </div>
       </div>
@@ -37,10 +37,10 @@ object Menu extends Observer {
     val mobileMenuElems = {
       <div class="w3-rest w3-hide-large w3-hide-medium">
         <div class="menu menu-sign-in-out">
-          <a class="w3-button w3-xxxlarge hamburger" data:onclick="toggleSidebar()">☰</a>
+          <a class="hamburger w3-button w3-xxxlarge" data:onclick="toggleSidebar()">☰</a>
         </div>
       </div>
-      <div class="w3-sidebar w3-bar-block mobile-menu" style="display: none" id="sidebar">{mobileMenu()}</div>
+      <div class="mobile-menu w3-sidebar w3-bar-block" style="display: none" id="sidebar">{mobileMenu()}</div>
     }
 
     if (!isMobile) menuElems else mobileMenuElems
@@ -51,11 +51,11 @@ object Menu extends Observer {
 
     val signInOutClasses = s"$commonClasses menu-item-sign-in-out"
     <div>
-      <div id="greet-signed-in" class="hidden greeting" style={s"display: ${display(isUserSignedIn.bind)}"}>
+      <div id="greet-signed-in" class="greeting hidden" style={s"display: ${display(isUserSignedIn.bind)}"}>
         <p>Hi, {firstStr(user.displayName.bind)}!</p>
         <a class={signInOutClasses} onclick={e: Event => handleClickSignOut()}>(Sign out)</a>
       </div>
-      <div id="greet-signed-out" class="hidden greeting" style={s"display: ${display(!isUserSignedIn.bind)}"}>
+      <div id="greet-signed-out" class="greeting hidden" style={s"display: ${display(!isUserSignedIn.bind)}"}>
         <p>Hi!</p>
         <a class={signInOutClasses} onclick={e: Event => handleClickSignIn()}>(Sign in)</a>
       </div>
