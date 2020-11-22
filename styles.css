@@ -1,4 +1,5 @@
 * {
+  font-family: 'Open Sans', sans-serif;
   color: #222222;
 }
 
@@ -44,7 +45,6 @@
 }
 
 .menu {
-  font-family: 'Open Sans', sans-serif;
   font-size: large;
   height: 86px;
   display: flex;
@@ -70,8 +70,6 @@
 }
 
 .mobile-menu {
-  font-family: 'Open Sans', sans-serif;
-  border: 1px dotted lightgray;
 }
 
 .pipe {
@@ -99,14 +97,13 @@
 }
 
 .content {
-  font-family: 'Open Sans', sans-serif;
   padding-left: 140px;
   padding-right: 140px;
   font-size: 20px;
 }
 
 .content .post-title {
-  font-family: roboto-condensed, sans-serif;
+  font-family: Roboto-condensed, sans-serif;
   font-style: normal;
   font-weight: 700;
   font-size: 40px;

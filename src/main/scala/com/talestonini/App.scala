@@ -27,15 +27,14 @@ object App {
           {Logo().bind}
           {Menu().bind}
         </div>
-        <hr></hr>
       </div>
       <div class="w3-content w3-row w3-hide-large w3-hide-medium">
         <div class="w3-padding-8">
           {Logo().bind}
           {Menu(isMobile = true).bind}
         </div>
-        <hr></hr>
       </div>
+      <hr></hr>
 
       <div class="w3-content">
         <div class="hidden" style={s"display: ${display(isSignInProvidersVisible.bind)}"}>
@@ -52,9 +51,9 @@ object App {
           </div>
           {route.state.bind.content.value.bind}
         </div>
-        <hr></hr>
       </div>
 
+      <hr></hr>
       <footer class="w3-container w3-padding-16 w3-center w3-hide-small">
         {Footer().bind}
       </footer>
