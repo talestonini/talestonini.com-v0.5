@@ -3,6 +3,7 @@ package com.talestonini.db
 import java.time._
 import java.time.format.DateTimeFormatter.ofPattern
 
+import com.talestonini.utils._
 import fr.hmil.roshttp.body.Implicits._
 import fr.hmil.roshttp.body.JSONBody.{JSONObject, JSONString, JSONValue}
 import io.circe._
@@ -23,6 +24,7 @@ package object model {
   sealed trait Entity {
     def dbFields: Seq[String]
     def content: String
+    def sortingField: String
   }
 
   type Docs[E] = Seq[Doc[E]]
@@ -85,7 +87,8 @@ package object model {
     resource: Option[String]
   ) extends Entity {
     def dbFields: Seq[String] = Seq("title", "resource", "first_publish_date", "publish_date")
-    def content: String       = title.getOrElse("") + resource.getOrElse("")
+    def content: String       = title.getOrElse("")
+    def sortingField: String  = datetime2Str(publishDate.getOrElse(InitDateTime), DateTimeCompareFormatter)
   }
 
   implicit lazy val postFieldsDecoder: Decoder[Post] =
@@ -109,6 +112,7 @@ package object model {
   ) extends Entity {
     def dbFields: Seq[String] = Seq("author", "date", "text")
     def content: String       = text.getOrElse("")
+    def sortingField: String  = datetime2Str(date.getOrElse(InitDateTime), DateTimeCompareFormatter)
   }
 
   implicit lazy val commentFieldsDecoder: Decoder[Comment] =
@@ -131,6 +135,7 @@ package object model {
   ) extends Entity {
     def dbFields: Seq[String] = Seq("name", "email", "uid")
     def content: String       = name.getOrElse("")
+    def sortingField: String  = email.getOrElse("")
   }
 
   implicit lazy val userFieldsDecoder: Decoder[User] =
