@@ -30,14 +30,14 @@ trait BasePostPage extends Observer {
 
   @html def apply(): Binding[Node] =
     <div>
-      <div class="w3-padding-8 post-title">{bPostDoc.bind.fields.title.getOrElse("")}</div>
+      <div class="post-title w3-padding-8">{bPostDoc.bind.fields.title.getOrElse("")}</div>
       <div class="post-date">
         <i>{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd)).getOrElse("")}</i>
       </div>
       <div class="w3-padding-16">{postContent()}</div>
       <hr />
       <div class="post-comments">
-        <div class="header">Comments ({bComments.length.bind.toString})</div>
+        <div class="header w3-bold">Comments ({bComments.length.bind.toString})</div>
         {commentInput()}
         {comments()}
       </div>

@@ -8,7 +8,7 @@ import org.scalajs.dom.raw.Node
 object Posts {
 
   @html def apply(): Binding[Node] =
-    <div>{postLinks()}</div>
+    <div class="post-list">{postLinks()}</div>
 
   // a binding post link
   case class BPostLink(
@@ -23,8 +23,12 @@ object Posts {
     for (p <- bPostLinks)
       yield <div>
               <p>
-                <a href={s"#/${p.resource.bind}"}>{p.title.bind}</a>
-                <div class="post-date"><i>{p.publishDate.bind}</i></div>
+                <a class="w3-bold" href={s"#/${p.resource.bind}"}>{p.title.bind}</a>
+                <div class="post-date">
+                  <a href={s"#/${p.resource.bind}"}>
+                    <i>{p.publishDate.bind}</i>
+                  </a>
+                </div>
               </p>
             </div>
 
