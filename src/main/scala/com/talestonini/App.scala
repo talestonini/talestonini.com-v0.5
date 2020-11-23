@@ -65,7 +65,10 @@ object App {
     </div>
 
   @JSExport("main")
-  def main(): Unit = html.render(document.body, app())
+  def main(): Unit = {
+    setInStorage(pristineAuthState, true)
+    html.render(document.body, app())
+  }
 
   // Firebase UI (auth stuff)
   @js.native
@@ -93,8 +96,12 @@ object App {
     .auth()
     .onAuthStateChanged(
       (userInfo: User) => {
-        if (!getFromStorage(userClickedSignOut))
+        if (!getFromStorage(userClickedSignOut) && !getFromStorage(pristineAuthState))
           displayLoading(isLoading, signingInOut)
+
+        // set to false as soon as onAuthStateChanged is once invoked,
+        // so that the "isLoading" animation does not fire at app start without the user ever attempting to sign in
+        setInStorage(pristineAuthState, false)
 
         if (Option(userInfo).isDefined) {
           captureUserInfo(userInfo)
@@ -124,6 +131,7 @@ object App {
   // --- private -------------------------------------------------------------------------------------------------------
 
   // local storage keys
+  private val pristineAuthState  = "pristineAuthState"
   private val userClickedSignOut = "userClickedSignOut"
 
   private val isSignInProvidersVisible = Var(false)
