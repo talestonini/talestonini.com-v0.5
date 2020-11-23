@@ -114,7 +114,7 @@ trait BasePostPage extends Observer {
   @html private def aComment(c: BComment): Binding[Node] =
     <div class="w3-panel w3-light-grey w3-leftbar">
       <p><i>{c.text.bind}</i></p>
-      <p>{c.author.bind} - <i>{c.date.bind}</i></p>
+      <p>{c.author.bind}<span style="padding: 0 15px 0 15px">|</span><i>{c.date.bind}</i></p>
     </div>
 
   // --- public --------------------------------------------------------------------------------------------------------

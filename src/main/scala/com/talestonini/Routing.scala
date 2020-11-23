@@ -26,7 +26,7 @@ object Routing {
     ""      -> Home(),
     "about" -> About(),
     "posts" -> Posts(),
-    "tags"  -> UnderConstruction(),
+    "tags"  -> Tags(),
     // posts
     "funProgCapstone"      -> FunProgCapstone(),
     "morseCodeChallenge"   -> MorseCodeChallenge(),

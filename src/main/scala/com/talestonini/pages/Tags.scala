@@ -4,11 +4,11 @@ import com.thoughtworks.binding.Binding
 import org.lrng.binding.html
 import org.scalajs.dom.raw.Node
 
-object UnderConstruction {
+object Tags {
 
   @html def apply(): Binding[Node] =
     <div>
-      <p>Under construction...</p>
+      <p>Coming soon...</p>
     </div>
 
 }

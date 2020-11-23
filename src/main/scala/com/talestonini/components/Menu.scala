@@ -71,10 +71,10 @@ object Menu extends Observer {
       yield <a href={mi.hash} class={s"$commonClasses menu-item"}>{mi.label}</a>
 
   @html private def mobileMenu() = {
-    val commonClasses = "w3-bar-item w3-button"
+    val commonClasses = "w3-bar-item w3-button w3-bold"
 
     val close =
-      <a class={s"$commonClasses w3-xxxlarge fa fa-close"} style="padding-bottom: 23px; text-align: right"
+      <a class={s"$commonClasses w3-xxxlarge w3-right-align fa fa-close"} style="padding-bottom: 23px"
         data:onclick="toggleSidebar()" />
 
     def onClick(handler: () => Unit) = {

@@ -21,6 +21,11 @@ object Posts {
 
   @html private def postLinks() =
     for (p <- bPostLinks)
-      yield <p><a href={s"#/${p.resource.bind}"}>{p.title.bind}</a> ({p.publishDate.bind})</p>
+      yield <div>
+              <p>
+                <a href={s"#/${p.resource.bind}"}>{p.title.bind}</a>
+                <div class="post-date"><i>{p.publishDate.bind}</i></div>
+              </p>
+            </div>
 
 }

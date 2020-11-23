@@ -151,6 +151,10 @@
   padding: 8px 0 8px 0;
 }
 
+.w3-bold {
+  font-weight: bold;
+}
+
 @media all and (max-width: 768px) {
   .menu-item {
     margin: 0 15px 0 15px;
