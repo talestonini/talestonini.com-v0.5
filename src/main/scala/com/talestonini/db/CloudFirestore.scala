@@ -91,7 +91,7 @@ object CloudFirestore {
                 val errMsg = s"unable to decode response from get documents: ${e.getMessage()}"
                 p failure CloudFirestoreException(errMsg)
               case Right(docs) =>
-                p success docs.documents
+                p success docs.documents.sortBy(_.fields.sortingField).reverse
             }
           case f: Failure[SimpleHttpResponse] =>
             val errMsg = s"failed getting documents: ${f.exception.getMessage()}"
