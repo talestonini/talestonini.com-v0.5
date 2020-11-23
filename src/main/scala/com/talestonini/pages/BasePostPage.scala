@@ -186,11 +186,12 @@ trait BasePostPage extends Observer {
       .createComment(user.accessToken, bPostDoc.value.name, c)
       .onComplete({
         case doc: Success[Doc[Comment]] =>
-          bComments.value += BComment(
-            author = Var(doc.value.fields.author.get.name.get),
-            date = Var(datetime2Str(doc.value.fields.date)),
-            text = Var(doc.value.fields.text.get)
-          )
+          bComments.value.prepend(
+              BComment(
+                author = Var(doc.value.fields.author.get.name.get),
+                date = Var(datetime2Str(doc.value.fields.date)),
+                text = Var(doc.value.fields.text.get)
+              ))
         case f: Failure[Doc[Comment]] =>
           println("failed creating comment")
       })
