@@ -1,5 +1,6 @@
 package com.talestonini
 
+import com.thoughtworks.binding.Binding.Var
 import java.time._
 import java.time.format.DateTimeFormatter.{ofPattern => pattern}
 import scala.scalajs.js
@@ -8,6 +9,8 @@ import scala.scalajs.js.annotation.JSGlobal
 package object utils {
 
   private val SimpleDateFormatter = pattern("dd LLL yyyy")
+
+  private var lengthyOperationsInPlace: Set[String] = Set.empty
 
   def datetime2Str(datetime: ZonedDateTime): String =
     datetime
@@ -35,6 +38,16 @@ package object utils {
 
     val chars = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')
     randomStringFromCharList(length, chars)
+  }
+
+  def displayLoading(isLoading: Var[Boolean], forOperation: String): Unit = {
+    lengthyOperationsInPlace = lengthyOperationsInPlace + forOperation
+    isLoading.value = true
+  }
+
+  def hideLoading(isLoading: Var[Boolean], forOperation: String): Unit = {
+    lengthyOperationsInPlace = lengthyOperationsInPlace - forOperation
+    if (lengthyOperationsInPlace.isEmpty) isLoading.value = false
   }
 
   object javascript {

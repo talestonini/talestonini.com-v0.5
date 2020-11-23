@@ -4,6 +4,7 @@ import com.talestonini.Routing._
 import com.talestonini.utils.javascript._
 import com.talestonini.utils.observer.EventName._
 import com.talestonini.utils.observer.SimpleObservable
+import com.talestonini.utils.{displayLoading, hideLoading}
 import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding.Var
 import components.{Footer, Logo, Menu}
@@ -73,6 +74,10 @@ object App {
 
   // --- public --------------------------------------------------------------------------------------------------------
 
+  // whether the app is loading some content or not;
+  // this is the state that backs displaying a loading animation of some kind on the UI
+  val isLoading = Var(false)
+
   // signed in user info
   case object user extends SimpleObservable {
     val displayName         = Var("")
@@ -83,17 +88,18 @@ object App {
   }
 
   // react to user signing in/out
+  val signingInOut = "signingInOut"
   Firebase
     .auth()
     .onAuthStateChanged(
       (userInfo: User) => {
         if (!getFromStorage(userClickedSignOut))
-          displayLoading()
+          displayLoading(isLoading, signingInOut)
 
         if (Option(userInfo).isDefined) {
           captureUserInfo(userInfo)
           hideSignInProviders()
-          hideLoading()
+          hideLoading(isLoading, signingInOut)
           user.notifyObservers(UserSignedIn)
         } else {
           discardUserInfo()
@@ -119,10 +125,6 @@ object App {
 
   // local storage keys
   private val userClickedSignOut = "userClickedSignOut"
-
-  private val isLoading = Var(false)
-  def displayLoading()  = isLoading.value = true
-  def hideLoading()     = isLoading.value = false
 
   private val isSignInProvidersVisible = Var(false)
   private def displaySignInProviders() = isSignInProvidersVisible.value = true

@@ -1,6 +1,6 @@
 package com.talestonini
 
-import com.talestonini.App.{displayLoading, hideLoading}
+import com.talestonini.App.isLoading
 import com.talestonini.db.CloudFirestore
 import com.talestonini.db.model._
 import com.talestonini.utils._
@@ -36,7 +36,8 @@ object Routing {
   private val pages = for (hash <- pageMap.keys) yield hash2Page(hash)
 
   // retrieve posts from db at application start
-  displayLoading()
+  val retrievingPosts = "retrievingPosts"
+  displayLoading(isLoading, retrievingPosts)
   CloudFirestore
     .getPosts()
     .onComplete({
@@ -58,10 +59,10 @@ object Routing {
               throw new Exception(s"missing entry in postDocMap for $resource")
             ) success p
         }
-        hideLoading()
+        hideLoading(isLoading, retrievingPosts)
       case f: Failure[Docs[Post]] =>
         println(s"failed getting posts: ${f.exception.getMessage()}")
-        hideLoading()
+        hideLoading(isLoading, retrievingPosts)
     })
 
   case class Page(hash: String, content: Var[Binding[Node]])
