@@ -41,17 +41,13 @@ package object utils {
   }
 
   def displayLoading(isLoading: Var[Boolean], forOperation: String): Unit = {
-    println("start display: " + lengthyOperationsInPlace)
     lengthyOperationsInPlace = lengthyOperationsInPlace + forOperation
     isLoading.value = true
-    println("end display: " + lengthyOperationsInPlace)
   }
 
   def hideLoading(isLoading: Var[Boolean], forOperation: String): Unit = {
-    println("start hide: " + lengthyOperationsInPlace)
     lengthyOperationsInPlace = lengthyOperationsInPlace - forOperation
     if (lengthyOperationsInPlace.isEmpty) isLoading.value = false
-    println("end hide: " + lengthyOperationsInPlace)
   }
 
   object javascript {
