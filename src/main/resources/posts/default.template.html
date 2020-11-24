@@ -7,6 +7,9 @@ import org.scalajs.dom.raw.Node
 
 object ${class.name} extends BasePostPage {
 
-  @html def postContent(): Binding[Node] = ${cursor.currentDocument.content}
+  @html def postContent(): Binding[Node] =
+    <div>
+      ${cursor.currentDocument.content}
+    </div>
 
 }

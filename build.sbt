@@ -48,6 +48,7 @@ lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
 compileScalastyle := scalastyle.in(Compile).toTask("").value
 (compile in Compile) := ((compile in Compile) dependsOn compileScalastyle).value
 
+laikaConfig := LaikaConfig.defaults
 Laika / sourceDirectories := Seq(sourceDirectory.value / "main/resources/posts")
 laikaSite / target := sourceDirectory.value / "main/scala/com/talestonini/pages/posts"
 laikaTheme := laika.theme.Theme.empty
@@ -67,4 +68,4 @@ laikaHTML2Scala := {
 
 lazy val laikaPrep = taskKey[Unit]("Runs all Laika-related tasks at once.")
 laikaPrep := Def.sequential(laikaHTML, laikaHTML2Scala).value
-(compile in Compile) := ((compile in Compile) dependsOn laikaPrep).value
+//(compile in Compile) := ((compile in Compile) dependsOn laikaPrep).value
