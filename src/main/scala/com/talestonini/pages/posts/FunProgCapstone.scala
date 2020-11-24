@@ -7,6 +7,9 @@ import org.scalajs.dom.raw.Node
 
 object FunProgCapstone extends BasePostPage {
 
-  @html def postContent(): Binding[Node] = <p>It&#39;s very easy to make some words <strong>bold</strong> and other words <em>italic</em> with Markdown. You can even <a href="http://google.com">link to Google!</a></p>
+  @html def postContent(): Binding[Node] =
+    <div>
+      <p>It&#39;s very easy to make some words <strong>bold</strong> and other words <em>italic</em> with Markdown. You can even <a href="http://google.com">link to Google!</a></p>
+    </div>
 
 }

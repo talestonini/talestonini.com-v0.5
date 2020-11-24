@@ -27,8 +27,8 @@ object Routing {
     "about" -> About(),
     "posts" -> Posts(),
     "tags"  -> Tags(),
-    // posts
-    "funProgCapstone"      -> FunProgCapstone(),
+    // posts (comment out if not to be available)
+    //"funProgCapstone"      -> FunProgCapstone(),
     "morseCodeChallenge"   -> MorseCodeChallenge(),
     "urbanForestChallenge" -> UrbanForestChallenge()
   )
@@ -46,11 +46,12 @@ object Routing {
           val resource = p.fields.resource.get
 
           // to build the posts page, with the list of posts
-          Posts.bPostLinks.value += Posts.BPostLink(
-            title = Var(p.fields.title.get),
-            publishDate = Var(datetime2Str(p.fields.publishDate)),
-            resource = Var(resource)
-          )
+          if (pageMap.keySet.contains(resource))
+            Posts.bPostLinks.value += Posts.BPostLink(
+              title = Var(p.fields.title.get),
+              publishDate = Var(datetime2Str(p.fields.publishDate)),
+              resource = Var(resource)
+            )
 
           // to build each post page
           postDocMap
