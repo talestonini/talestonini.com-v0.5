@@ -8,7 +8,7 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, Route}
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.window
-import pages._
+import pages.{About, Posts, Tags}
 import pages.posts._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Promise
@@ -23,7 +23,7 @@ object Routing {
   )
 
   private val pageMap: Map[String, Binding[Node]] = Map(
-    ""      -> About(),
+    ""      -> MorseCodeChallenge(),
     "about" -> About(),
     "posts" -> Posts(),
     "tags"  -> Tags(),
