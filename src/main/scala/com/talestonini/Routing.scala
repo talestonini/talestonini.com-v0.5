@@ -23,7 +23,7 @@ object Routing {
   )
 
   private val pageMap: Map[String, Binding[Node]] = Map(
-    ""      -> Home(),
+    ""      -> About(),
     "about" -> About(),
     "posts" -> Posts(),
     "tags"  -> Tags(),
