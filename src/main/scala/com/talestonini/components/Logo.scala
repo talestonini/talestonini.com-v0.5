@@ -14,13 +14,13 @@ object Logo {
             <td class="symbol">&#x276F;</td>
             <td class="tales_t">T</td>
             <td class="ales">ales</td>
-            {pronunciation("/tɑː \u2022 les/").bind}
+            {pronunciation("/tɑː \u2022 les/")}
           </tr>
           <tr>
             <td />
             <td class="tonini_t">T</td>
             <td class="onini">onini</td>
-            {pronunciation("/toʊ \u2022 niː \u2022 nɪ/").bind}
+            {pronunciation("/toʊ \u2022 niː \u2022 nɪ/")}
           </tr>
           <tr>
             <td />

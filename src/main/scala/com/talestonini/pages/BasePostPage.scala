@@ -20,20 +20,27 @@ import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Promise
 import scala.util.{Failure, Success}
+import org.scalajs.dom.raw.HTMLDivElement
 
 trait BasePostPage extends Observer {
 
   // --- UI ------------------------------------------------------------------------------------------------------------
 
   // where each post builds its content, converted from MarkDown to HTML by Laika
-  def postContent(): Binding[Node]
+  def postContent(): NodeBinding[HTMLDivElement]
+
+  def postPreviewContent(): Binding[Node]
+
+  @html def postHeadline(): Binding[BindingSeq[Node]] = Binding {
+    <div class="post-title w3-padding-8">{bPostDoc.bind.fields.title.getOrElse("")}</div>
+    <div class="post-date">
+      <i>{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd, SimpleDateFormatter)).getOrElse("")}</i>
+    </div>
+  }
 
   @html def apply(): Binding[Node] =
     <div>
-      <div class="post-title w3-padding-8">{bPostDoc.bind.fields.title.getOrElse("")}</div>
-      <div class="post-date">
-        <i>{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd, SimpleDateFormatter)).getOrElse("")}</i>
-      </div>
+      {postHeadline()}
       <div class="w3-padding-16">{postContent()}</div>
       <hr />
       <div class="post-comments">

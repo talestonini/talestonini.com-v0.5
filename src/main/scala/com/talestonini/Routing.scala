@@ -3,34 +3,38 @@ package com.talestonini
 import com.talestonini.App.isLoading
 import com.talestonini.db.CloudFirestore
 import com.talestonini.db.model._
+import com.talestonini.pages.BasePostPage
 import com.talestonini.utils._
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, Route}
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.window
-import pages.{About, Posts, Tags}
 import pages.posts._
+import pages.{Home, Posts, Tags, About}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Promise
 import scala.util.{Failure, Success}
 
 object Routing {
 
+  // comment out if the post is not to be available in the website
+  val postPageObjMap: Map[String, BasePostPage] = Map(
+    //"funProgCapstone"      -> FunProgCapstone,
+    "morseCodeChallenge"   -> MorseCodeChallenge,
+    "urbanForestChallenge" -> UrbanForestChallenge
+  )
+
+  private val pageMap: Map[String, Binding[Node]] = Map(
+    ""      -> Home(),
+    "posts" -> Posts(),
+    "tags"  -> Tags(),
+    "about" -> About()
+  ) ++ postPageObjMap.map(e => (e._1, e._2.apply()))
+
   private val postDocMap: Map[String, Promise[Doc[Post]]] = Map(
     "funProgCapstone"      -> FunProgCapstone.postDocPromise,
     "morseCodeChallenge"   -> MorseCodeChallenge.postDocPromise,
     "urbanForestChallenge" -> UrbanForestChallenge.postDocPromise
-  )
-
-  private val pageMap: Map[String, Binding[Node]] = Map(
-    ""      -> MorseCodeChallenge(),
-    "about" -> About(),
-    "posts" -> Posts(),
-    "tags"  -> Tags(),
-    // posts (comment out if not to be available)
-    //"funProgCapstone"      -> FunProgCapstone(),
-    "morseCodeChallenge"   -> MorseCodeChallenge(),
-    "urbanForestChallenge" -> UrbanForestChallenge()
   )
 
   private val pages = for (hash <- pageMap.keys) yield hash2Page(hash)
