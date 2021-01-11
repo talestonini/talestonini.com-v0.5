@@ -10,7 +10,7 @@ It is developed in ScalaJS and hosted with Firebase Hosting.
 Open the index.html file and note how it updates automatically with code changes.
 
 ## Testing locally before deploying
-Use script `test_local.sh`.  Internally it does:
+Use script `test_local.sh`.  You may need to login manually first:
 ```
 > firebase login
 > firebase serve
