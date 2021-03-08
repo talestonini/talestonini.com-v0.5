@@ -4,6 +4,8 @@
 .metals
 coursier
 project/.bloop
+project/project
+project/target
 Session.vim
 target
 

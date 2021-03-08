@@ -1,7 +1,7 @@
 enablePlugins(ScalaJSPlugin, LaikaPlugin)
 
 name := "TalesTonini.com"
-scalaVersion := "2.13.1"
+scalaVersion := "2.13.5"
 val circeVersion = "0.14.0-M1"
 
 resolvers += Resolver.bintrayRepo("hmil", "maven")

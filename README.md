@@ -28,3 +28,6 @@ Prepare to deploy will create a directory with the contents to be deployed.
 > ./prep_deploy.sh public
 > firebase deploy
 ```
+
+## TODO
+- Improve the about page.
