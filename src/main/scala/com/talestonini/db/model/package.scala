@@ -100,8 +100,8 @@ package object model {
         for {
           resource         <- c.downField("resource").get[String]("stringValue")
           title            <- c.downField("title").get[String]("stringValue")
-          firstPublishDate <- c.downField("first_publish_date").get[ZonedDateTime]("timestampValue")
-          publishDate      <- c.downField("publish_date").get[ZonedDateTime]("timestampValue")
+          firstPublishDate <- c.downField("first_publish_date").getOrElse[ZonedDateTime]("timestampValue")(InitDateTime)
+          publishDate      <- c.downField("publish_date").getOrElse[ZonedDateTime]("timestampValue")(InitDateTime)
           enabled          <- c.downField("enabled").getOrElse[Boolean]("booleanValue")(true)
         } yield Post(Option(resource), Option(title), Option(firstPublishDate), Option(publishDate), Option(enabled))
     }
