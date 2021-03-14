@@ -17,18 +17,20 @@ import scala.util.{Failure, Success}
 object Routing {
 
   private val postDocMap: Map[String, Promise[Doc[Post]]] = Map(
+    "dockerVim"            -> DockerVim.postDocPromise,
     "funProgCapstone"      -> FunProgCapstone.postDocPromise,
     "morseCodeChallenge"   -> MorseCodeChallenge.postDocPromise,
     "urbanForestChallenge" -> UrbanForestChallenge.postDocPromise
   )
 
   private val pageMap: Map[String, Binding[Node]] = Map(
-    ""      -> MorseCodeChallenge(),
+    ""      -> DockerVim(),
     "about" -> About(),
     "posts" -> Posts(),
     "tags"  -> Tags(),
-    // posts (comment out if not to be available)
-    //"funProgCapstone"      -> FunProgCapstone(),
+    // posts
+    "funProgCapstone"      -> FunProgCapstone(),
+    "dockerVim"            -> DockerVim(),
     "morseCodeChallenge"   -> MorseCodeChallenge(),
     "urbanForestChallenge" -> UrbanForestChallenge()
   )
@@ -42,7 +44,7 @@ object Routing {
     .getPosts()
     .onComplete({
       case posts: Success[Docs[Post]] =>
-        for (p <- posts.get) {
+        for (p <- posts.get if p.fields.enabled.getOrElse(true)) {
           val resource = p.fields.resource.get
 
           // to build the posts page, with the list of posts
