@@ -18,7 +18,7 @@ object DockerVim extends BasePostPage {
       <p>But the coolest thing about it are actually the plugins to support programming in Scala and Java.  For <strong>Scala</strong>, it
       automates all the various configuration steps of <a href="https://scalameta.org/metals/docs/editors/vim.html">Metals for Vim</a>,
       giving it features like code completion (with the help of <a href="https://github.com/neoclide/coc.nvim">CoC</a> and
-      <a href="https://github.com/scalameta/coc-metals">coc-metals</a>), jump-to definition navigation, jump to code references, and hint
+      <a href="https://github.com/scalameta/coc-metals">coc-metals</a>), jump to definition navigation, jump to code references, and hint
       on inferred types, to name a few.  For <strong>Java</strong> it combines <a href="https://github.com/neoclide/coc.nvim">CoC</a> and
       <a href="https://github.com/neoclide/coc-java">coc-java</a> to give it the same essential programming features.</p>
       <p>The biggest motivation behind this effort of automation was to have the ability to easily configure my tooling when

@@ -11,7 +11,7 @@ ability to search for text with the [Silver Searcher](https://github.com/Numkil/
 But the coolest thing about it are actually the plugins to support programming in Scala and Java.  For **Scala**, it
 automates all the various configuration steps of [Metals for Vim](https://scalameta.org/metals/docs/editors/vim.html),
 giving it features like code completion (with the help of [CoC](https://github.com/neoclide/coc.nvim) and
-[coc-metals](https://github.com/scalameta/coc-metals)), jump-to definition navigation, jump to code references, and hint
+[coc-metals](https://github.com/scalameta/coc-metals)), jump to definition navigation, jump to code references, and hint
 on inferred types, to name a few.  For **Java** it combines [CoC](https://github.com/neoclide/coc.nvim) and
 [coc-java](https://github.com/neoclide/coc-java) to give it the same essential programming features.
 

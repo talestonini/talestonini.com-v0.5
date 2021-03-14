@@ -2,7 +2,7 @@ enablePlugins(ScalaJSPlugin, LaikaPlugin)
 
 name := "TalesTonini.com"
 scalaVersion := "2.13.5"
-val circeVersion = "0.14.0-M4"
+val circeVersion = "0.14.0-M1"
 
 resolvers += Resolver.bintrayRepo("hmil", "maven")
 
@@ -28,8 +28,8 @@ libraryDependencies ++= Seq(
   "io.circe" %%% "circe-generic" % circeVersion,
   "io.circe" %%% "circe-parser"  % circeVersion,
   // Java Time for ScalaJS
-  "io.github.cquiroz" %%% "scala-java-time"      % "2.2.0",
-  "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.2.0",
+  "io.github.cquiroz" %%% "scala-java-time"      % "2.0.0",
+  "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.0.0",
   // Test
   "org.scalatest" %%% "scalatest" % "3.2.6" % "test"
 )
