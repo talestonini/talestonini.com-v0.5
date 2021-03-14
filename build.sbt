@@ -16,16 +16,6 @@ scalacOptions ++= {
   }
 }
 
-// Enable macro annotations by adding compiler plugins for Scala 2.12
-libraryDependencies ++= {
-  import Ordering.Implicits._
-  if (VersionNumber(scalaVersion.value).numbers >= Seq(2L, 13L)) {
-    Nil
-  } else {
-    Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
-  }
-}
-
 libraryDependencies ++= Seq(
   "org.scala-js" %%% "scalajs-dom" % "1.0.0",
   // Binding
@@ -41,7 +31,7 @@ libraryDependencies ++= Seq(
   "io.github.cquiroz" %%% "scala-java-time"      % "2.0.0",
   "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.0.0",
   // Test
-  "org.scalatest" %%% "scalatest" % "3.2.2" % "test"
+  "org.scalatest" %%% "scalatest" % "3.2.6" % "test"
 )
 
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")

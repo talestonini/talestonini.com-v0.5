@@ -62,7 +62,8 @@ package object model {
               p.firstPublishDate.map(fpd =>
                 "first_publish_date" -> field("timestampValue", fpd.format(LongDateTimeFormatter))
               ),
-              p.publishDate.map(pd => "publish_date" -> field("timestampValue", pd.format(LongDateTimeFormatter)))
+              p.publishDate.map(pd => "publish_date" -> field("timestampValue", pd.format(LongDateTimeFormatter))),
+              p.enabled.map(e => "enabled"           -> field("enabled", e))
             ).filter(_.isDefined).map(_.get): _*
           )
         case c: Comment =>
@@ -81,12 +82,13 @@ package object model {
   // --- post (ie article) ---------------------------------------------------------------------------------------------
 
   case class Post(
+    resource: Option[String],
     title: Option[String],
     firstPublishDate: Option[ZonedDateTime],
     publishDate: Option[ZonedDateTime],
-    resource: Option[String]
+    enabled: Option[Boolean] = Some(true)
   ) extends Entity {
-    def dbFields: Seq[String] = Seq("title", "resource", "first_publish_date", "publish_date")
+    def dbFields: Seq[String] = Seq("resource", "title", "first_publish_date", "publish_date", "enabled")
     def content: String       = title.getOrElse("")
     def sortingField: String  = datetime2Str(publishDate.getOrElse(InitDateTime), DateTimeCompareFormatter)
   }
@@ -96,11 +98,12 @@ package object model {
     new Decoder[Post] {
       final def apply(c: HCursor): Decoder.Result[Post] =
         for {
-          title            <- c.downField("title").get[String]("stringValue")
-          firstPublishDate <- c.downField("first_publish_date").get[ZonedDateTime]("timestampValue")
-          publishDate      <- c.downField("publish_date").get[ZonedDateTime]("timestampValue")
           resource         <- c.downField("resource").get[String]("stringValue")
-        } yield Post(Option(title), Option(firstPublishDate), Option(publishDate), Option(resource))
+          title            <- c.downField("title").get[String]("stringValue")
+          firstPublishDate <- c.downField("first_publish_date").getOrElse[ZonedDateTime]("timestampValue")(InitDateTime)
+          publishDate      <- c.downField("publish_date").getOrElse[ZonedDateTime]("timestampValue")(InitDateTime)
+          enabled          <- c.downField("enabled").getOrElse[Boolean]("booleanValue")(true)
+        } yield Post(Option(resource), Option(title), Option(firstPublishDate), Option(publishDate), Option(enabled))
     }
 
   // --- comment -------------------------------------------------------------------------------------------------------
