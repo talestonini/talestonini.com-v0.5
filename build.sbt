@@ -2,7 +2,7 @@ enablePlugins(ScalaJSPlugin, LaikaPlugin)
 
 name := "TalesTonini.com"
 scalaVersion := "2.13.5"
-val circeVersion = "0.14.0-M1"
+val circeVersion = "0.14.0-M4"
 
 resolvers += Resolver.bintrayRepo("hmil", "maven")
 
@@ -13,16 +13,6 @@ scalacOptions ++= {
     Seq("-Ymacro-annotations")
   } else {
     Nil
-  }
-}
-
-// Enable macro annotations by adding compiler plugins for Scala 2.12
-libraryDependencies ++= {
-  import Ordering.Implicits._
-  if (VersionNumber(scalaVersion.value).numbers >= Seq(2L, 13L)) {
-    Nil
-  } else {
-    Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
   }
 }
 
@@ -38,10 +28,10 @@ libraryDependencies ++= Seq(
   "io.circe" %%% "circe-generic" % circeVersion,
   "io.circe" %%% "circe-parser"  % circeVersion,
   // Java Time for ScalaJS
-  "io.github.cquiroz" %%% "scala-java-time"      % "2.0.0",
-  "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.0.0",
+  "io.github.cquiroz" %%% "scala-java-time"      % "2.2.0",
+  "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.2.0",
   // Test
-  "org.scalatest" %%% "scalatest" % "3.2.2" % "test"
+  "org.scalatest" %%% "scalatest" % "3.2.6" % "test"
 )
 
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
