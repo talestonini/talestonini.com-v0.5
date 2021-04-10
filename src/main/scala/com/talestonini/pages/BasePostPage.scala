@@ -32,7 +32,7 @@ trait BasePostPage extends Observer {
     <div>
       <div class="post-title w3-padding-8">{bPostDoc.bind.fields.title.getOrElse("")}</div>
       <div class="post-date">
-        <i>{bPostDoc.bind.fields.publishDate.map(pd => datetime2Str(pd, SimpleDateFormatter)).getOrElse("")}</i>
+        {postDate(bPostDoc.bind.fields)}
       </div>
       <div class="w3-padding-16">{postContent()}</div>
       <hr />
@@ -42,6 +42,18 @@ trait BasePostPage extends Observer {
         {comments()}
       </div>
     </div>
+
+  @html private def postDate(p: Post): Binding[Node] = {
+    val firstPublishDate = p.firstPublishDate.map(fpd => datetime2Str(fpd, SimpleDateFormatter)).getOrElse("")
+    val publishDate      = p.publishDate.map(pd => datetime2Str(pd, SimpleDateFormatter)).getOrElse("")
+
+    if (firstPublishDate == publishDate)
+      <i>{publishDate}</i>
+    else
+      <div>
+        <i>{publishDate}</i> <i class="first-published">(first {firstPublishDate})</i>
+      </div>
+  }
 
   // widget for inputting a new commment
   private val isInputtingComment = Var(false)

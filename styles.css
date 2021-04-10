@@ -229,3 +229,16 @@ hr {
   /*background-size: 90px 90px;*/
   /*height: 50px;*/
 /*}*/
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+figcaption {
+  font-size: 15px;
+}
+
+.first-published {
+  color: #8a8a8a;
+}

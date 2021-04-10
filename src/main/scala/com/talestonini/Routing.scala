@@ -51,6 +51,7 @@ object Routing {
           if (pageMap.keySet.contains(resource))
             Posts.bPostLinks.value += Posts.BPostLink(
               title = Var(p.fields.title.get),
+              firstPublishDate = Var(datetime2Str(p.fields.firstPublishDate)),
               publishDate = Var(datetime2Str(p.fields.publishDate)),
               resource = Var(resource)
             )

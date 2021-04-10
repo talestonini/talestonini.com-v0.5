@@ -42,6 +42,7 @@ Laika / sourceDirectories := Seq(sourceDirectory.value / "main/resources/posts")
 laikaSite / target := sourceDirectory.value / "main/scala/com/talestonini/pages/posts"
 laikaTheme := laika.theme.Theme.empty
 laikaExtensions := Seq(laika.markdown.github.GitHubFlavor)
+laikaConfig := LaikaConfig.defaults.withRawContent
 
 lazy val laikaHTML2Scala = taskKey[Unit]("Renames Laika's .html outputs to .scala")
 laikaHTML2Scala := {
