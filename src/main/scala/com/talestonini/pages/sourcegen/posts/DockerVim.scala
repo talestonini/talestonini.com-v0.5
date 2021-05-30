@@ -5,7 +5,7 @@
  * Do not modify it directly, as compilation will ovewrite your modifications.
  *
  **************************************************************************************************/
-package com.talestonini.pages.posts
+package com.talestonini.pages.sourcegen.posts
 
 import com.talestonini.pages.BasePostPage
 import com.thoughtworks.binding.Binding
