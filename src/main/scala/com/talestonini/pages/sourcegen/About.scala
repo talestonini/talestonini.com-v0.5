@@ -19,7 +19,7 @@ object About {
       <div class="aside">
         <table style="width:100%">
           <tr>
-            <td style="padding-right: 15px"><img src="/img/talestonini.jpg"/></td>
+            <td style="padding-right: 15px; width: 30%; vertical-align: top;"><img src="/img/talestonini.jpg"/></td>
             <td>I&#39;m <strong>Tales Tonini</strong>, software engineer working in data engineering at <a href="https://eliiza.com.au/">Eliiza</a>. My current interests in the field are Functional Programming, Distributed Systems, the Scala language, Spark and Kafka.</td>
           </tr>
           <tr>
