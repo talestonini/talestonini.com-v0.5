@@ -8,6 +8,7 @@
 package com.talestonini.pages.sourcegen.posts
 
 import com.talestonini.pages.BasePostPage
+import com.talestonini.pages.CodeSnippets
 import com.thoughtworks.binding.Binding
 import org.lrng.binding.html
 import org.scalajs.dom.raw.Node
