@@ -19,18 +19,21 @@ object About {
       <div class="aside">
         <table style="width:100%">
           <tr>
-            <td style="padding-right: 15px; width: 30%; vertical-align: top;"><img src="/img/talestonini.jpg"/></td>
-            <td>I&#39;m <strong>Tales Tonini</strong>, software engineer working in data engineering at <a href="https://eliiza.com.au/">Eliiza</a>. My current interests in the field are Functional Programming, Distributed Systems, the Scala language, Spark and Kafka.</td>
+            <td style="padding-right: 15px; width: 30%;"><img src="/img/talestonini.jpg"/></td>
+            <td>I&#39;m <strong>Tales Tonini</strong>, software engineer working in data engineering at <a href="https://eliiza.com.au/">Eliiza</a>.</td>
           </tr>
           <tr>
-            <td colspan="2">I currently live in Melbourne, Australia, but am originally from Brazil. Aside from programming, I like to stay with family and friends, swim, walk on the beach, play soccer, hike, watch birds, play some guitar and play with Lego.</td>
+            <td colspan="2">My current interests in the field are Functional Programming, Distributed Systems, the Scala language, Spark and Kafka.</td>
+          </tr>
+          <tr>
+            <td colspan="2">I live in Melbourne, Australia, but am originally from Brazil. Aside from programming, I like to spend time with family and friends, swimming and the outdoors.</td>
           </tr>
         </table>
       </div>
       
       <h1 id="about-the-website" class="section">About the website</h1>
-      <p>I started this website to practice writing about things I do at work, general interests in Software Engineering and as a way to learn ScalaJS.
-      These are some of the technologies and libraries that I build it with:</p>
+      <p>I started this website to share my interests in Software Engineering and as a way to learn ScalaJS.
+      These are some of the technologies and libraries that I used to build it:</p>
       <ul>
         <li><a href="https://www.scala-lang.org/">Scala 2.13</a></li>
         <li><a href="https://www.scala-js.org/">ScalaJS</a></li>
