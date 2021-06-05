@@ -28,3 +28,5 @@ These are some of the technologies and libraries that I used to build it:
 - [Laika](https://planet42.github.io/Laika/)
 - [Firebase](https://firebase.google.com/)
 - [Cloud Firestore](https://firebase.google.com/firebase/cloud-firestore)
+- [W3.CSS](https://www.w3schools.com/w3css/default.asp)
+- [PrismJS](https://prismjs.com/index.html)

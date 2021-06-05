@@ -41,6 +41,8 @@ object About {
         <li><a href="https://planet42.github.io/Laika/">Laika</a></li>
         <li><a href="https://firebase.google.com/">Firebase</a></li>
         <li><a href="https://firebase.google.com/firebase/cloud-firestore">Cloud Firestore</a></li>
+        <li><a href="https://www.w3schools.com/w3css/default.asp">W3.CSS</a></li>
+        <li><a href="https://prismjs.com/index.html">PrismJS</a></li>
       </ul>
     </div>
 

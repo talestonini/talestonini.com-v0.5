@@ -16,10 +16,8 @@ on inferred types, to name a few.  For **Java** it combines [CoC](https://github
 [coc-java](https://github.com/neoclide/coc-java) to give it the same essential programming features.
 
 <div class="aside">
-  <figure>
-    <img src="/img/vimide.png" alt="Programming in Scala" />
-    <figcaption>Fig.1 - Programming in Scala</figcaption>
-  </figure>
+  <img src="/img/vimide.png" alt="Programming in Scala" />
+  <figcaption>Fig.1 - Programming in Scala</figcaption>
 </div>
 
 The biggest motivation behind this effort of automation was to have the ability to easily configure my tooling when

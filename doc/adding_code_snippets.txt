@@ -1,6 +1,7 @@
-package com.talestonini.pages
+Adding Code Snippets to a Post - 06 Jun 2021
+--------------------------------------------
 
-object CodeSnippets {
+1) Add a function with the code snippet into com.talestonini.pages.CodeSnippets:
 
   object DockerVim {
     def codeSnippet1() =
@@ -35,4 +36,9 @@ object CodeSnippets {
         |""".stripMargin
   }
 
-}
+2) Refer to the code snippet in the post MD page:
+
+  ``` lang-scala
+  {CodeSnippets.DockerVim.codeSnippet1()}
+  ```
+  <div class="aside"><figcaption>Snippet.1 - Scala code</figcaption></div>
