@@ -47,6 +47,10 @@ package object utils {
     randomStringFromCharList(length, chars)
   }
 
+  @js.native
+  @JSGlobal("sendGtagEvent")
+  def sendGtagEvent(eventName: String, pagePath: String): Unit = js.native
+
   // --- datetime ------------------------------------------------------------------------------------------------------
 
   private val UTCZoneId = ZoneId.of("UTC")

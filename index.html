@@ -5,6 +5,20 @@
   <meta charset="UTF-8">
   <title>TalesTonini.com</title>
 
+  <!-- Google Analytics ============================================================================================ -->
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7S73VXDDSG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7S73VXDDSG', {
+      send_page_view: false
+    });
+  </script>
+
   <!-- Firebase ==================================================================================================== -->
 
   <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
@@ -108,12 +122,14 @@
         overlay.style.display = "none";
       }
     }
+  </script>
 
-    function closeSidebar() {
-      var sidebar = document.getElementById("sidebar")
-      var overlay = document.getElementById("overlay")
-      sidebar.style.display = "none";
-      overlay.style.display = "none";
+  <script>
+    function sendGtagEvent(eventName, pagePath) {
+      gtag('event', eventName, {
+        page_path: pagePath,
+        send_to: 'G-7S73VXDDSG'
+      })
     }
   </script>
 

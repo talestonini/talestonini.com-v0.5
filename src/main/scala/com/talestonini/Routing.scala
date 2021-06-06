@@ -77,7 +77,10 @@ object Routing {
 
   val route = Route.Hash(hash2Page(""))(new Route.Format[Page] {
     override def unapply(hashText: String) = pages.find(_.hash == window.location.hash)
-    override def apply(page: Page): String = page.hash
+    override def apply(page: Page): String = {
+      sendGtagEvent("page_view", page.hash)
+      page.hash
+    }
   })
   route.watch()
 
