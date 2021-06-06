@@ -106,13 +106,13 @@ object App {
         if (Option(userInfo).isDefined) {
           captureUserInfo(userInfo)
           hideSignInProviders()
-          hideLoading(isLoading, signingInOut)
           user.notifyObservers(UserSignedIn)
         } else {
           discardUserInfo()
           uiStart()
           user.notifyObservers(UserSignedOut)
         }
+        hideLoading(isLoading, signingInOut)
       },
       (err: firebase.auth.Error) => println("error capturing auth state change"),
       () => {}
