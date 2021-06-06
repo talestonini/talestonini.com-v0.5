@@ -17,9 +17,23 @@ object About {
     <div>
       <h1 id="about-me" class="title">About me</h1>
       <div class="aside">
-        <table style="width:100%">
+        <table class="w3-hide-small" style="width:100%">
           <tr>
             <td style="padding-right: 15px; width: 30%;"><img src="/img/talestonini.jpg"/></td>
+            <td>
+              <p>I&#39;m <strong>Tales Tonini</strong>, software engineer working in data engineering at <a href="https://eliiza.com.au/">Eliiza</a>.</p>
+              <p>My current interests in the field are Functional Programming, Distributed Systems, the Scala language, Spark and Kafka.</p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <p>I live in Melbourne, Australia, but am originally from Brazil. Aside from programming, I like to spend time with family and friends, swimming and the outdoors.</p>
+            </td>
+          </tr>
+        </table>
+        <table class="w3-hide-large" style="width:100%">
+          <tr>
+            <td style="padding-right: 10px; width: 30%;"><img src="/img/talestonini.jpg"/></td>
             <td>I&#39;m <strong>Tales Tonini</strong>, software engineer working in data engineering at <a href="https://eliiza.com.au/">Eliiza</a>.</td>
           </tr>
           <tr>
@@ -31,8 +45,8 @@ object About {
         </table>
       </div>
       
-      <h1 id="about-the-website" class="section">About the website</h1>
-      <p>I started this website to share my interests in Software Engineering and as a way to learn ScalaJS.
+      <h1 id="about-my-website" class="section">About my website</h1>
+      <p>I started this website to share my interests and learnings in Software Engineering and as a way to play around with ScalaJS.
       These are some of the technologies and libraries that I used to build it:</p>
       <ul>
         <li><a href="https://www.scala-lang.org/">Scala 2.13</a></li>

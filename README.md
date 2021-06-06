@@ -36,6 +36,8 @@ Prepare to deploy will create a directory with the contents to be deployed.
 - Tweet/LinkedIn a post
 - Tags
 - JS bundler
-- Laika
-  - code with braces -> escape braces
-- Home content
+~~- Laika~~
+~~  - code with braces -> escape braces~~
+~~- Home content~~
+- Fix loading wheel when incognito
+~~- About page -> layout not good for desktop~~
