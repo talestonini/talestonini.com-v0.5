@@ -1,7 +1,7 @@
 Adding Code Snippets to a Post - 06 Jun 2021
 --------------------------------------------
 
-1) Add a function with the code snippet into com.talestonini.pages.CodeSnippets:
+1) Add a function with the code snippet into com.talestonini.CodeSnippets:
 
   object DockerVim {
     def codeSnippet1() =

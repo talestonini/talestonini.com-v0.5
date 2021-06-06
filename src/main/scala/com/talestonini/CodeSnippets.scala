@@ -1,4 +1,4 @@
-package com.talestonini.pages
+package com.talestonini
 
 object CodeSnippets {
 
