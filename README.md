@@ -30,4 +30,14 @@ Prepare to deploy will create a directory with the contents to be deployed.
 ```
 
 ## TODO
-- Improve the about page.
+~~ - Improve the about page with sections about me and the website ~~
+- Page with terms and conditions / privacy policy
+- Likes
+- Tweet/LinkedIn a post
+- Tags
+- JS bundler
+~~ - Laika ~~
+~~   - code with braces -> escape braces ~~
+~~ - Home content ~~
+~~ - Fix loading wheel when incognito ~~
+~~ - About page -> layout not good for desktop ~~

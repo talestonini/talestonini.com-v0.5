@@ -2,7 +2,7 @@ enablePlugins(ScalaJSPlugin, LaikaPlugin)
 
 name := "TalesTonini.com"
 scalaVersion := "2.13.5"
-val circeVersion = "0.14.0-M1"
+val circeVersion = "0.14.1"
 
 resolvers += Resolver.bintrayRepo("hmil", "maven")
 
@@ -17,7 +17,7 @@ scalacOptions ++= {
 }
 
 libraryDependencies ++= Seq(
-  "org.scala-js" %%% "scalajs-dom" % "1.0.0",
+  "org.scala-js" %%% "scalajs-dom" % "1.1.0",
   // Binding
   "com.thoughtworks.binding" %%% "route"   % "latest.release",
   "com.thoughtworks.binding" %%% "binding" % "latest.release",
@@ -28,31 +28,37 @@ libraryDependencies ++= Seq(
   "io.circe" %%% "circe-generic" % circeVersion,
   "io.circe" %%% "circe-parser"  % circeVersion,
   // Java Time for ScalaJS
-  "io.github.cquiroz" %%% "scala-java-time"      % "2.0.0",
-  "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.0.0",
+  "io.github.cquiroz" %%% "scala-java-time"      % "2.3.0",
+  "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.3.0",
   // Test
-  "org.scalatest" %%% "scalatest" % "3.2.6" % "test"
+  "org.scalatest" %%% "scalatest" % "3.2.9" % "test"
 )
 
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
 compileScalastyle := scalastyle.in(Compile).toTask("").value
 (compile in Compile) := ((compile in Compile) dependsOn compileScalastyle).value
 
-Laika / sourceDirectories := Seq(sourceDirectory.value / "main/resources/posts")
-laikaSite / target := sourceDirectory.value / "main/scala/com/talestonini/pages/posts"
+Laika / sourceDirectories := Seq(sourceDirectory.value / "main/resources/pages")
+laikaSite / target := sourceDirectory.value / "main/scala/com/talestonini/pages/sourcegen"
 laikaTheme := laika.theme.Theme.empty
 laikaExtensions := Seq(laika.markdown.github.GitHubFlavor)
 laikaConfig := LaikaConfig.defaults.withRawContent
 
 lazy val laikaHTML2Scala = taskKey[Unit]("Renames Laika's .html outputs to .scala")
 laikaHTML2Scala := {
-  val laikaHTMLTargetDir = sourceDirectory.value / "main/scala/com/talestonini/pages/posts"
-  file(laikaHTMLTargetDir.getAbsolutePath)
+  renameHtmlToScala(sourceDirectory.value / "main/scala/com/talestonini/pages/sourcegen")
+  renameHtmlToScala(sourceDirectory.value / "main/scala/com/talestonini/pages/sourcegen/posts")
+}
+
+def renameHtmlToScala(dir: File) = {
+  file(dir.getAbsolutePath)
     .listFiles()
     .map(f => {
       val filename = f.getAbsolutePath()
-      val prefix   = filename.substring(0, filename.lastIndexOf("."))
-      f.renameTo(new File(prefix + ".scala"))
+      if (filename.endsWith("html")) {
+        val prefix = filename.substring(0, filename.lastIndexOf("."))
+        f.renameTo(new File(prefix + ".scala"))
+      }
     })
 }
 

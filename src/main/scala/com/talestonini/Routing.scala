@@ -8,8 +8,9 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, Route}
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.window
-import pages.{About, Posts, Tags}
-import pages.posts._
+import pages.{Posts, Tags}
+import pages.sourcegen._
+import pages.sourcegen.posts._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Promise
 import scala.util.{Failure, Success}

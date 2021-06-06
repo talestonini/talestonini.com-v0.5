@@ -5,9 +5,10 @@
  * Do not modify it directly, as compilation will ovewrite your modifications.
  *
  **************************************************************************************************/
-package com.talestonini.pages.posts
+package com.talestonini.pages.sourcegen.posts
 
 import com.talestonini.pages.BasePostPage
+import com.talestonini.pages.CodeSnippets
 import com.thoughtworks.binding.Binding
 import org.lrng.binding.html
 import org.scalajs.dom.raw.Node
@@ -29,10 +30,8 @@ object DockerVim extends BasePostPage {
       on inferred types, to name a few.  For <strong>Java</strong> it combines <a href="https://github.com/neoclide/coc.nvim">CoC</a> and
       <a href="https://github.com/neoclide/coc-java">coc-java</a> to give it the same essential programming features.</p>
       <div class="aside">
-        <figure>
-          <img src="/img/vimide.png" alt="Programming in Scala"/>
-          <figcaption>Fig.1 - Programming in Scala</figcaption>
-        </figure>
+        <img src="/img/vimide.png" alt="Programming in Scala"/>
+        <figcaption>Fig.1 - Programming in Scala</figcaption>
       </div>
       <p>The biggest motivation behind this effort of automation was to have the ability to easily configure my tooling when
       changing work machines.  As a consultant, I&#39;m required to use client&#39;s laptops, which usually come in various different

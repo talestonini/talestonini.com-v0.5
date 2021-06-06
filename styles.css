@@ -105,8 +105,8 @@
 }
 
 .content {
-  padding-left: 140px;
-  padding-right: 140px;
+  padding-left: 120px;
+  padding-right: 120px;
   font-size: 20px;
 }
 
@@ -126,7 +126,7 @@
   text-decoration: underline;
 }
 
-.content .post-title {
+.content .post-title, h1 {
   font-family: Roboto-Condensed, sans-serif;
   font-style: normal;
   font-weight: 700;
@@ -164,6 +164,16 @@
 .content hr {
   height: 1px;
   margin: 16px 0;
+}
+
+.content code {
+  font-family: 'Source Code Pro', sans-serif;
+  font-size: 14px;
+}
+
+.content code span {
+  font-family: 'Source Code Pro', sans-serif;
+  font-size: 14px;
 }
 
 .no-decoration {
@@ -233,6 +243,7 @@ hr {
 img {
   max-width: 100%;
   height: auto;
+  box-shadow: 0px 0px 0px 1px #ccc;
 }
 
 figcaption {
