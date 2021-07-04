@@ -1,7 +1,9 @@
 package com.talestonini.components
 
+import com.talestonini.BuildInfo
 import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding.BindingSeq
+import java.time.Year
 import org.lrng.binding.html
 import org.scalajs.dom.raw.Node
 
@@ -26,8 +28,11 @@ object Footer {
       </a>
     </div>
     <div class="w3-small">
-      <p>© Tales Tonini, 2019-2021</p>
+      <p>{footerText()}</p>
     </div>
   }
+
+  private def footerText(): String =
+    s"© Tales Tonini, 2019-${Year.now().getValue()} \u2014 v${BuildInfo.version}"
 
 }

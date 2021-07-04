@@ -1,6 +1,7 @@
-enablePlugins(ScalaJSPlugin, LaikaPlugin)
+enablePlugins(BuildInfoPlugin, ScalaJSPlugin, LaikaPlugin)
 
 name := "TalesTonini.com"
+version := "0.1.0"
 scalaVersion := "2.13.5"
 val circeVersion = "0.14.1"
 
@@ -15,6 +16,10 @@ scalacOptions ++= {
     Nil
   }
 }
+
+// BuilfInfoPlubin
+buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
+buildInfoPackage := "com.talestonini"
 
 libraryDependencies ++= Seq(
   "org.scala-js" %%% "scalajs-dom" % "1.1.0",

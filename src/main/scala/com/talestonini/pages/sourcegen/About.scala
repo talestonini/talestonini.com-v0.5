@@ -31,7 +31,7 @@ object About {
             </td>
           </tr>
         </table>
-        <table class="w3-hide-large" style="width:100%">
+        <table class="w3-hide-large w3-hide-medium" style="width:100%">
           <tr>
             <td style="padding-right: 10px; width: 30%;"><img src="/img/talestonini.jpg"/></td>
             <td>I&#39;m <strong>Tales Tonini</strong>, software engineer working in data engineering at <a href="https://eliiza.com.au/">Eliiza</a>.</td>
