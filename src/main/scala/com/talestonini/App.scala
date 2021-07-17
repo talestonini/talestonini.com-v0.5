@@ -66,6 +66,7 @@ object App {
 
   @JSExport("main")
   def main(): Unit = {
+    runFirebaseAuth()
     setInStorage(pristineAuthState, true)
     html.render(document.body, app())
   }
@@ -90,33 +91,35 @@ object App {
     var accessToken: String = _
   }
 
-  // react to user signing in/out
-  val signingInOut = "signingInOut"
-  Firebase
-    .auth()
-    .onAuthStateChanged(
-      (userInfo: User) => {
-        if (!getFromStorage(userClickedSignOut) && !getFromStorage(pristineAuthState))
-          displayLoading(isLoading, signingInOut)
+  def runFirebaseAuth(): Unit = {
+    // react to user signing in/out
+    val signingInOut = "signingInOut"
+    Firebase
+      .auth()
+      .onAuthStateChanged(
+        (userInfo: User) => {
+          if (!getFromStorage(userClickedSignOut) && !getFromStorage(pristineAuthState))
+            displayLoading(isLoading, signingInOut)
 
-        // set to false as soon as onAuthStateChanged is once invoked,
-        // so that the "isLoading" animation does not fire at app start without the user ever attempting to sign in
-        setInStorage(pristineAuthState, false)
+          // set to false as soon as onAuthStateChanged is once invoked,
+          // so that the "isLoading" animation does not fire at app start without the user ever attempting to sign in
+          setInStorage(pristineAuthState, false)
 
-        if (Option(userInfo).isDefined) {
-          captureUserInfo(userInfo)
-          hideSignInProviders()
-          user.notifyObservers(UserSignedIn)
-        } else {
-          discardUserInfo()
-          uiStart()
-          user.notifyObservers(UserSignedOut)
-        }
-        hideLoading(isLoading, signingInOut)
-      },
-      (err: firebase.auth.Error) => println("error capturing auth state change"),
-      () => {}
-    )
+          if (Option(userInfo).isDefined) {
+            captureUserInfo(userInfo)
+            hideSignInProviders()
+            user.notifyObservers(UserSignedIn)
+          } else {
+            discardUserInfo()
+            uiStart()
+            user.notifyObservers(UserSignedOut)
+          }
+          hideLoading(isLoading, signingInOut)
+        },
+        (err: firebase.auth.Error) => println("error capturing auth state change"),
+        () => {}
+      )
+  }
 
   def handleClickSignIn(): Unit = {
     setInStorage(userClickedSignOut, false)
