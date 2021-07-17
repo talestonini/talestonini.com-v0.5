@@ -38,11 +38,12 @@ Use script `deploy.sh`.
 
 ## TODO
 
-### New Features
+### New features
 - Likes
 - Tweet/LinkedIn a post
 - Tags
-- ~~JS bundler~~: makes no sense, as the website does not depend on any npm library
+- ~~JS bundler~~: makes no sense, as the website does not depend on any npm library (`firebase` and `firebaseui` are
+**npm** modules, but (afaik) *Firebase Hosting* delivers their code from the script-includes in `index.html`)
 - ~~Laika~~
   - ~~code with braces -> escape braces~~
 - ~~Home content~~
@@ -54,4 +55,7 @@ Use script `deploy.sh`.
 - ~~Fix loading wheel when incognito~~
 - ~~About page -> layout not good for desktop~~
 - ~~About page with duplicate content when flipping mobile horizontally~~
+
+### Nice to have
 - Open-source the website
+- Improve delivery of scripts/styles from `index.html` (Firebase ones are fine, I mean all others)
