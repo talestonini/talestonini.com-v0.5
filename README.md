@@ -65,3 +65,4 @@ Hosting*)
 ### Nice to have
 - Open-source the website
 - Improve delivery of scripts/styles from `index.html` (Firebase ones are fine, I mean all others)
+- Auto-deploy? with [Deploy to Firebase Hosting](https://github.com/marketplace/actions/deploy-to-firebase-hosting)
