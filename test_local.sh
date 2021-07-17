@@ -1,4 +1,4 @@
 #!/bin/bash
 
-./prep_deploy.sh public
+./prep_deploy.sh public dev
 firebase serve

@@ -4,29 +4,36 @@ It is developed in ScalaJS and hosted with Firebase Hosting.
 
 ## Developing
 ```
+> sbt fastOptJS
+> ./test_local.sh
+```
+~~Open the index.html file and note how it updates automatically with code changes.~~
+The above is not true anymore, as the website depends on Firebase components.
+Typically, you'll want to continually bundle the app with:
+```
 > sbt
 > ~fastOptJS
 ```
-Open the index.html file and note how it updates automatically with code changes.
+...and at another terminal window:
+```
+> ./test_local.sh
+```
 
 ## Testing locally before deploying
 Use script `test_local.sh`.  You may need to login manually first:
 ```
 > firebase login
-> firebase serve
 ```
 Now visit the provided local URL.
-If that fails, try re-authenticating first:
+If that fails, try re-authenticating:
 ```
 > firebase login --reauth
-> firebase serve
 ```
 
 ## Deploying
-Prepare to deploy will create a directory with the contents to be deployed.
+Use script `deploy.sh`.
 ```
-> ./prep_deploy.sh public
-> firebase deploy
+> ./deploy.sh
 ```
 
 ## TODO
@@ -35,7 +42,7 @@ Prepare to deploy will create a directory with the contents to be deployed.
 - Likes
 - Tweet/LinkedIn a post
 - Tags
-- JS bundler
+- ~~JS bundler~~: makes no sense, as the website does not depend on any npm library
 - ~~Laika~~
   - ~~code with braces -> escape braces~~
 - ~~Home content~~
@@ -47,3 +54,4 @@ Prepare to deploy will create a directory with the contents to be deployed.
 - ~~Fix loading wheel when incognito~~
 - ~~About page -> layout not good for desktop~~
 - ~~About page with duplicate content when flipping mobile horizontally~~
+- Open-source the website
