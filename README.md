@@ -37,10 +37,10 @@ Use script `deploy.sh`.
 > ./deploy.sh
 ```
 
-## Upgrading **npm** dependencies
+## Upgrading npm dependencies
 All **npm** dependencies are delivered by *Firebase Hosting* (afaik) so far. To upgrade them, refer to the
-script-includes in `index.html`. In the npm website, search for modules `firebase` and `firebaseui` to find out their
-latest versions.
+script-includes in `index.html`. In the [npm](https://www.npmjs.com/) website, search for modules `firebase` and
+`firebaseui` to find out their latest versions.
 
 ## TODO
 
