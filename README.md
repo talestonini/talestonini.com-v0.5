@@ -8,6 +8,7 @@ It is developed in ScalaJS and hosted with Firebase Hosting.
 > ./test_local.sh
 ```
 ~~Open the index.html file and note how it updates automatically with code changes.~~
+
 The above is not true anymore, as the website depends on Firebase components.
 Typically, you'll want to continually bundle the app with:
 ```
