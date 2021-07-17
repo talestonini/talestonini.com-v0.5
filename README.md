@@ -36,14 +36,19 @@ Use script `deploy.sh`.
 > ./deploy.sh
 ```
 
+## Upgrading **npm** dependencies
+All **npm** dependencies are delivered by *Firebase Hosting* (afaik) so far. To upgrade them, refer to the
+script-includes in `index.html`. In the npm website, search for modules `firebase` and `firebaseui` to find out their
+latest versions.
+
 ## TODO
 
 ### New features
 - Likes
 - Tweet/LinkedIn a post
 - Tags
-- ~~JS bundler~~: makes no sense, as the website does not depend on any npm library (`firebase` and `firebaseui` are
-**npm** modules, but (afaik) *Firebase Hosting* delivers their code from the script-includes in `index.html`)
+- ~~JS bundler~~: makes no sense, as the website does not depend on any npm library (that is not delivered by *Firebase
+Hosting*)
 - ~~Laika~~
   - ~~code with braces -> escape braces~~
 - ~~Home content~~
