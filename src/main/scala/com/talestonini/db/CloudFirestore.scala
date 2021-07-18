@@ -17,7 +17,7 @@ import scala.util.{Failure, Success}
 
 object CloudFirestore {
 
-  private val ApiKey        = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY"
+  private val ApiKey        = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY" // restricted web app API key
   private val ProjectId     = "ttdotcom"
   private val Database      = "(default)"
   private val FirestoreHost = "firestore.googleapis.com"

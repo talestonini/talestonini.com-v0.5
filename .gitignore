@@ -1,18 +1,16 @@
+**/.DS_store
+
 .bloop
 .bsp
 .idea
 .metals
-coursier
+old
 project/.bloop
 project/project
 project/target
-Session.vim
+public
 target
 
 .firebase/hosting.cHVibGlj.cache
 firebase-debug.log
-node_modules
 package-lock.json
-public*
-
-**/.DS_store
