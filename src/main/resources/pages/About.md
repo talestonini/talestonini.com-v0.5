@@ -35,8 +35,8 @@
 </div>
 
 #About my website
-I started this website to share my interests and learnings and as a way to play around with ScalaJS.
-These are some of the technologies and libraries that I used to build it:
+I started this website to share my interests and learnings and as a way to play around with ScalaJS. These are some of
+the technologies and libraries that I use to build it:
 
 - [Scala 2.13](https://www.scala-lang.org/)
 - [ScalaJS](https://www.scala-js.org/)
@@ -46,3 +46,21 @@ These are some of the technologies and libraries that I used to build it:
 - [Cloud Firestore](https://firebase.google.com/firebase/cloud-firestore)
 - [W3.CSS](https://www.w3schools.com/w3css/default.asp)
 - [PrismJS](https://prismjs.com/index.html)
+
+The **source code is open** [in my GitHub account](https://github.com/talestonini/talestonini.com) and I would gladly
+receive feedback about it.
+
+As you can see, I built a little engine to generate ScalaJS code for the posts I write in
+[Markdown](https://en.wikipedia.org/wiki/Markdown).
+
+##A note on data privacy and transparency
+My website is hosted by **Firebase** (a platform that is owned by Google) and has **Google Analytics** enabled, so that
+I can track visits to my pages and posts. I also allow visitors to login via some social media platforms (GitHub,
+Twitter, Google and Facebook), which allows visitors to leave comments on the posts and, in the near future, to like
+them too. I do not do anything special or malicious with the data I collect about visitors and visits, other than
+satisfy my own curiosity about which posts attract more attention. For the sake of full transparency, this is what I
+collect:
+
+- Count of visits per page (not linked to visitor)
+- Personal identifiers that visitors utilise in their social accounts used to log into my website
+- Comments (and likes in the future) left on the posts by logged in visitors

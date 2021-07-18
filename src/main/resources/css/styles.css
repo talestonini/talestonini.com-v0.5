@@ -133,6 +133,13 @@
   font-size: 40px;
 }
 
+h2 {
+  font-family: Roboto-Condensed, sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 35px;
+}
+
 .content .post-date {
   font-size: 15px;
 }
