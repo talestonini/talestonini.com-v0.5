@@ -50,9 +50,8 @@ object Menu extends Observer {
     if (!isMobile) menuElems else mobileMenuElems
   }
 
+  // this is just for normal menu (not the mobile menu)
   @html private def greetUser(): Binding[Node] = {
-    def firstStr(str: String) = str.split(" ")(0)
-
     val signInOutClasses = s"$commonClasses menu-item-sign-in-out"
     <div>
       <div id="greet-signed-in" class="greeting hidden" style={s"display: ${display(isUserSignedIn.bind)}"}>
@@ -85,7 +84,7 @@ object Menu extends Observer {
     val signOut =
       <a id="greet-signed-in-mobile" class={s"$commonClasses w3-xlarge w3-light-grey"}
         style={s"display: ${display(isUserSignedIn.bind)}"} onclick={e: Event => onClick(handleClickSignOut)}>
-        Hi, {user.displayName.bind}! (Sign out)
+        Hi, {firstStr(user.displayName.bind)}! (Sign out)
       </a>
 
     val signIn =
@@ -117,5 +116,7 @@ object Menu extends Observer {
   private def toggleSidebar(): Unit = js.native
 
   private val commonClasses = "w3-button w3-hover-none w3-border-white w3-bottombar w3-hover-border-black w3-hide-small"
+
+  private def firstStr(str: String) = str.split(" ")(0)
 
 }

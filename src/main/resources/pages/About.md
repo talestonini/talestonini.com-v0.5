@@ -9,7 +9,7 @@
       <td style="padding-right: 15px; width: 30%;"><img src="/img/talestonini.jpg" /></td>
       <td>
         <p>Hi!, my name is <strong>Tales Tonini</strong> and I'm a software engineer interested in Functional Programming, Distributed Systems and the Scala language.</p>
-        <p>I work in data engineering for an AI consultancy called <a href="https://eliiza.com.au/">Eliiza</a>, and for the past 4+ years I've mainly worked with Spark and Kafka, platforms that I really enjoy to program in.</p>
+        <p>I work in data engineering for an AI consultancy called <a href="https://eliiza.com.au/">Eliiza</a>, and for the past 5 years I've mainly worked with Spark and Kafka, platforms that I really enjoy to program in.</p>
       </td>
     </tr>
     <tr>
@@ -27,7 +27,7 @@
     </tr>
     <tr>
       <td colspan="2">
-        <p>I work in data engineering for an AI consultancy called <a href="https://eliiza.com.au/">Eliiza</a>, and for the past 4+ years I've mainly worked with Spark and Kafka, platforms that I really enjoy to program in.</p>
+        <p>I work in data engineering for an AI consultancy called <a href="https://eliiza.com.au/">Eliiza</a>, and for the past 5 years I've mainly worked with Spark and Kafka, platforms that I really enjoy to program in.</p>
         <p>I live in Melbourne, Australia, but am originally from Brazil. Aside from programming, I like to spend time with family and friends, swimming and the outdoors.</p>
       </td>
     </tr>
