@@ -61,6 +61,6 @@ them too. I do not do anything special or malicious with the data I collect abou
 satisfy my own curiosity about which posts attract more attention. For the sake of full transparency, this is what I
 collect:
 
-- Count of visits per page (not linked to visitor)
-- Personal identifiers that visitors utilise in their social accounts used to log into my website
-- Comments (and likes in the future) left on the posts by logged in visitors
+- Count of visits per page (not linked to visitor);
+- Personal identifiers that visitors utilise in their social accounts used to log into my website;
+- Comments (and likes in the future) left on the posts by logged in visitors.

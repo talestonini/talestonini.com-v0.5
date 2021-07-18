@@ -73,9 +73,9 @@ object About {
       satisfy my own curiosity about which posts attract more attention. For the sake of full transparency, this is what I
       collect:</p>
       <ul>
-        <li>Count of visits per page (not linked to visitor)</li>
-        <li>Personal identifiers that visitors utilise in their social accounts used to log into my website</li>
-        <li>Comments (and likes in the future) left on the posts by logged in visitors</li>
+        <li>Count of visits per page (not linked to visitor);</li>
+        <li>Personal identifiers that visitors utilise in their social accounts used to log into my website;</li>
+        <li>Comments (and likes in the future) left on the posts by logged in visitors.</li>
       </ul>
     </div>
 
