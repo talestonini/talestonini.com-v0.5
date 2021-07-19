@@ -56,7 +56,7 @@ Hosting*)
 - ~~Version number in footer~~
 
 ### Issues
-- Missing a page with terms and conditions / privacy policy
+- ~~Missing a page with terms and conditions / privacy policy~~
 - ~~Improve the about page with sections about me and the website~~
 - ~~Fix loading wheel when incognito~~
 - ~~About page -> layout not good for desktop~~

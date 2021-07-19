@@ -1,7 +1,7 @@
 enablePlugins(BuildInfoPlugin, ScalaJSPlugin, LaikaPlugin)
 
 name := "TalesTonini.com"
-version := "0.1.6"
+version := "0.1.7"
 scalaVersion := "2.13.5"
 val circeVersion = "0.14.1"
 
