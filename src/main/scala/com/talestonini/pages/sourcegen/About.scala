@@ -68,14 +68,13 @@ object About {
       <h2 id="a-note-on-data-privacy-and-transparency" class="section">A note on data privacy and transparency</h2>
       <p>My website is hosted by <strong>Firebase</strong> (a platform that is owned by Google) and has <strong>Google Analytics</strong> enabled, so that
       I can track visits to my pages and posts. I also allow visitors to login via some social media platforms (GitHub,
-      Twitter, Google and Facebook), which allows visitors to leave comments on the posts and, in the near future, to like
-      them too. I do not do anything special or malicious with the data I collect about visitors and visits, other than
-      satisfy my own curiosity about which posts attract more attention. For the sake of full transparency, this is what I
-      collect:</p>
+      Twitter, Google and Facebook), which allows visitors to leave comments on the posts and soon to leave likes on them too.
+      I do not do anything special or malicious with the data I collect about visitors and visits, other than satisfy my own
+      curiosity about which posts attract more attention. For the sake of full transparency, this is what I collect:</p>
       <ul>
-        <li>Count of visits per page (not linked to visitor);</li>
-        <li>Personal identifiers that visitors utilise in their social accounts used to log into my website;</li>
-        <li>Comments (and likes in the future) left on the posts by logged in visitors.</li>
+        <li>Count of visits per page (not linked to visitors);</li>
+        <li>Personal identifiers that visitors utilise in their social media accounts used to log into my website;</li>
+        <li>Comments (and soon likes) left on the posts by logged-in visitors.</li>
       </ul>
     </div>
 

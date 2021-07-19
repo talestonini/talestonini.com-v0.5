@@ -25,12 +25,10 @@ object Routing {
   )
 
   private val pageMap: Map[String, Binding[Node]] = Map(
-    ""               -> DockerVim(),
-    "about"          -> About(),
-    "posts"          -> Posts(),
-    "privacyPolicy"  -> PrivacyPolicy(),
-    "tags"           -> Tags(),
-    "termsOfService" -> TermsOfService(),
+    ""      -> DockerVim(),
+    "about" -> About(),
+    "posts" -> Posts(),
+    "tags"  -> Tags(),
     // posts
     "funProgCapstone"      -> FunProgCapstone(),
     "dockerVim"            -> DockerVim(),
