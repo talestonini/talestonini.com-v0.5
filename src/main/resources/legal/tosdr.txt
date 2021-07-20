@@ -36,9 +36,9 @@
 Domains: talestonini.com,ttdotcom.web.app,ttdotcom.firebaseapp.com
 
 Document-Name: Privacy Policy
-Url: https://talestonini.com/#/privacyPolicy
+Url: https://talestonini.com/privacyPolicy.html
 Path: //*[@id="pp"]
 
-Document-Name: Terms and Conditions
-Url: https://talestonini.com/#/termsAndConditions
-Path: //*[@id="tsacs"]
+Document-Name: Terms of Service
+Url: https://talestonini.com/termsOfService.html
+Path: //*[@id="tos"]

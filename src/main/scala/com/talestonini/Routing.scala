@@ -9,7 +9,6 @@ import com.thoughtworks.binding.{Binding, Route}
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.window
 import pages.{Posts, Tags}
-import pages.legal._
 import pages.sourcegen._
 import pages.sourcegen.posts._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -26,12 +25,10 @@ object Routing {
   )
 
   private val pageMap: Map[String, Binding[Node]] = Map(
-    ""                   -> DockerVim(),
-    "about"              -> About(),
-    "posts"              -> Posts(),
-    "privacyPolicy"      -> PrivacyPolicy(),
-    "tags"               -> Tags(),
-    "termsAndConditions" -> TermsAndConditions(),
+    ""      -> DockerVim(),
+    "about" -> About(),
+    "posts" -> Posts(),
+    "tags"  -> Tags(),
     // posts
     "funProgCapstone"      -> FunProgCapstone(),
     "dockerVim"            -> DockerVim(),

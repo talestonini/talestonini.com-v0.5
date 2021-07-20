@@ -15,8 +15,8 @@ cp -r target/scala-2.13/classes/favicom/* $public/favicom
 cp -r target/scala-2.13/classes/fonts/* $public/fonts
 cp -r target/scala-2.13/classes/img/* $public/img
 cp -r target/scala-2.13/classes/js/* $public/js
+cp -r target/scala-2.13/classes/legal/* $public
 
-cp target/scala-2.13/classes/tosdr.txt $public/tosdr.txt
 cp index.html $public
 
 if [ $cycle = dev ]
