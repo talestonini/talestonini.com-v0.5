@@ -36,6 +36,46 @@ object CodeSnippets {
         |  decorator.doSthSpecial()
         |  ...
         |""".stripMargin
+
+    def scala2Decorator() =
+      """object Scala2Decorator {
+        |  implicit def converter(tp: ThirdPartyApi): Scala2Decorator =
+        |    Scala2Decorator(tp)
+        |}
+        |
+        |class Scala2Decorator(tp: ThirdPartyApi) {
+        |  def doSthSpecial() = {
+        |    println(s"doing something special with ${tp.prop}, the Scala 2 way")
+        |    tp.otherProp = "baz"
+        |  }
+        |}
+        |""".stripMargin
+
+    def usingScala2Decorator() =
+      """  ...
+        |  import Scala2Decorator.converter
+        |
+        |  val tp = new ThirdPartyApi()
+        |  tp.doSth()
+        |  tp.doSthSpecial()
+        |  ...
+        |""".stripMargin
+
+    def scala3Decorator() =
+      """extension (tp: ThirdPartyApi)
+        |  def doSthMoreSpecial() = {
+        |    println(s"doing something even more special with ${tp.prop}, the Scala 3 way")
+        |    tp.otherProp = "baz"
+        |  }
+        |""".stripMargin
+
+    def usingScala3Decorator() =
+      """  ...
+        |  val tp = new ThirdPartyApi()
+        |  tp.doSth()
+        |  tp.doSthMoreSpecial()
+        |  ...
+        |""".stripMargin
   }
 
 }
