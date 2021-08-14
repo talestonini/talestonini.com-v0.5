@@ -21,11 +21,12 @@ object Routing {
     "dockerVim"            -> DockerVim.postDocPromise,
     "funProgCapstone"      -> FunProgCapstone.postDocPromise,
     "morseCodeChallenge"   -> MorseCodeChallenge.postDocPromise,
+    "scalaDecorators"      -> ScalaDecorators.postDocPromise,
     "urbanForestChallenge" -> UrbanForestChallenge.postDocPromise
   )
 
   private val pageMap: Map[String, Binding[Node]] = Map(
-    ""      -> DockerVim(),
+    ""      -> ScalaDecorators(),
     "about" -> About(),
     "posts" -> Posts(),
     "tags"  -> Tags(),
@@ -33,6 +34,7 @@ object Routing {
     "funProgCapstone"      -> FunProgCapstone(),
     "dockerVim"            -> DockerVim(),
     "morseCodeChallenge"   -> MorseCodeChallenge(),
+    "scalaDecorators"      -> ScalaDecorators(),
     "urbanForestChallenge" -> UrbanForestChallenge()
   )
 

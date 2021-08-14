@@ -76,6 +76,6 @@ package object utils {
       case None     => default
     }
 
-  def now() = ZonedDateTime.now(UTCZoneId)
+  def now(): ZonedDateTime = ZonedDateTime.now(UTCZoneId)
 
 }
