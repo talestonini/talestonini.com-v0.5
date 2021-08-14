@@ -96,13 +96,14 @@ object ScalaDecorators extends BasePostPage {
       <h2 id="conclusion" class="section">Conclusion</h2>
       <p>In this post we saw what a <em>decorator</em> is in the realm of Object Oriented Design Patterns and defined three ways of
       writing decorators in Scala, from a traditional way to more elegant ones, utilising features of the Scala language in
-      its versions 2 and 3.</p>
-      <p>My favourite application of decorators in Scala is actually defining new <em>functional style</em> methods for third-party
-      library API&#39;s such as Apache Spark&#39;s
+      its versions 2 and 3. Check out the <a href="https://github.com/talestonini/scala-decorators">full working code</a> of the snippets
+      above in GitHub.</p>
+      <p>To finalise, I&#39;d like to share that my favourite application of decorators in Scala is actually defining new <em>functional
+      style</em> methods for third-party library API&#39;s such as Apache Spark&#39;s
       DataFrame/<a href="https://spark.apache.org/docs/3.1.2/api/scala/org/apache/spark/sql/Dataset.html">Dataset</a> or
       Apache Kafka Streams&#39; <a href="https://kafka.apache.org/27/javadoc/org/apache/kafka/streams/kstream/KStream.html">KStream</a>.</p>
-      <p>If you got up to here, thank you! I hope you enjoyed the read and would really like to receive your feedback.
-      Cheers!</p>
+      <p>If you got down to here, thank you! I hope you enjoyed the read and would really like to receive your feedback.</p>
+      <p>Cheers!</p>
     </div>
 
 }

@@ -124,12 +124,14 @@ to exhaust the topic of extension methods here, since the intent of this post is
 
 In this post we saw what a *decorator* is in the realm of Object Oriented Design Patterns and defined three ways of
 writing decorators in Scala, from a traditional way to more elegant ones, utilising features of the Scala language in
-its versions 2 and 3.
+its versions 2 and 3. Check out the [full working code](https://github.com/talestonini/scala-decorators) of the snippets
+above in GitHub.
 
-My favourite application of decorators in Scala is actually defining new *functional style* methods for third-party
-library API's such as Apache Spark's
+To finalise, I'd like to share that my favourite application of decorators in Scala is actually defining new *functional
+style* methods for third-party library API's such as Apache Spark's
 DataFrame/[Dataset](https://spark.apache.org/docs/3.1.2/api/scala/org/apache/spark/sql/Dataset.html) or
 Apache Kafka Streams' [KStream](https://kafka.apache.org/27/javadoc/org/apache/kafka/streams/kstream/KStream.html).
 
-If you got up to here, thank you! I hope you enjoyed the read and would really like to receive your feedback.
+If you got down to here, thank you! I hope you enjoyed the read and would really like to receive your feedback.
+
 Cheers!
