@@ -3,78 +3,112 @@ package com.talestonini
 object CodeSnippets {
 
   object ScalaDecorators {
-    def thirdPartyApi() =
-      """sealed class ThirdPartyApi {
+    def thirdPartyStuff(): String =
+      """package com.acme
+        |
+        |sealed class ThirdPartyStuff {
         |  val prop: String = "foo"
         |  var otherProp: String = "bar"
         |
-        |  def doSth() = println(s"doing something with $prop")
-        |  def doSthElse() = println(s"doing something else with $prop")
-        |  def doAnotherThing() = println(s"doing another thing with $prop")
+        |  def doSth() =
+        |    println(s"doing something with $prop")
+        |
+        |  def doSthElse() =
+        |    println(s"doing something else")
+        |
+        |  def doAnotherThing() =
+        |    println(s"doing another thing with $otherProp")
         |}
         |""".stripMargin
 
-    def traditionalDecorator() =
-      """class TraditionalDecorator(tp: ThirdPartyApi) {
-        |  def doSth() = tp.doSth()
-        |  def doSthElse() = tp.doSthElse()
-        |  def doAnotherThing() = tp.doAnotherThing()
+    def traditionalDecorator(): String =
+      """package decorator
+        |
+        |import com.acme._
+        |
+        |class TraditionalDecorator(tps: ThirdPartyStuff) {
+        |  def doSth() = tps.doSth()
+        |  def doSthElse() = tps.doSthElse()
+        |  def doAnotherThing() = tps.doAnotherThing()
         |
         |  def doSthSpecial() = {
-        |    println(s"doing something special with ${tp.prop}, the traditional way")
-        |    tp.otherProp = "baz"
+        |    println(s"doing something special with ${tps.prop}, the traditional way")
+        |    tps.otherProp = "baz"
         |  }
         |}
         |""".stripMargin
 
-    def usingTraditionalDecorator() =
-      """  ...
-        |  val tp = new ThirdPartyApi()
-        |  tp.doSth()
+    def usingTraditionalDecorator(): String =
+      """package decorator
         |
-        |  val decorator = new TraditionalDecorator(tp)
+        |import com.acme._
+        |
+        |  ...
+        |  val tps = new ThirdPartyStuff()
+        |  tps.doSth()
+        |
+        |  val decorator = new TraditionalDecorator(tps)
         |  decorator.doSthSpecial()
         |  ...
+        |
         |""".stripMargin
 
-    def scala2Decorator() =
-      """object Scala2Decorator {
-        |  implicit def converter(tp: ThirdPartyApi): Scala2Decorator =
-        |    Scala2Decorator(tp)
+    def scala2Decorator(): String =
+      """package decorator.scala2
+        |
+        |import com.acme._
+        |
+        |object Scala2Decorator {
+        |  implicit def converter(tps: ThirdPartyStuff): Scala2Decorator =
+        |    Scala2Decorator(tps)
         |}
         |
-        |class Scala2Decorator(tp: ThirdPartyApi) {
+        |class Scala2Decorator(tps: ThirdPartyStuff) {
         |  def doSthSpecial() = {
-        |    println(s"doing something special with ${tp.prop}, the Scala 2 way")
-        |    tp.otherProp = "baz"
+        |    println(s"doing something special with ${tps.prop}, the Scala 2 way")
+        |    tps.otherProp = "baz"
         |  }
         |}
         |""".stripMargin
 
-    def usingScala2Decorator() =
-      """  ...
+    def usingScala2Decorator(): String =
+      """package decorator
+        |
+        |import scala2._
+        |
+        |  ...
         |  import Scala2Decorator.converter
         |
-        |  val tp = new ThirdPartyApi()
-        |  tp.doSth()
-        |  tp.doSthSpecial()
+        |  val tps = new ThirdPartyStuff()
+        |  tps.doSth()
+        |  tps.doSthSpecial()
         |  ...
+        |
         |""".stripMargin
 
-    def scala3Decorator() =
-      """extension (tp: ThirdPartyApi)
+    def scala3Decorator(): String =
+      """package decorator.scala3
+        |
+        |import com.acme._
+        |
+        |extension (tps: ThirdPartyStuff)
         |  def doSthMoreSpecial() = {
-        |    println(s"doing something even more special with ${tp.prop}, the Scala 3 way")
-        |    tp.otherProp = "baz"
+        |    println(s"doing something even more special with ${tps.prop}, the Scala 3 way")
+        |    tps.otherProp = "baz"
         |  }
         |""".stripMargin
 
-    def usingScala3Decorator() =
-      """  ...
-        |  val tp = new ThirdPartyApi()
-        |  tp.doSth()
-        |  tp.doSthMoreSpecial()
+    def usingScala3Decorator(): String =
+      """package decorator
+        |
+        |import scala3.doSthMoreSpecial
+        |
         |  ...
+        |  val tps = new ThirdPartyStuff()
+        |  tps.doSth()
+        |  tps.doSthMoreSpecial()
+        |  ...
+        |
         |""".stripMargin
   }
 
