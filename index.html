@@ -108,9 +108,17 @@
   <script type="text/javascript" src="./target/scala-2.13/talestonini-com-opt.js"></script>
 </head>
 
-<body>
+<body onhashchange="prismHighlightAll()">
   <script src="./js/prism.js"></script>
   <script src="./js/prism-line-numbers.min.js"></script>
+
+  <script type="text/javascript">
+    function prismHighlightAll() {
+      setTimeout(function() {
+        Prism.highlightAll();
+      }, 5); // need to wait a bit or Prism will not be ready to do the highlight
+    }
+  </script>
 
   <script>
     function toggleSidebar() {
