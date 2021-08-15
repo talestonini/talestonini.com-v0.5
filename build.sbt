@@ -1,7 +1,7 @@
 enablePlugins(BuildInfoPlugin, ScalaJSPlugin, LaikaPlugin)
 
 name := "TalesTonini.com"
-version := "0.1.9"
+version := "0.1.10"
 scalaVersion := "2.13.5"
 val circeVersion = "0.14.1"
 
@@ -40,8 +40,8 @@ libraryDependencies ++= Seq(
 )
 
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
-compileScalastyle := scalastyle.in(Compile).toTask("").value
-(compile in Compile) := ((compile in Compile) dependsOn compileScalastyle).value
+compileScalastyle := (Compile / scalastyle).toTask("").value
+Compile / compile := ((Compile / compile) dependsOn compileScalastyle).value
 
 Laika / sourceDirectories := Seq(sourceDirectory.value / "main/resources/pages")
 laikaSite / target := sourceDirectory.value / "main/scala/com/talestonini/pages/sourcegen"
@@ -69,4 +69,4 @@ def renameHtmlToScala(dir: File) = {
 
 lazy val laikaPrep = taskKey[Unit]("Runs all Laika-related tasks at once.")
 laikaPrep := Def.sequential(laikaHTML, laikaHTML2Scala).value
-(compile in Compile) := ((compile in Compile) dependsOn laikaPrep).value
+Compile / compile := ((Compile / compile) dependsOn laikaPrep).value
