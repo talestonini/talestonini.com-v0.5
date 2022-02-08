@@ -24,9 +24,9 @@ buildInfoPackage := "com.talestonini"
 libraryDependencies ++= Seq(
   "org.scala-js" %%% "scalajs-dom" % "1.1.0",
   // Binding
-  "com.thoughtworks.binding" %%% "route"   % "latest.release",
-  "com.thoughtworks.binding" %%% "binding" % "latest.release",
-  "org.lrng.binding"         %%% "html"    % "latest.release",
+  "com.thoughtworks.binding" %%% "route"   % "12.0.0", // needed for Routing.scala
+  "com.thoughtworks.binding" %%% "binding" % "12.0.0",
+  "org.lrng.binding"         %%% "html"    % "1.0.3+56-51cfb24a", // needed for all HTML elements
   // RosHTTP
   "fr.hmil"  %%% "roshttp"       % "3.0.0",
   "io.circe" %%% "circe-core"    % circeVersion,
