@@ -14,7 +14,7 @@ object CodeSnippets {
         |    println(s"doing something with $prop")
         |
         |  def doSthElse() =
-        |    println(s"doing something else")
+        |    println("doing something else")
         |
         |  def doAnotherThing() =
         |    println(s"doing another thing with $otherProp")
