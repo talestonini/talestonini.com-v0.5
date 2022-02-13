@@ -5,14 +5,13 @@ import com.talestonini.db.model._
 import com.talestonini.utils.randomAlphaNumericString
 import fr.hmil.roshttp.body.Implicits._
 import fr.hmil.roshttp.HttpRequest
-import fr.hmil.roshttp.Method.{GET, PATCH, POST}
+import fr.hmil.roshttp.Method.{GET, DELETE, PATCH, POST}
 import fr.hmil.roshttp.Protocol.HTTPS
 import fr.hmil.roshttp.response.SimpleHttpResponse
 import io.circe._
 import io.circe.parser._
 import monix.execution.Scheduler.Implicits.{global => scheduler}
 import scala.concurrent._
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 
 object CloudFirestore {
@@ -40,6 +39,20 @@ object CloudFirestore {
     val newCommentId   = randomAlphaNumericString(20)
     val commentDocName = s"$postDocName/comments/$newCommentId"
     upsertDocument[Comment](token, commentDocName, comment)
+  }
+
+  def createComment(postDocName: String, comment: Comment): Future[Doc[Comment]] = {
+    val newCommentId   = randomAlphaNumericString(20)
+    val commentDocName = s"$postDocName/comments/$newCommentId"
+    upsertDocument[Comment](commentDocName, comment)
+  }
+
+  def removeComment(token: String, path: String): Future[Option[Throwable]] = {
+    deleteDocument[Comment](token, path)
+  }
+
+  def removeComment(path: String): Future[Option[Throwable]] = {
+    deleteDocument[Comment](path)
   }
 
   def getAuthToken(): Future[String] = {
@@ -149,6 +162,60 @@ object CloudFirestore {
           })
       }
 
+    p.future
+  }
+
+  private def upsertDocument[E <: Entity](path: String, entity: E)(
+    implicit docDecoder: Decoder[Doc[E]]
+  ): Future[Doc[E]] = {
+    val p = Promise[Doc[E]]()
+    getAuthToken()
+      .onComplete({
+        case token: Success[String] =>
+          p completeWith upsertDocument[E](token.get, path, entity)
+        case f: Failure[String] =>
+          val errMsg = s"failed getting auth token: ${f.exception.getMessage()}"
+          p failure CloudFirestoreException(errMsg)
+      })
+    p.future
+  }
+
+  private def deleteDocument[E <: Entity](token: String, path: String)(
+    implicit docDecoder: Decoder[Doc[E]]
+  ): Future[Option[Throwable]] = {
+    val p = Promise[Option[Throwable]]()
+    Future {
+      HttpRequest()
+        .withMethod(DELETE)
+        .withProtocol(HTTPS)
+        .withHost(FirestoreHost)
+        .withPath(s"/v1/$path")
+        .withHeader("Authorization", s"Bearer $token")
+        .send()
+        .onComplete({
+          case empty: Success[SimpleHttpResponse] =>
+            p success None
+          case f: Failure[SimpleHttpResponse] =>
+            val errMsg = s"failed deleting document: ${f.exception.getMessage()}"
+            p failure CloudFirestoreException(errMsg)
+        })
+    }
+
+    p.future
+  }
+
+  private def deleteDocument[E <: Entity](path: String)(
+    implicit docDecoder: Decoder[Doc[E]]
+  ): Future[Option[Throwable]] = {
+    val p = Promise[Option[Throwable]]()
+    getAuthToken()
+      .onComplete({
+        case token: Success[String] =>
+          p completeWith deleteDocument[E](token.get, path)
+        case f: Failure[String] =>
+          val errMsg = s"failed getting auth token: ${f.exception.getMessage()}"
+          p failure CloudFirestoreException(errMsg)
+      })
     p.future
   }
 

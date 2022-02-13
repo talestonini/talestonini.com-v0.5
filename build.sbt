@@ -5,8 +5,7 @@ version := "0.1.12"
 scalaVersion := "2.13.8"
 val circeVersion = "0.14.1"
 
-resolvers += Resolver.bintrayRepo("hmil", "maven")
-//resolvers += "hmil.fr" at "https://files.hmil.fr/maven/"
+resolvers += "hmil.fr" at "https://files.hmil.fr/maven/"
 
 // Enable macro annotations by setting scalac flags for Scala 2.13
 scalacOptions ++= {

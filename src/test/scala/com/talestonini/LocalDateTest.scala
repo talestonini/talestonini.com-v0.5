@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
 
 import org.scalatest._
-import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers._
 
 class LocalDateSpec extends BaseSpec {
