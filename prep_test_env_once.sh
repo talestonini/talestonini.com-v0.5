@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# see https://github.com/scala-js/scala-js-env-selenium#headless-usage
+# see https://github.com/scala-js/scala-js-env-selenium
 
 # install xvfb and firefox
 apt-get update -y
