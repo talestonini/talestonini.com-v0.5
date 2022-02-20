@@ -47,13 +47,14 @@ libraryDependencies ++= Seq(
   "org.scalatest" %%% "scalatest" % "3.2.11" % "test"
 )
 
-// ScalaJSBundlerPlugin
-Compile / npmDependencies ++= Seq(
-  // Sttp
+// ScalaJSBundlerPlugin adds Node.js dependencies
+/*Compile / npmDependencies ++= Seq(
+  // Sttp - does not seem to be needed despite page
+  // https://sttp.softwaremill.com/en/v3/backends/javascript/fetch.html#node-js
   "node-fetch"               -> "3.2.0",
   "abortcontroller-polyfill" -> "1.7.3",
   "fetch-headers"            -> "3.0.1"
-)
+)*/
 Test / requireJsDomEnv := true
 Test / jsEnv := new org.scalajs.jsenv.selenium.SeleniumJSEnv(new org.openqa.selenium.firefox.FirefoxOptions())
 

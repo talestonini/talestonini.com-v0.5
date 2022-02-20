@@ -66,7 +66,6 @@ object App {
 
   @JSExport("main")
   def main(): Unit = {
-    //loadSttpDependencies()
     runFirebaseAuth()
     setInStorage(pristineAuthState, true)
     html.render(document.body, app())
@@ -76,16 +75,6 @@ object App {
   @js.native
   @JSGlobal("uiStart")
   private def uiStart(): Unit = js.native
-
-  def loadSttpDependencies() = {
-    // https://www.scala-js.org/doc/interoperability/global-scope.html
-    // see https://sttp.softwaremill.com/en/v3/backends/javascript/fetch.html#node-js
-    // see https://www.npmjs.com/package/abortcontroller-polyfill
-    val g = js.Dynamic.global.globalThis
-    g.fetch = g.require("node-fetch")
-    g.require("abortcontroller-polyfill/dist/polyfill-patch-fetch")
-    g.Headers = g.require("fetch-headers")
-  }
 
   // --- public --------------------------------------------------------------------------------------------------------
 
