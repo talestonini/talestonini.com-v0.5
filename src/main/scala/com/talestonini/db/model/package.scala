@@ -16,6 +16,10 @@ package object model {
 
   // --- common --------------------------------------------------------------------------------------------------------
 
+  // signUp response (get auth token)
+  case class AuthTokenResponseBody(kind: String, idToken: String, refreshToken: String, expiresIn: String,
+    localId: String)
+
   // follows Cloud Firestore specs
   case class Doc[E](name: String, fields: E, createTime: String, updateTime: String)
 

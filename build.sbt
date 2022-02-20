@@ -1,10 +1,14 @@
-enablePlugins(BuildInfoPlugin, ScalaJSPlugin, LaikaPlugin)
+enablePlugins(BuildInfoPlugin, ScalaJSPlugin, LaikaPlugin, ScalaJSBundlerPlugin)
 
 name := "TalesTonini.com"
 version := "0.1.12"
 scalaVersion := "2.13.8"
-val circeVersion = "0.14.1"
+val circeVersion = "0.15.0-M1"
 
+scalaJSUseMainModuleInitializer := true
+Compile / mainClass := Some("com.talestonini.App")
+
+// remove when RosHTTP is removed
 resolvers += "hmil.fr" at "https://files.hmil.fr/maven/"
 
 // Enable macro annotations by setting scalac flags for Scala 2.13
@@ -22,7 +26,7 @@ buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
 buildInfoPackage := "com.talestonini"
 
 libraryDependencies ++= Seq(
-  "org.scala-js" %%% "scalajs-dom" % "1.1.0",
+  "org.scala-js" %%% "scalajs-dom" % "1.1.0", // cannot use latest version yet due to binary incompatibilities
   // Binding
   "com.thoughtworks.binding" %%% "route"   % "12.0.0", // needed for Routing.scala
   "com.thoughtworks.binding" %%% "binding" % "12.0.0",
@@ -32,12 +36,34 @@ libraryDependencies ++= Seq(
   "io.circe" %%% "circe-core"    % circeVersion,
   "io.circe" %%% "circe-generic" % circeVersion,
   "io.circe" %%% "circe-parser"  % circeVersion,
+  // Sttp - cannot use the latest version yet due to binary incompatibilities
+  "com.softwaremill.sttp.client3" %%% "core"  % "3.3.14",
+  "com.softwaremill.sttp.client3" %%% "circe" % "3.3.14",
+  //"io.circe"                      %%% "circe-generic" % "0.14.1",
   // Java Time for ScalaJS
-  "io.github.cquiroz" %%% "scala-java-time"      % "2.3.0",
-  "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.3.0",
+  "io.github.cquiroz" %%% "scala-java-time"      % "2.4.0-M1",
+  "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.4.0-M1",
   // Test
-  "org.scalatest" %%% "scalatest" % "3.2.9" % "test"
+  "org.scalatest" %%% "scalatest" % "3.2.11" % "test"
 )
+
+// ScalaJSBundlerPlugin
+Compile / npmDependencies ++= Seq(
+  // Sttp
+  // newest versions do not work in test; although tests not working anyway, it's just that newer versions
+  // cause an earlier error:
+  // [info]   scala.scalajs.js.JavaScriptException: Error [ERR_REQUIRE_ESM]: require() of ES Module /root/dev/node_modules/node-fetch/src/index.js from /root/dev/repos/talestonini.com/[stdin] not supported.
+  // [info] Instead change the require of index.js in /root/dev/repos/talestonini.com/[stdin] to a dynamic import() which is available in all CommonJS modules.
+  // see https://stackoverflow.com/questions/69081410/error-err-require-esm-require-of-es-module-not-supported
+  "node-fetch"               -> "2.6.1", // "3.2.0"
+  "abortcontroller-polyfill" -> "1.3.0", // "1.7.3"
+  "fetch-headers"            -> "2.0.0"  // "3.0.1"
+)
+Test / requireJsDomEnv := true
+
+// to be able to have `require` in tests
+// see https://github.com/scala-js/scala-js-env-jsdom-nodejs/issues/44
+Test / jsEnv := new net.exoego.jsenv.jsdomnodejs.JSDOMNodeJSEnv()
 
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
 compileScalastyle := (Compile / scalastyle).toTask("").value

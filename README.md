@@ -19,6 +19,13 @@ Typically, you'll want to continually bundle the app with:
 ```
 > ./test_local.sh
 ```
+### Notes
+
+#### Newest Node.js (17.x.x) issues
+At sbt target `fastOptJS::webpack`. To solve:
+```
+> export NODE_OPTIONS=--openssl-legacy-provider
+```
 
 ## Testing locally before deploying
 Use script `test_local.sh`.  You may need to login manually first:
@@ -30,6 +37,10 @@ If that fails, try re-authenticating:
 ```
 > firebase login --reauth
 ```
+
+### Notes
+- The `test` target runs with node modules installed locally (not the ones bundled for the app); make sure versions
+match.
 
 ## Deploying
 Use script `deploy.sh`.

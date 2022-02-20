@@ -18,6 +18,10 @@ class CloudFirestoreSpec extends AsyncWordSpec with Matchers {
 
   "the database object" should {
 
+    "get an auth token" in {
+      CloudFirestore.getAuthToken() map { token => token should startWith("eyJh") }
+    }
+
     "get a post" in {
       // let's get the post about Scala Decorators
       CloudFirestore.getPosts() map { posts =>
