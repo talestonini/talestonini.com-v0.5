@@ -1,6 +1,5 @@
 package com.talestonini.db
 
-import com.talestonini.App
 import com.talestonini.db.model._
 import com.talestonini.utils.randomAlphaNumericString
 import fr.hmil.roshttp.body.Implicits._
@@ -16,8 +15,7 @@ import scala.util.{Failure, Success}
 
 object CloudFirestore {
 
-  //private val ApiKey        = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY" // restricted web app API key
-  private val ApiKey        = "AIzaSyAZ2dyy-5GGWxvzQbTSRPjJpKED6jeCS-s"
+  private val ApiKey        = "AIzaSyDSpyLoxb_xSC7XAO-VUDJ0Hd_XyuquAnY" // restricted web app API key
   private val ProjectId     = "ttdotcom"
   private val Database      = "(default)"
   private val FirestoreHost = "firestore.googleapis.com"
