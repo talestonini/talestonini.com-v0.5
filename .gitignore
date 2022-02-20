@@ -13,4 +13,7 @@ target
 
 .firebase/hosting.cHVibGlj.cache
 firebase-debug.log
-package-lock.json
+
+doc/dev_locally.md
+tools
+geckodriver

@@ -1,6 +1,5 @@
 package com.talestonini.db
 
-import cats.syntax.either._
 import com.talestonini.db.model._
 import com.talestonini.utils.randomAlphaNumericString
 import fr.hmil.roshttp.body.Implicits._
@@ -56,29 +55,22 @@ object CloudFirestore {
   }
 
   def getAuthToken(): Future[String] = {
+    import io.circe.generic.auto._
+    import sttp.client3._
+    import sttp.client3.circe._
+
+    val request: Request[AuthTokenResponseBody, Any] = basicRequest
+      .post(uri"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$ApiKey")
+      .header("Content-Type", "application/json")
+      .response(asJson[AuthTokenResponseBody].getRight)
+
     val p = Promise[String]()
-    Future {
-      HttpRequest()
-        .withMethod(POST)
-        .withProtocol(HTTPS)
-        .withHost("identitytoolkit.googleapis.com")
-        .withPath("/v1/accounts:signUp")
-        .withQueryParameter("key", ApiKey)
-        .send()
-        .onComplete({
-          case rawJson: Success[SimpleHttpResponse] =>
-            val json = parse(rawJson.get.body).getOrElse(Json.Null)
-            json.hcursor.get[String]("idToken") match {
-              case Left(e) =>
-                var errMsg = s"unable to decode response from signUp: ${e.getMessage()}"
-                p failure CloudFirestoreException(errMsg)
-              case Right(token) =>
-                p success token
-            }
-          case f: Failure[SimpleHttpResponse] =>
-            var errMsg = s"failed requesting signUp token: ${f.exception.getMessage()}"
-            p failure CloudFirestoreException(errMsg)
-        })
+    request.send(FetchBackend()) onComplete {
+      case authTokenResponse: Success[Response[AuthTokenResponseBody]] =>
+        p success authTokenResponse.value.body.idToken
+      case f: Failure[Response[AuthTokenResponseBody]] =>
+        var errMsg = s"failed requesting signUp token: ${f.exception.getMessage()}"
+        p failure CloudFirestoreException(errMsg)
     }
     p.future
   }
