@@ -33,7 +33,7 @@ If that fails, try re-authenticating:
 
 ## Running unit tests
 - Node.js version 17.x.x presents issues running sbt target `fastOptJS::webpack`. To solve, run the following in the
-machine used to build the app:
+machine used to build the app (run my `sbt.sh`):
 ```
 > export NODE_OPTIONS=--openssl-legacy-provider
 ```
@@ -43,6 +43,7 @@ make sure the app node dependencies match the modules installed locally for reli
 - Run `npm install <node-module>@latest` to get the latest version of a node module.
 - The `test` target will run tests within a real browser. Make sure the testing machine has the appropriate drivers.
   - On a Mac, you can install drivers with `brew install geckodriver`.
+  - On Ubuntu, you can prepare the environment running `prep_test_env_once.sh`.
 
 ## Deploying
 Use script `deploy.sh`.

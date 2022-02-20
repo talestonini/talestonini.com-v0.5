@@ -13,3 +13,6 @@ target
 
 .firebase/hosting.cHVibGlj.cache
 firebase-debug.log
+
+tools
+geckodriver
