@@ -8,7 +8,7 @@ val circeVersion = "0.15.0-M1"
 scalaJSUseMainModuleInitializer := true
 Compile / mainClass := Some("com.talestonini.App")
 
-// remove when RosHTTP is removed
+// TODO: remove when RosHTTP is removed
 resolvers += "hmil.fr" at "https://files.hmil.fr/maven/"
 
 // Enable macro annotations by setting scalac flags for Scala 2.13
@@ -50,20 +50,12 @@ libraryDependencies ++= Seq(
 // ScalaJSBundlerPlugin
 Compile / npmDependencies ++= Seq(
   // Sttp
-  // newest versions do not work in test; although tests not working anyway, it's just that newer versions
-  // cause an earlier error:
-  // [info]   scala.scalajs.js.JavaScriptException: Error [ERR_REQUIRE_ESM]: require() of ES Module /root/dev/node_modules/node-fetch/src/index.js from /root/dev/repos/talestonini.com/[stdin] not supported.
-  // [info] Instead change the require of index.js in /root/dev/repos/talestonini.com/[stdin] to a dynamic import() which is available in all CommonJS modules.
-  // see https://stackoverflow.com/questions/69081410/error-err-require-esm-require-of-es-module-not-supported
-  "node-fetch"               -> "2.6.1", // "3.2.0"
-  "abortcontroller-polyfill" -> "1.3.0", // "1.7.3"
-  "fetch-headers"            -> "2.0.0"  // "3.0.1"
+  "node-fetch"               -> "3.2.0",
+  "abortcontroller-polyfill" -> "1.7.3",
+  "fetch-headers"            -> "3.0.1"
 )
 Test / requireJsDomEnv := true
-
-// to be able to have `require` in tests
-// see https://github.com/scala-js/scala-js-env-jsdom-nodejs/issues/44
-Test / jsEnv := new net.exoego.jsenv.jsdomnodejs.JSDOMNodeJSEnv()
+Test / jsEnv := new org.scalajs.jsenv.selenium.SeleniumJSEnv(new org.openqa.selenium.firefox.FirefoxOptions())
 
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
 compileScalastyle := (Compile / scalastyle).toTask("").value

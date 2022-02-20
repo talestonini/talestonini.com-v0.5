@@ -19,13 +19,6 @@ Typically, you'll want to continually bundle the app with:
 ```
 > ./test_local.sh
 ```
-### Notes
-
-#### Newest Node.js (17.x.x) issues
-At sbt target `fastOptJS::webpack`. To solve:
-```
-> export NODE_OPTIONS=--openssl-legacy-provider
-```
 
 ## Testing locally before deploying
 Use script `test_local.sh`.  You may need to login manually first:
@@ -38,9 +31,18 @@ If that fails, try re-authenticating:
 > firebase login --reauth
 ```
 
-### Notes
-- The `test` target runs with node modules installed locally (not the ones bundled for the app); make sure versions
-match.
+## Running unit tests
+- Node.js version 17.x.x presents issues running sbt target `fastOptJS::webpack`. To solve, run the following in the
+machine used to build the app:
+```
+> export NODE_OPTIONS=--openssl-legacy-provider
+```
+- The `test` target runs with node modules installed locally in the building machine (not the ones bundled for the app);
+make sure the app node dependencies match the modules installed locally for reliable test results.
+- Run `npm outdated` to check which node module versions you have in the building machine.
+- Run `npm install <node-module>@latest` to get the latest version of a node module.
+- The `test` target will run tests within a real browser. Make sure the testing machine has the appropriate drivers.
+  - On a Mac, you can install drivers with `brew install geckodriver`.
 
 ## Deploying
 Use script `deploy.sh`.

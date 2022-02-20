@@ -61,8 +61,6 @@ object CloudFirestore {
     import sttp.client3._
     import sttp.client3.circe._
 
-    App.loadSttpDependencies()
-
     val request: Request[AuthTokenResponseBody, Any] = basicRequest
       .post(uri"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$ApiKey")
       .header("Content-Type", "application/json")
