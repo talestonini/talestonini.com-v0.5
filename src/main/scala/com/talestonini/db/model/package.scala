@@ -23,7 +23,7 @@ package object model {
   // follows Cloud Firestore specs
   case class Doc[E](name: String, fields: E, createTime: String, updateTime: String)
 
-  case class DocsRes[E](documents: Seq[Doc[E]])
+  case class DocsRes[E](documents: Docs[E])
 
   sealed trait Entity {
     def dbFields: Seq[String]

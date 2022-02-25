@@ -8,10 +8,16 @@ import fr.hmil.roshttp.Method.{GET, DELETE, PATCH, POST}
 import fr.hmil.roshttp.Protocol.HTTPS
 import fr.hmil.roshttp.response.SimpleHttpResponse
 import io.circe._
+import io.circe.generic.auto._
 import io.circe.parser._
 import monix.execution.Scheduler.Implicits.{global => scheduler}
 import scala.concurrent._
 import scala.util.{Failure, Success}
+import sttp.client3._
+import sttp.client3.circe._
+import com.talestonini
+import org.scalajs.dom.experimental.RequestMode
+import org.scalajs.dom.experimental.RequestCredentials
 
 object CloudFirestore {
 
@@ -55,10 +61,6 @@ object CloudFirestore {
   }
 
   def getAuthToken(): Future[String] = {
-    import io.circe.generic.auto._
-    import sttp.client3._
-    import sttp.client3.circe._
-
     val request: Request[AuthTokenResponseBody, Any] = basicRequest
       .post(uri"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$ApiKey")
       .header("Content-Type", "application/json")
@@ -66,8 +68,8 @@ object CloudFirestore {
 
     val p = Promise[String]()
     request.send(FetchBackend()) onComplete {
-      case authTokenResponse: Success[Response[AuthTokenResponseBody]] =>
-        p success authTokenResponse.value.body.idToken
+      case s: Success[Response[AuthTokenResponseBody]] =>
+        p success s.value.body.idToken
       case f: Failure[Response[AuthTokenResponseBody]] =>
         var errMsg = s"failed requesting signUp token: ${f.exception.getMessage()}"
         p failure CloudFirestoreException(errMsg)
@@ -77,31 +79,25 @@ object CloudFirestore {
 
   // -------------------------------------------------------------------------------------------------------------------
 
+  private val backend = FetchBackend(FetchOptions(Some(RequestCredentials.include), Some(RequestMode.cors)))
+  //private val backend = FetchBackend()
+
   private def getDocuments[E <: Entity](token: String, path: String)(
     implicit docsResDecoder: Decoder[DocsRes[E]]
   ): Future[Docs[E]] = {
+    val request: Request[DocsRes[E], Any] = basicRequest
+      .get(uri"https://$FirestoreHost/v1/$path")
+      .header("Authorization", s"Bearer $token")
+      .response(asJson[DocsRes[E]].getRight)
+      .followRedirects(true)
+
     val p = Promise[Docs[E]]()
-    Future {
-      HttpRequest()
-        .withMethod(GET)
-        .withProtocol(HTTPS)
-        .withHost(FirestoreHost)
-        .withPath("/v1/" + path)
-        .withHeader("Authorization", s"Bearer $token")
-        .send()
-        .onComplete({
-          case rawJson: Success[SimpleHttpResponse] =>
-            decode[DocsRes[E]](rawJson.get.body) match {
-              case Left(e) =>
-                val errMsg = s"unable to decode response from get documents: ${e.getMessage()}"
-                p failure CloudFirestoreException(errMsg)
-              case Right(docs) =>
-                p success docs.documents.sortBy(_.fields.sortingField).reverse
-            }
-          case f: Failure[SimpleHttpResponse] =>
-            val errMsg = s"failed getting documents: ${f.exception.getMessage()}"
-            p failure CloudFirestoreException(errMsg)
-        })
+    request.send(backend) onComplete {
+      case s: Success[Response[DocsRes[E]]] =>
+        p success s.value.body.documents.sortBy(_.fields.sortingField).reverse
+      case f: Failure[Response[DocsRes[E]]] =>
+        val errMsg = s"failed getting documents: ${f.exception.getMessage()}"
+        p failure CloudFirestoreException(errMsg)
     }
     p.future
   }
@@ -124,35 +120,43 @@ object CloudFirestore {
   private def upsertDocument[E <: Entity](token: String, path: String, entity: E)(
     implicit docDecoder: Decoder[Doc[E]]
   ): Future[Doc[E]] = {
+
+    def queryParams(): String =
+      (for (dbField <- entity.dbFields) yield (s"updateMask=$dbField")).mkString("&")
+
     val p = Promise[Doc[E]]()
 
-    if (isBadRequest(token, entity.content))
-      p failure CloudFirestoreException("")
-    else
-      Future {
-        HttpRequest()
-          .withMethod(PATCH)
-          .withProtocol(HTTPS)
-          .withHost(FirestoreHost)
-          .withPath(s"/v1/$path")
-          .withQueryParameters((for (dbField <- entity.dbFields) yield ("updateMask.fieldPaths", dbField)): _*)
-          .withHeader("Authorization", s"Bearer $token")
-          .withBody(entityToDocBody(path, entity))
-          .send()
-          .onComplete({
-            case rawJson: Success[SimpleHttpResponse] =>
-              decode[Doc[E]](rawJson.get.body) match {
-                case Left(e) =>
-                  val errMsg = s"unable to decode response from patch document: ${e.getMessage()}"
-                  p failure CloudFirestoreException(errMsg)
-                case Right(doc) =>
-                  p success doc
-              }
-            case f: Failure[SimpleHttpResponse] =>
-              val errMsg = s"failed upserting document: ${f.exception.getMessage()}"
+    //if (isBadRequest(token, entity.content))
+    //p failure CloudFirestoreException("")
+    //else {
+    //val request: Request[Doc[E], Any] = basicRequest
+    //.post(uri"http://$FirestoreHost/v1/$path?${queryParams()}")
+    //.body(entityToDocBody(path, entity))
+    //.response(asJson[Doc[E]].getRight)
+    //}
+
+    HttpRequest()
+      .withMethod(PATCH)
+      .withProtocol(HTTPS)
+      .withHost(FirestoreHost)
+      .withPath(s"/v1/$path")
+      .withQueryParameters((for (dbField <- entity.dbFields) yield ("updateMask.fieldPaths", dbField)): _*)
+      .withHeader("Authorization", s"Bearer $token")
+      .withBody(entityToDocBody(path, entity))
+      .send()
+      .onComplete({
+        case rawJson: Success[SimpleHttpResponse] =>
+          decode[Doc[E]](rawJson.get.body) match {
+            case Left(e) =>
+              val errMsg = s"unable to decode response from patch document: ${e.getMessage()}"
               p failure CloudFirestoreException(errMsg)
-          })
-      }
+            case Right(doc) =>
+              p success doc
+          }
+        case f: Failure[SimpleHttpResponse] =>
+          val errMsg = s"failed upserting document: ${f.exception.getMessage()}"
+          p failure CloudFirestoreException(errMsg)
+      })
 
     p.future
   }
@@ -176,22 +180,20 @@ object CloudFirestore {
     implicit docDecoder: Decoder[Doc[E]]
   ): Future[Option[Throwable]] = {
     val p = Promise[Option[Throwable]]()
-    Future {
-      HttpRequest()
-        .withMethod(DELETE)
-        .withProtocol(HTTPS)
-        .withHost(FirestoreHost)
-        .withPath(s"/v1/$path")
-        .withHeader("Authorization", s"Bearer $token")
-        .send()
-        .onComplete({
-          case empty: Success[SimpleHttpResponse] =>
-            p success None
-          case f: Failure[SimpleHttpResponse] =>
-            val errMsg = s"failed deleting document: ${f.exception.getMessage()}"
-            p failure CloudFirestoreException(errMsg)
-        })
-    }
+    HttpRequest()
+      .withMethod(DELETE)
+      .withProtocol(HTTPS)
+      .withHost(FirestoreHost)
+      .withPath(s"/v1/$path")
+      .withHeader("Authorization", s"Bearer $token")
+      .send()
+      .onComplete({
+        case empty: Success[SimpleHttpResponse] =>
+          p success None
+        case f: Failure[SimpleHttpResponse] =>
+          val errMsg = s"failed deleting document: ${f.exception.getMessage()}"
+          p failure CloudFirestoreException(errMsg)
+      })
 
     p.future
   }
