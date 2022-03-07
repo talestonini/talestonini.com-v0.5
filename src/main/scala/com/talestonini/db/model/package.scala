@@ -4,8 +4,8 @@ import java.time._
 import java.time.format.DateTimeFormatter.ofPattern
 
 import com.talestonini.utils._
-import fr.hmil.roshttp.body.Implicits._
-import fr.hmil.roshttp.body.JSONBody.{JSONObject, JSONString, JSONValue}
+//import fr.hmil.roshttp.body.Implicits._
+//import fr.hmil.roshttp.body.JSONBody.{JSONObject, JSONString, JSONValue}
 import io.circe._
 
 package object model {
@@ -17,8 +17,7 @@ package object model {
   // --- common --------------------------------------------------------------------------------------------------------
 
   // signUp response (get auth token)
-  case class AuthTokenResponseBody(kind: String, idToken: String, refreshToken: String, expiresIn: String,
-    localId: String)
+  case class AuthTokenResponse(kind: String, idToken: String, refreshToken: String, expiresIn: String, localId: String)
 
   // follows Cloud Firestore specs
   case class Doc[E](name: String, fields: E, createTime: String, updateTime: String)
@@ -53,35 +52,35 @@ package object model {
         } yield DocsRes(docs)
     }
 
-  def entityToDocBody[E <: Entity](name: String, entity: E): JSONObject =
-    JSONObject(
-      "name" -> name,
-      "fields" -> (entity match {
-        // type match is the easiest for now (not keen on reflection)
-        case p: Post =>
-          JSONObject(
-            Seq[Option[(String, JSONValue)]](
-              p.title.map(t => "title"       -> field("stringValue", t)),
-              p.resource.map(r => "resource" -> field("stringValue", r)),
-              p.firstPublishDate.map(fpd =>
-                "first_publish_date" -> field("timestampValue", fpd.format(LongDateTimeFormatter))
-              ),
-              p.publishDate.map(pd => "publish_date" -> field("timestampValue", pd.format(LongDateTimeFormatter))),
-              p.enabled.map(e => "enabled"           -> field("enabled", e))
-            ).filter(_.isDefined).map(_.get): _*
-          )
-        case c: Comment =>
-          JSONObject(
-            Seq[Option[(String, JSONValue)]](
-              c.author.map(a => "author" -> field("mapValue", userToJsonValue(a))),
-              c.date.map(d => "date"     -> field("timestampValue", d.format(LongDateTimeFormatter))),
-              c.text.map(t => "text"     -> field("stringValue", t))
-            ).filter(_.isDefined).map(_.get): _*
-          )
-        case _ =>
-          throw new Exception(s"unexpected entity type: ${entity.getClass()}")
-      })
-    )
+  //def entityToDocBody[E <: Entity](name: String, entity: E): JSONObject =
+  //JSONObject(
+  //"name" -> name,
+  //"fields" -> (entity match {
+  //// type match is the easiest for now (not keen on reflection)
+  //case p: Post =>
+  //JSONObject(
+  //Seq[Option[(String, JSONValue)]](
+  //p.title.map(t => "title"       -> field("stringValue", t)),
+  //p.resource.map(r => "resource" -> field("stringValue", r)),
+  //p.firstPublishDate.map(fpd =>
+  //"first_publish_date" -> field("timestampValue", fpd.format(LongDateTimeFormatter))
+  //),
+  //p.publishDate.map(pd => "publish_date" -> field("timestampValue", pd.format(LongDateTimeFormatter))),
+  //p.enabled.map(e => "enabled"           -> field("enabled", e))
+  //).filter(_.isDefined).map(_.get): _*
+  //)
+  //case c: Comment =>
+  //JSONObject(
+  //Seq[Option[(String, JSONValue)]](
+  //c.author.map(a => "author" -> field("mapValue", userToJsonValue(a))),
+  //c.date.map(d => "date"     -> field("timestampValue", d.format(LongDateTimeFormatter))),
+  //c.text.map(t => "text"     -> field("stringValue", t))
+  //).filter(_.isDefined).map(_.get): _*
+  //)
+  //case _ =>
+  //throw new Exception(s"unexpected entity type: ${entity.getClass()}")
+  //})
+  //)
 
   // --- post (ie article) ---------------------------------------------------------------------------------------------
 
@@ -155,20 +154,20 @@ package object model {
         } yield User(Option(name), Option(email), Option(uid))
     }
 
-  private def userToJsonValue(user: User): JSONValue =
-    JSONObject(
-      "fields" -> JSONObject(
-        Seq[Option[(String, JSONValue)]](
-          user.name.map(n => "name"   -> field("stringValue", n)),
-          user.email.map(e => "email" -> field("stringValue", e)),
-          user.uid.map(u => "uid"     -> field("stringValue", u))
-        ).filter(_.isDefined).map(_.get): _*
-      )
-    )
+  //private def userToJsonValue(user: User): JSONValue =
+  //JSONObject(
+  //"fields" -> JSONObject(
+  //Seq[Option[(String, JSONValue)]](
+  //user.name.map(n => "name"   -> field("stringValue", n)),
+  //user.email.map(e => "email" -> field("stringValue", e)),
+  //user.uid.map(u => "uid"     -> field("stringValue", u))
+  //).filter(_.isDefined).map(_.get): _*
+  //)
+  //)
 
   // -------------------------------------------------------------------------------------------------------------------
 
-  private def field(`type`: String, value: String): JSONObject    = JSONObject(`type` -> new JSONString(value))
-  private def field(`type`: String, value: JSONValue): JSONObject = JSONObject(`type` -> value)
+  //private def field(`type`: String, value: String): JSONObject    = JSONObject(`type` -> new JSONString(value))
+  //private def field(`type`: String, value: JSONValue): JSONObject = JSONObject(`type` -> value)
 
 }
