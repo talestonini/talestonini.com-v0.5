@@ -59,13 +59,12 @@ Test / requireJsDomEnv := true
 //Test / jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv()
 
 // Firefox
-Test / jsEnv := new org.scalajs.jsenv.selenium.SeleniumJSEnv(new org.openqa.selenium.firefox.FirefoxOptions())
+//Test / jsEnv := new org.scalajs.jsenv.selenium.SeleniumJSEnv(new org.openqa.selenium.firefox.FirefoxOptions())
 
 // Chrome
-//Test / jsEnv := new org.scalajs.jsenv.selenium.SeleniumJSEnv(
-//new org.openqa.selenium.chrome.ChromeOptions()
-//.addArguments("--no-sandbox", "--disable-dev-shm-usage")
-//)
+Test / jsEnv := new org.scalajs.jsenv.selenium.SeleniumJSEnv(
+  new org.openqa.selenium.chrome.ChromeOptions().addArguments("--no-sandbox", "--disable-dev-shm-usage")
+)
 
 // PhantomJS
 //Test / jsEnv := PhantomJSEnv(org.scalajs.jsenv.phantomjs.PhantomJSEnv.Config().withArgs(List("--web-security=no"))).value

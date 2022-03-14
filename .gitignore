@@ -10,6 +10,8 @@ project/project
 project/target
 public
 target
+node_modules/
+yarn.lock
 
 .firebase/hosting.cHVibGlj.cache
 firebase-debug.log
