@@ -6,6 +6,8 @@ scalaVersion := "2.13.8"
 val circeVersion  = "0.15.0-M1"
 val http4sVersion = "1.0.0-M31"
 
+javaOptions ++= Seq("-Xmx2Gb")
+
 scalaJSUseMainModuleInitializer := true
 Compile / mainClass := Some("com.talestonini.App")
 
@@ -27,8 +29,8 @@ libraryDependencies ++= Seq(
   "org.scala-js" %%% "scalajs-dom" % "1.1.0", // cannot use latest version yet due to binary incompatibilities
   // Binding
   "com.thoughtworks.binding" %%% "route"   % "12.0.0", // needed for Routing.scala
-  "com.thoughtworks.binding" %%% "binding" % "12.0.0",
-  "org.lrng.binding"         %%% "html"    % "1.0.3+56-51cfb24a", // needed for all HTML elements
+  "com.thoughtworks.binding" %%% "binding" % "12.1.0",
+  "org.lrng.binding"         %%% "html"    % "1.0.3", // needed for all HTML elements
   // Http4s
   "io.circe"   %%% "circe-core"          % circeVersion,
   "io.circe"   %%% "circe-generic"       % circeVersion,
@@ -47,25 +49,29 @@ libraryDependencies ++= Seq(
 )
 
 // ScalaJSBundlerPlugin adds Node.js dependencies
-Compile / npmDependencies ++= Seq(
-  "net" -> "1.0.2",
-  "tls" -> "0.0.1"
-)
+//Compile / npmDependencies ++= Seq(
+// 17 Mar '22 - these dependencies are not needed, not for testing nor for the browser running app (keeping here for ref
+//              on node dependencies)
+//"net" -> "1.0.2",
+//"tls" -> "0.0.1"
+//)
 
+// 17 Mar '11 - jsEnv is by default NodeJS; thse other envs are only needed when testing browser-related features.
+//              They are here just for future reference, but are not needed for testing Cats Effects code, Java Time,
+//              etc. (In fact, the Cats Effects code in http4s does not pass in browser environments, as "net socket"
+//              is not present and I get "$$x1 is not a constructor", related to instantiating a net socket in http4s
+//              code. Apparently, I'd need a polyfill for that sort of NodeJS functionality that is not present in a
+//              browser. All browsers/headless browsers below fail those tests.)
 // Test Setup
-Test / requireJsDomEnv := true
-
+//Test / requireJsDomEnv := true
 // Node + DOM
 //Test / jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv()
-
 // Firefox
 //Test / jsEnv := new org.scalajs.jsenv.selenium.SeleniumJSEnv(new org.openqa.selenium.firefox.FirefoxOptions())
-
 // Chrome
-Test / jsEnv := new org.scalajs.jsenv.selenium.SeleniumJSEnv(
-  new org.openqa.selenium.chrome.ChromeOptions().addArguments("--no-sandbox", "--disable-dev-shm-usage")
-)
-
+//Test / jsEnv := new org.scalajs.jsenv.selenium.SeleniumJSEnv(
+//new org.openqa.selenium.chrome.ChromeOptions().addArguments("--no-sandbox", "--disable-dev-shm-usage")
+//)
 // PhantomJS
 //Test / jsEnv := PhantomJSEnv(org.scalajs.jsenv.phantomjs.PhantomJSEnv.Config().withArgs(List("--web-security=no"))).value
 //scalaJSLinkerConfig ~= { _.withESFeatures(_.withUseECMAScript2015(false)) }
