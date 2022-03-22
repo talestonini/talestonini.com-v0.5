@@ -6,8 +6,6 @@ scalaVersion := "2.13.8"
 val circeVersion  = "0.15.0-M1"
 val http4sVersion = "1.0.0-M31"
 
-javaOptions ++= Seq("-Xmx2Gb")
-
 scalaJSUseMainModuleInitializer := true
 Compile / mainClass := Some("com.talestonini.App")
 
@@ -47,6 +45,8 @@ libraryDependencies ++= Seq(
   "org.scalatest" %%% "scalatest"           % "3.2.11" % Test,
   "org.typelevel" %%% "munit-cats-effect-3" % "1.0.7"  % Test
 )
+
+Test / javaOptions ++= Seq("-Xmx2Gb")
 
 // ScalaJSBundlerPlugin adds Node.js dependencies
 //Compile / npmDependencies ++= Seq(

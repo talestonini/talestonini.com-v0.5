@@ -4,9 +4,8 @@ import java.time._
 import java.time.format.DateTimeFormatter.ofPattern
 
 import com.talestonini.utils._
-//import fr.hmil.roshttp.body.Implicits._
-//import fr.hmil.roshttp.body.JSONBody.{JSONObject, JSONString, JSONValue}
 import io.circe._
+import scala.language.implicitConversions
 
 package object model {
 
@@ -52,35 +51,16 @@ package object model {
         } yield DocsRes(docs)
     }
 
-  //def entityToDocBody[E <: Entity](name: String, entity: E): JSONObject =
-  //JSONObject(
-  //"name" -> name,
-  //"fields" -> (entity match {
-  //// type match is the easiest for now (not keen on reflection)
-  //case p: Post =>
-  //JSONObject(
-  //Seq[Option[(String, JSONValue)]](
-  //p.title.map(t => "title"       -> field("stringValue", t)),
-  //p.resource.map(r => "resource" -> field("stringValue", r)),
-  //p.firstPublishDate.map(fpd =>
-  //"first_publish_date" -> field("timestampValue", fpd.format(LongDateTimeFormatter))
-  //),
-  //p.publishDate.map(pd => "publish_date" -> field("timestampValue", pd.format(LongDateTimeFormatter))),
-  //p.enabled.map(e => "enabled"           -> field("enabled", e))
-  //).filter(_.isDefined).map(_.get): _*
-  //)
-  //case c: Comment =>
-  //JSONObject(
-  //Seq[Option[(String, JSONValue)]](
-  //c.author.map(a => "author" -> field("mapValue", userToJsonValue(a))),
-  //c.date.map(d => "date"     -> field("timestampValue", d.format(LongDateTimeFormatter))),
-  //c.text.map(t => "text"     -> field("stringValue", t))
-  //).filter(_.isDefined).map(_.get): _*
-  //)
-  //case _ =>
-  //throw new Exception(s"unexpected entity type: ${entity.getClass()}")
-  //})
-  //)
+  case class DocBody[E <: Entity](name: String, entity: E)
+
+  implicit def docBodyEncoder[E <: Entity](implicit entityEncoder: Encoder[E]): Encoder[DocBody[E]] =
+    new Encoder[DocBody[E]] {
+      def apply(docBody: DocBody[E]): Json =
+        Json.obj(
+          "name"   -> Json.fromString(docBody.name),
+          "fields" -> entityEncoder(docBody.entity)
+        )
+    }
 
   // --- post (ie article) ---------------------------------------------------------------------------------------------
 
@@ -96,7 +76,26 @@ package object model {
     def sortingField: String  = datetime2Str(publishDate.getOrElse(InitDateTime), DateTimeCompareFormatter)
   }
 
-  implicit lazy val postFieldsDecoder: Decoder[Post] =
+  implicit lazy val postEncoder: Encoder[Post] =
+    new Encoder[Post] {
+      final def apply(p: Post): Json = {
+        Json.obj(
+          Seq[Option[(String, Json)]](
+            p.resource.map(r => "resource" -> field("stringValue", r)),
+            p.title.map(t => "title"       -> field("stringValue", t)),
+            p.firstPublishDate.map(fpd =>
+              "first_publish_date" -> field("timestampValue", fpd.format(LongDateTimeFormatter))
+            ),
+            p.publishDate.map(pd => "publish_date" -> field("timestampValue", pd.format(LongDateTimeFormatter))),
+            p.enabled.map(e => "enabled"           -> field("booleanValue", e))
+          ).filter(_.isDefined).map(_.get): _*
+        )
+      }
+    }
+
+  implicit def postAsJson(post: Post): Json = postEncoder(post)
+
+  implicit lazy val postDecoder: Decoder[Post] =
     // title, resource, first_publish_date and publish_date are my database specs
     new Decoder[Post] {
       final def apply(c: HCursor): Decoder.Result[Post] =
@@ -121,7 +120,22 @@ package object model {
     def sortingField: String  = datetime2Str(date.getOrElse(InitDateTime), DateTimeCompareFormatter)
   }
 
-  implicit lazy val commentFieldsDecoder: Decoder[Comment] =
+  implicit lazy val commentEncoder: Encoder[Comment] =
+    new Encoder[Comment] {
+      final def apply(c: Comment): Json = {
+        Json.obj(
+          Seq[Option[(String, Json)]](
+            c.author.map(a => "author" -> field("mapValue", a)),
+            c.date.map(d => "date"     -> field("timestampValue", d.format(LongDateTimeFormatter))),
+            c.text.map(t => "text"     -> field("stringValue", t))
+          ).filter(_.isDefined).map(_.get): _*
+        )
+      }
+    }
+
+  implicit def commentAsJson(comment: Comment): Json = commentEncoder(comment)
+
+  implicit lazy val commentDecoder: Decoder[Comment] =
     // author, date and text are my database specs
     new Decoder[Comment] {
       final def apply(c: HCursor): Decoder.Result[Comment] =
@@ -144,7 +158,22 @@ package object model {
     def sortingField: String  = email.getOrElse("")
   }
 
-  implicit lazy val userFieldsDecoder: Decoder[User] =
+  implicit lazy val userEncoder: Encoder[User] =
+    new Encoder[User] {
+      final def apply(u: User): Json = {
+        Json.obj(
+          Seq[Option[(String, Json)]](
+            u.name.map(n => "name"   -> field("stringValue", n)),
+            u.email.map(e => "email" -> field("stringValue", e)),
+            u.uid.map(uid => "uid"   -> field("stringValue", uid))
+          ).filter(_.isDefined).map(_.get): _*
+        )
+      }
+    }
+
+  implicit def userAsJson(user: User): Json = userEncoder(user)
+
+  implicit lazy val userDecoder: Decoder[User] =
     new Decoder[User] {
       def apply(c: HCursor): Decoder.Result[User] =
         for {
@@ -154,20 +183,13 @@ package object model {
         } yield User(Option(name), Option(email), Option(uid))
     }
 
-  //private def userToJsonValue(user: User): JSONValue =
-  //JSONObject(
-  //"fields" -> JSONObject(
-  //Seq[Option[(String, JSONValue)]](
-  //user.name.map(n => "name"   -> field("stringValue", n)),
-  //user.email.map(e => "email" -> field("stringValue", e)),
-  //user.uid.map(u => "uid"     -> field("stringValue", u))
-  //).filter(_.isDefined).map(_.get): _*
-  //)
-  //)
-
   // -------------------------------------------------------------------------------------------------------------------
 
-  //private def field(`type`: String, value: String): JSONObject    = JSONObject(`type` -> new JSONString(value))
-  //private def field(`type`: String, value: JSONValue): JSONObject = JSONObject(`type` -> value)
+  private def field(`type`: String, value: String): Json =
+    Json.fromJsonObject(JsonObject((`type`, Json.fromString(value))))
+  private def field(`type`: String, value: Boolean): Json =
+    Json.fromJsonObject(JsonObject((`type`, Json.fromBoolean(value))))
+  private def field(`type`: String, value: Json): Json =
+    Json.fromJsonObject(JsonObject((`type`, value)))
 
 }
