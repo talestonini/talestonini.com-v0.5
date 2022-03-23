@@ -174,9 +174,7 @@ trait BasePostPage extends Observer {
 
   // a binding comment
   private case class BComment(
-    author: Var[String],
-    date: Var[String],
-    text: Var[String]
+    author: Var[String], date: Var[String], text: Var[String]
   )
 
   // the comments on this page
@@ -198,12 +196,11 @@ trait BasePostPage extends Observer {
       .createComment(user.accessToken, bPostDoc.value.name, c)
       .onComplete({
         case doc: Success[Doc[Comment]] =>
-          bComments.value.prepend(
-              BComment(
-                author = Var(doc.value.fields.author.get.name.get),
-                date = Var(datetime2Str(doc.value.fields.date)),
-                text = Var(doc.value.fields.text.get)
-              ))
+          bComments.value.prepend(BComment(
+              author = Var(doc.value.fields.author.get.name.get),
+              date = Var(datetime2Str(doc.value.fields.date)),
+              text = Var(doc.value.fields.text.get)
+            ))
         case f: Failure[Doc[Comment]] =>
           println("failed creating comment")
       })

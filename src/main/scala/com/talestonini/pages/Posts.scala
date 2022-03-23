@@ -12,10 +12,7 @@ object Posts {
 
   // a binding post link
   case class BPostLink(
-    title: Var[String],
-    firstPublishDate: Var[String],
-    publishDate: Var[String],
-    resource: Var[String]
+    title: Var[String], firstPublishDate: Var[String], publishDate: Var[String], resource: Var[String]
   )
 
   val bPostLinks = Vars.empty[BPostLink]

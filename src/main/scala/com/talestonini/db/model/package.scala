@@ -65,11 +65,8 @@ package object model {
   // --- post (ie article) ---------------------------------------------------------------------------------------------
 
   case class Post(
-    resource: Option[String],
-    title: Option[String],
-    firstPublishDate: Option[ZonedDateTime],
-    publishDate: Option[ZonedDateTime],
-    enabled: Option[Boolean] = Some(true)
+    resource: Option[String], title: Option[String], firstPublishDate: Option[ZonedDateTime],
+    publishDate: Option[ZonedDateTime], enabled: Option[Boolean] = Some(true)
   ) extends Entity {
     def dbFields: Seq[String] = Seq("resource", "title", "first_publish_date", "publish_date", "enabled")
     def content: String       = title.getOrElse("")
@@ -82,12 +79,11 @@ package object model {
         Json.obj(
           Seq[Option[(String, Json)]](
             p.resource.map(r => "resource" -> field("stringValue", r)),
-            p.title.map(t => "title"       -> field("stringValue", t)),
+            p.title.map(t => "title" -> field("stringValue", t)),
             p.firstPublishDate.map(fpd =>
-              "first_publish_date" -> field("timestampValue", fpd.format(LongDateTimeFormatter))
-            ),
+              "first_publish_date" -> field("timestampValue", fpd.format(LongDateTimeFormatter))),
             p.publishDate.map(pd => "publish_date" -> field("timestampValue", pd.format(LongDateTimeFormatter))),
-            p.enabled.map(e => "enabled"           -> field("booleanValue", e))
+            p.enabled.map(e => "enabled" -> field("booleanValue", e))
           ).filter(_.isDefined).map(_.get): _*
         )
       }
@@ -111,9 +107,7 @@ package object model {
   // --- comment -------------------------------------------------------------------------------------------------------
 
   case class Comment(
-    author: Option[User],
-    date: Option[ZonedDateTime],
-    text: Option[String]
+    author: Option[User], date: Option[ZonedDateTime], text: Option[String]
   ) extends Entity {
     def dbFields: Seq[String] = Seq("author", "date", "text")
     def content: String       = text.getOrElse("")
@@ -126,8 +120,8 @@ package object model {
         Json.obj(
           Seq[Option[(String, Json)]](
             c.author.map(a => "author" -> field("mapValue", a)),
-            c.date.map(d => "date"     -> field("timestampValue", d.format(LongDateTimeFormatter))),
-            c.text.map(t => "text"     -> field("stringValue", t))
+            c.date.map(d => "date" -> field("timestampValue", d.format(LongDateTimeFormatter))),
+            c.text.map(t => "text" -> field("stringValue", t))
           ).filter(_.isDefined).map(_.get): _*
         )
       }
@@ -149,9 +143,7 @@ package object model {
   // --- user ----------------------------------------------------------------------------------------------------------
 
   case class User(
-    name: Option[String],
-    email: Option[String],
-    uid: Option[String]
+    name: Option[String], email: Option[String], uid: Option[String]
   ) extends Entity {
     def dbFields: Seq[String] = Seq("name", "email", "uid")
     def content: String       = name.getOrElse("")
@@ -163,9 +155,9 @@ package object model {
       final def apply(u: User): Json = {
         Json.obj(
           Seq[Option[(String, Json)]](
-            u.name.map(n => "name"   -> field("stringValue", n)),
+            u.name.map(n => "name" -> field("stringValue", n)),
             u.email.map(e => "email" -> field("stringValue", e)),
-            u.uid.map(uid => "uid"   -> field("stringValue", uid))
+            u.uid.map(uid => "uid" -> field("stringValue", uid))
           ).filter(_.isDefined).map(_.get): _*
         )
       }
