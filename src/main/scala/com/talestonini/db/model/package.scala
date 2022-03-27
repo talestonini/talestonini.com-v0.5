@@ -3,9 +3,14 @@ package com.talestonini.db
 import java.time._
 import java.time.format.DateTimeFormatter.ofPattern
 
+import cats.effect.IO
 import com.talestonini.utils._
 import io.circe._
+import org.http4s.circe.jsonOf
+import org.http4s.EntityDecoder
 import scala.language.implicitConversions
+import org.http4s.circe.CirceEntityEncoder
+import org.http4s.EntityEncoder
 
 package object model {
 
@@ -19,55 +24,57 @@ package object model {
   case class AuthTokenResponse(kind: String, idToken: String, refreshToken: String, expiresIn: String, localId: String)
 
   // follows Cloud Firestore specs
-  case class Doc[E](name: String, fields: E, createTime: String, updateTime: String)
+  case class Doc[M](name: String, fields: M, createTime: String, updateTime: String)
 
-  case class DocsRes[E](documents: Seq[Doc[E]])
+  case class DocsRes[M](documents: Seq[Doc[M]])
 
-  sealed trait Entity {
+  sealed trait Model {
     def dbFields: Seq[String]
     def content: String
     def sortingField: String
   }
 
-  type Docs[E] = Seq[Doc[E]]
+  type Docs[M] = Seq[Doc[M]]
 
-  implicit def docDecoder[E <: Entity](implicit fieldsDecoder: Decoder[E]): Decoder[Doc[E]] =
+  implicit def docDecoder[M <: Model](implicit fieldsDecoder: Decoder[M]): Decoder[Doc[M]] =
     // name, fields, createTime and updateTime are part of Cloud Firestore specs
-    new Decoder[Doc[E]] {
-      final def apply(c: HCursor): Decoder.Result[Doc[E]] =
+    new Decoder[Doc[M]] {
+      final def apply(c: HCursor): Decoder.Result[Doc[M]] =
         for {
           name       <- c.get[String]("name")
-          fields     <- c.get[E]("fields")
+          fields     <- c.get[M]("fields")
           createTime <- c.get[String]("createTime")
           updateTime <- c.get[String]("updateTime")
         } yield Doc(name, fields, createTime, updateTime)
     }
 
-  implicit def docsResDecoder[E <: Entity](implicit docSeqDecoder: Decoder[Seq[Doc[E]]]): Decoder[DocsRes[E]] =
-    new Decoder[DocsRes[E]] {
-      final def apply(c: HCursor): Decoder.Result[DocsRes[E]] =
+  implicit def docsResDecoder[M <: Model](implicit docSeqDecoder: Decoder[Seq[Doc[M]]]): Decoder[DocsRes[M]] =
+    new Decoder[DocsRes[M]] {
+      final def apply(c: HCursor): Decoder.Result[DocsRes[M]] =
         for {
-          docs <- c.get[Seq[Doc[E]]]("documents")
+          docs <- c.get[Seq[Doc[M]]]("documents")
         } yield DocsRes(docs)
     }
 
-  case class DocBody[E <: Entity](name: String, entity: E)
+  case class DocBody[M <: Model](name: String, model: M)
 
-  implicit def docBodyEncoder[E <: Entity](implicit entityEncoder: Encoder[E]): Encoder[DocBody[E]] =
-    new Encoder[DocBody[E]] {
-      def apply(docBody: DocBody[E]): Json =
+  implicit def docBodyEncoder[M <: Model](implicit modelEncoder: Encoder[M]): Encoder[DocBody[M]] =
+    new Encoder[DocBody[M]] {
+      def apply(docBody: DocBody[M]): Json =
         Json.obj(
           "name"   -> Json.fromString(docBody.name),
-          "fields" -> entityEncoder(docBody.entity)
+          "fields" -> modelEncoder(docBody.model)
         )
     }
+
+  implicit def responseDecoder[A](implicit decoder: Decoder[A]): EntityDecoder[IO, A] = jsonOf[IO, A]
 
   // --- post (ie article) ---------------------------------------------------------------------------------------------
 
   case class Post(
     resource: Option[String], title: Option[String], firstPublishDate: Option[ZonedDateTime],
     publishDate: Option[ZonedDateTime], enabled: Option[Boolean] = Some(true)
-  ) extends Entity {
+  ) extends Model {
     def dbFields: Seq[String] = Seq("resource", "title", "first_publish_date", "publish_date", "enabled")
     def content: String       = title.getOrElse("")
     def sortingField: String  = datetime2Str(publishDate.getOrElse(InitDateTime), DateTimeCompareFormatter)
@@ -89,7 +96,7 @@ package object model {
       }
     }
 
-  implicit def postAsJson(post: Post): Json = postEncoder(post)
+  // implicit def postAsJson(post: Post): Json = postEncoder(post)
 
   implicit lazy val postDecoder: Decoder[Post] =
     // title, resource, first_publish_date and publish_date are my database specs
@@ -108,7 +115,7 @@ package object model {
 
   case class Comment(
     author: Option[User], date: Option[ZonedDateTime], text: Option[String]
-  ) extends Entity {
+  ) extends Model {
     def dbFields: Seq[String] = Seq("author", "date", "text")
     def content: String       = text.getOrElse("")
     def sortingField: String  = datetime2Str(date.getOrElse(InitDateTime), DateTimeCompareFormatter)
@@ -144,7 +151,7 @@ package object model {
 
   case class User(
     name: Option[String], email: Option[String], uid: Option[String]
-  ) extends Entity {
+  ) extends Model {
     def dbFields: Seq[String] = Seq("name", "email", "uid")
     def content: String       = name.getOrElse("")
     def sortingField: String  = email.getOrElse("")

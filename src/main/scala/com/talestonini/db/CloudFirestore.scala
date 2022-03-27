@@ -7,7 +7,7 @@ import com.talestonini.utils.randomAlphaNumericString
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.parser._
-import org.http4s.{Entity => Ent, EntityDecoder, Headers, Header, Method, Request}
+import org.http4s.{Entity, EntityDecoder, Headers, Header, Method, Request}
 import org.http4s.client._
 import org.http4s.circe._
 import org.http4s.ember.client._
@@ -17,7 +17,9 @@ import org.http4s.UriTemplate._
 import org.http4s.Uri
 import org.typelevel.ci._
 import scala.concurrent._
+import scala.language.implicitConversions
 import scala.util.{Failure, Success}
+import org.http4s.EntityEncoder
 
 object CloudFirestore {
 
@@ -63,15 +65,9 @@ object CloudFirestore {
     Promise[Option[Throwable]]().future
   // deleteDocument[Comment](path)
 
-  def getAuthToken(): Future[String] = getAuthTokenF().unsafeToFuture()
-
   def getAuthTokenF(): IO[String] = {
-    implicit val entityDecoder: EntityDecoder[IO, AuthTokenResponse] = jsonOf[IO, AuthTokenResponse]
-
-    val uri = uri"https://identitytoolkit.googleapis.com/v1/accounts:signUp".withQueryParam("key", ApiKey)
-
+    val uri     = uri"https://identitytoolkit.googleapis.com/v1/accounts:signUp".withQueryParam("key", ApiKey)
     val request = Request[IO](Method.POST, uri).withHeaders(Headers(Header.Raw(ci"Content-Type", "application/json")))
-
     val clientResource: Resource[IO, Client[IO]] = EmberClientBuilder.default[IO].build
 
     clientResource
@@ -82,43 +78,41 @@ object CloudFirestore {
           .map(response => response.idToken))
   }
 
+  def getAuthToken(): Future[String] = getAuthTokenF().unsafeToFuture()
+
   // -------------------------------------------------------------------------------------------------------------------
 
-  private def getDocuments[E <: Entity](token: String, path: String)(
-    implicit docsResDecoder: Decoder[DocsRes[E]]
-  ): Future[Docs[E]] = {
-    implicit val entityDecoder: EntityDecoder[IO, DocsRes[E]] = jsonOf[IO, DocsRes[E]]
-
-    val uri = UriTemplate(
-      authority = Some(Uri.Authority(host = Uri.RegName(FirestoreHost))),
-      scheme = Some(Uri.Scheme.https),
-      path = List(PathElm("v1"), PathElm(path))
-    ).toUriIfPossible.getOrElse(throw CloudFirestoreException("unable to build URI to get documents"))
-
+  private def getDocumentsF[M <: Model](token: String, path: String)(
+    implicit docsResDecoder: Decoder[DocsRes[M]]
+  ): IO[Docs[M]] = {
+    val uri     = toFirestoreUri(path)
     val request = Request[IO](Method.GET, uri).withHeaders(Header.Raw(CIString("Authorization"), s"Bearer $token"))
-
     val clientResource: Resource[IO, Client[IO]] = EmberClientBuilder.default[IO].build
 
     clientResource
       .use(client =>
         client
-          .expectOr[DocsRes[E]](request)(response =>
+          .expectOr[DocsRes[M]](request)(response =>
             IO(CloudFirestoreException(s"failed getting documents: ${response}")))
           .map(docsRes => docsRes.documents.sortBy(_.fields.sortingField).reverse))
-      .unsafeToFuture()
   }
 
-  private def getDocuments[E <: Entity](path: String)(
-    implicit docsResDecoder: Decoder[DocsRes[E]]
-  ): Future[Docs[E]] = {
+  private def getDocuments[M <: Model](token: String, path: String)(
+    implicit docsResDecoder: Decoder[DocsRes[M]]
+  ): Future[Docs[M]] = getDocumentsF(token, path).unsafeToFuture()
+
+  private def getDocuments[M <: Model](path: String)(
+    implicit docsResDecoder: Decoder[DocsRes[M]]
+  ): Future[Docs[M]] = {
+    // TODO: review this
     // import scala.concurrent.ExecutionContext.Implicits.global
     import monix.execution.Scheduler.Implicits.{global => scheduler}
 
-    val p = Promise[Docs[E]]()
+    val p = Promise[Docs[M]]()
     getAuthToken()
       .onComplete({
         case token: Success[String] =>
-          p completeWith getDocuments[E](token.get, path)
+          p completeWith getDocuments[M](token.get, path)
         case f: Failure[String] =>
           val errMsg = s"failed getting auth token: ${f.exception.getMessage()}"
           p failure CloudFirestoreException(errMsg)
@@ -126,27 +120,37 @@ object CloudFirestore {
     p.future
   }
 
-  // private def upsertDocument[E <: Entity](token: String, path: String, entity: E)(
-  // implicit docDecoder: Decoder[Doc[E]]
-  // ): Future[Doc[E]] = {
-  // val p = Promise[Doc[E]]()
+  // private def upsertDocumentF[M <: Model](token: String, path: String, model: M)(
+  // implicit docDecoder: Decoder[Doc[M]]
+  // ): IO[Doc[M]] = {
+  // import io.circe.generic.auto._
+  // import io.circe.syntax._
 
-  // if (isBadRequest(token, entity.content))
-  // p failure CloudFirestoreException("")
-  // else
-  // Future {
+  // val uri = toFirestoreUri(path).withQueryParams(
+  // (for (dbField <- model.dbFields) yield ("updateMask.fieldPaths", dbField)).toMap)
+  //// val request =
+  //// Request[IO](method = Method.PATCH, uri = uri, entity = model)
+  //// .withHeaders(Header.Raw(CIString("Authorization"), s"Bearer $token"))
+  // PATCH(model.asJson, uri)
+  // val clientResource: Resource[IO, Client[IO]] = EmberClientBuilder.default[IO].build
+
+  // clientResource
+  // .use(client =>
+  // client
+  // .expectOr[
+
   // HttpRequest()
   // .withMethod(PATCH)
   // .withProtocol(HTTPS)
   // .withHost(FirestoreHost)
   // .withPath(s"/v1/$path")
-  // .withQueryParameters((for (dbField <- entity.dbFields) yield ("updateMask.fieldPaths", dbField)): _*)
+  // .withQueryParameters((for (dbField <- model.dbFields) yield ("updateMask.fieldPaths", dbField)): _*)
   // .withHeader("Authorization", s"Bearer $token")
-  // .withBody(entityToDocBody(path, entity))
+  // .withBody(modelToDocBody(path, model))
   // .send()
   // .onComplete({
   // case rawJson: Success[SimpleHttpResponse] =>
-  // decode[Doc[E]](rawJson.get.body) match {
+  // decode[Doc[M]](rawJson.get.body) match {
   // case Left(e) =>
   // val errMsg = s"unable to decode response from patch document: ${e.getMessage()}"
   // p failure CloudFirestoreException(errMsg)
@@ -159,17 +163,25 @@ object CloudFirestore {
   // })
   // }
 
+  // private def upsertDocument[M <: Model](token: String, path: String, model: M)(
+  // implicit docDecoder: Decoder[Doc[M]]
+  // ): Future[Doc[M]] =
+  // if (isBadRequest(token, model.content)) {
+  //// TODO improve this
+  // val p = Promise[Doc[M]]()
+  // p failure CloudFirestoreException("")
   // p.future
-  // }
+  // } else
+  // upsertDocumentF(token, path, model).unsafeToFuture()
 
-  // private def upsertDocument[E <: Entity](path: String, entity: E)(
-  // implicit docDecoder: Decoder[Doc[E]]
-  // ): Future[Doc[E]] = {
-  // val p = Promise[Doc[E]]()
+  // private def upsertDocument[M <: Model](path: String, model: M)(
+  // implicit docDecoder: Decoder[Doc[M]]
+  // ): Future[Doc[M]] = {
+  // val p = Promise[Doc[M]]()
   // getAuthToken()
   // .onComplete({
   // case token: Success[String] =>
-  // p completeWith upsertDocument[E](token.get, path, entity)
+  // p completeWith upsertDocument[M](token.get, path, model)
   // case f: Failure[String] =>
   // val errMsg = s"failed getting auth token: ${f.exception.getMessage()}"
   // p failure CloudFirestoreException(errMsg)
@@ -177,8 +189,8 @@ object CloudFirestore {
   // p.future
   // }
 
-  // private def deleteDocument[E <: Entity](token: String, path: String)(
-  // implicit docDecoder: Decoder[Doc[E]]
+  // private def deleteDocument[M <: Model](token: String, path: String)(
+  // implicit docDecoder: Decoder[Doc[M]]
   // ): Future[Option[Throwable]] = {
   // val p = Promise[Option[Throwable]]()
   // Future {
@@ -201,14 +213,14 @@ object CloudFirestore {
   // p.future
   // }
 
-  // private def deleteDocument[E <: Entity](path: String)(
-  // implicit docDecoder: Decoder[Doc[E]]
+  // private def deleteDocument[M <: Model](path: String)(
+  // implicit docDecoder: Decoder[Doc[M]]
   // ): Future[Option[Throwable]] = {
   // val p = Promise[Option[Throwable]]()
   // getAuthToken()
   // .onComplete({
   // case token: Success[String] =>
-  // p completeWith deleteDocument[E](token.get, path)
+  // p completeWith deleteDocument[M](token.get, path)
   // case f: Failure[String] =>
   // val errMsg = s"failed getting auth token: ${f.exception.getMessage()}"
   // p failure CloudFirestoreException(errMsg)
@@ -230,5 +242,12 @@ object CloudFirestore {
     val isSimilarContent = luContent.nonEmpty && content.toSeq.diff(luContent).unwrap.length() < 3
     isBadInterval || isSimilarContent
   }
+
+  def toFirestoreUri(path: String): Uri =
+    UriTemplate(
+      authority = Some(Uri.Authority(host = Uri.RegName(FirestoreHost))),
+      scheme = Some(Uri.Scheme.https),
+      path = List(PathElm("v1"), PathElm(path))
+    ).toUriIfPossible.getOrElse(throw CloudFirestoreException("unable to build URI"))
 
 }
