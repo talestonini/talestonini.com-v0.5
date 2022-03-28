@@ -6,11 +6,12 @@ import java.time.format.DateTimeFormatter.ofPattern
 import cats.effect.IO
 import com.talestonini.utils._
 import io.circe._
-import org.http4s.circe.jsonOf
+import io.circe.syntax._
+import org.http4s.circe._
 import org.http4s.EntityDecoder
-import scala.language.implicitConversions
 import org.http4s.circe.CirceEntityEncoder
 import org.http4s.EntityEncoder
+import scala.language.implicitConversions
 
 package object model {
 
@@ -26,7 +27,9 @@ package object model {
   // follows Cloud Firestore specs
   case class Doc[M](name: String, fields: M, createTime: String, updateTime: String)
 
-  case class DocsRes[M](documents: Seq[Doc[M]])
+  type Docs[M] = Seq[Doc[M]]
+
+  case class DocsRes[M](documents: Docs[M])
 
   sealed trait Model {
     def dbFields: Seq[String]
@@ -34,7 +37,18 @@ package object model {
     def sortingField: String
   }
 
-  type Docs[M] = Seq[Doc[M]]
+  case class Body[M](name: String, fields: M)
+
+  implicit def bodyEncoder[M <: Model](implicit modelEncoder: Encoder[M]): Encoder[Body[M]] =
+    new Encoder[Body[M]] {
+      def apply(body: Body[M]): Json =
+        Json.obj(
+          "name"   -> Json.fromString(body.name),
+          "fields" -> modelEncoder(body.fields)
+        )
+    }
+
+  // implicit def bodyEntityEncoder[A](implicit encoder: Encoder[A]): EntityEncoder[IO, A] = jsonEncoderOf[IO, A]
 
   implicit def docDecoder[M <: Model](implicit fieldsDecoder: Decoder[M]): Decoder[Doc[M]] =
     // name, fields, createTime and updateTime are part of Cloud Firestore specs
@@ -48,26 +62,15 @@ package object model {
         } yield Doc(name, fields, createTime, updateTime)
     }
 
-  implicit def docsResDecoder[M <: Model](implicit docSeqDecoder: Decoder[Seq[Doc[M]]]): Decoder[DocsRes[M]] =
+  implicit def docsResDecoder[M <: Model](implicit docsDecoder: Decoder[Docs[M]]): Decoder[DocsRes[M]] =
     new Decoder[DocsRes[M]] {
       final def apply(c: HCursor): Decoder.Result[DocsRes[M]] =
         for {
-          docs <- c.get[Seq[Doc[M]]]("documents")
+          docs <- c.get[Docs[M]]("documents")
         } yield DocsRes(docs)
     }
 
-  case class DocBody[M <: Model](name: String, model: M)
-
-  implicit def docBodyEncoder[M <: Model](implicit modelEncoder: Encoder[M]): Encoder[DocBody[M]] =
-    new Encoder[DocBody[M]] {
-      def apply(docBody: DocBody[M]): Json =
-        Json.obj(
-          "name"   -> Json.fromString(docBody.name),
-          "fields" -> modelEncoder(docBody.model)
-        )
-    }
-
-  implicit def responseDecoder[A](implicit decoder: Decoder[A]): EntityDecoder[IO, A] = jsonOf[IO, A]
+  implicit def responseEntityDecoder[A](implicit decoder: Decoder[A]): EntityDecoder[IO, A] = jsonOf[IO, A]
 
   // --- post (ie article) ---------------------------------------------------------------------------------------------
 
@@ -95,8 +98,6 @@ package object model {
         )
       }
     }
-
-  // implicit def postAsJson(post: Post): Json = postEncoder(post)
 
   implicit lazy val postDecoder: Decoder[Post] =
     // title, resource, first_publish_date and publish_date are my database specs
@@ -126,15 +127,13 @@ package object model {
       final def apply(c: Comment): Json = {
         Json.obj(
           Seq[Option[(String, Json)]](
-            c.author.map(a => "author" -> field("mapValue", a)),
+            c.author.map(a => "author" -> field("mapValue", Json.obj(("fields", a)))),
             c.date.map(d => "date" -> field("timestampValue", d.format(LongDateTimeFormatter))),
             c.text.map(t => "text" -> field("stringValue", t))
           ).filter(_.isDefined).map(_.get): _*
         )
       }
     }
-
-  implicit def commentAsJson(comment: Comment): Json = commentEncoder(comment)
 
   implicit lazy val commentDecoder: Decoder[Comment] =
     // author, date and text are my database specs
