@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sbt -J-Xmx2G
+sbt -J-Xmx3G

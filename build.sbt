@@ -3,13 +3,6 @@ enablePlugins(BuildInfoPlugin, ScalaJSPlugin, LaikaPlugin, ScalaJSBundlerPlugin)
 name         := "TalesTonini.com"
 version      := "0.1.12"
 scalaVersion := "2.13.8"
-//val circeVersion = "0.15.0-M1"
-val circeVersion = "0.14.1"
-//val http4sVersion = "1.0.0-M31"
-val http4sVersion = "0.23.11"
-
-scalaJSUseMainModuleInitializer := true
-Compile / mainClass             := Some("com.talestonini.App")
 
 // Enable macro annotations by setting scalac flags for Scala 2.13
 scalacOptions ++= {
@@ -21,9 +14,8 @@ scalacOptions ++= {
   }
 }
 
-// BuilfInfoPlubin
-buildInfoKeys    := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
-buildInfoPackage := "com.talestonini"
+val circeVersion  = "0.15.0-M1"
+val http4sVersion = "1.0.0-M32"
 
 libraryDependencies ++= Seq(
   "org.scala-js" %%% "scalajs-dom" % "1.1.0", // cannot use latest version yet due to binary incompatibilities
@@ -41,15 +33,20 @@ libraryDependencies ++= Seq(
   "org.http4s" %%% "http4s-circe"        % http4sVersion,
   "io.monix"   %%% "monix-execution"     % "3.4.0",
   // Java Time for ScalaJS
-  "io.github.cquiroz" %%% "scala-java-time"      % "2.4.0-M1",
-  "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.4.0-M1",
+  "io.github.cquiroz" %%% "scala-java-time"      % "2.4.0-M2",
+  "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.4.0-M2",
   // Test
   "org.scalatest" %%% "scalatest"           % "3.2.11" % Test,
   "org.typelevel" %%% "munit-cats-effect-3" % "1.0.7"  % Test
 )
 
-Test / javaOptions ++= Seq("-Xmx2Gb")
+scalaJSUseMainModuleInitializer := true
+Compile / mainClass             := Some("com.talestonini.App")
+Global / onChangedBuildSource   := ReloadOnSourceChanges
 
+// Node dependencies
+// -----------------
+//
 // ScalaJSBundlerPlugin adds Node.js dependencies
 //Compile / npmDependencies ++= Seq(
 // 17 Mar '22 - these dependencies are not needed, not for testing nor for the browser running app (keeping here for ref
@@ -58,13 +55,15 @@ Test / javaOptions ++= Seq("-Xmx2Gb")
 //"tls" -> "0.0.1"
 //)
 
-// 17 Mar '11 - jsEnv is by default NodeJS; thse other envs are only needed when testing browser-related features.
+// Test setup
+// ----------
+//
+// 17 Mar '11 - jsEnv is by default NodeJS; these other envs are only needed when testing browser-related features.
 //              They are here just for future reference, but are not needed for testing Cats Effects code, Java Time,
 //              etc. (In fact, the Cats Effects code in http4s does not pass in browser environments, as "net socket"
 //              is not present and I get "$$x1 is not a constructor", related to instantiating a net socket in http4s
 //              code. Apparently, I'd need a polyfill for that sort of NodeJS functionality that is not present in a
 //              browser. All browsers/headless browsers below fail those tests.)
-// Test Setup
 //Test / requireJsDomEnv := true
 // Node + DOM
 //Test / jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv()
@@ -78,10 +77,22 @@ Test / javaOptions ++= Seq("-Xmx2Gb")
 //Test / jsEnv := PhantomJSEnv(org.scalajs.jsenv.phantomjs.PhantomJSEnv.Config().withArgs(List("--web-security=no"))).value
 //scalaJSLinkerConfig ~= { _.withESFeatures(_.withUseECMAScript2015(false)) }
 
+// Scalastyle
+// ----------
+//
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
 compileScalastyle := (Compile / scalastyle).toTask("").value
 Compile / compile := ((Compile / compile) dependsOn compileScalastyle).value
 
+// BuilfInfoPlugin
+// ---------------
+//
+buildInfoKeys    := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
+buildInfoPackage := "com.talestonini"
+
+// LaikaPlugin
+// -----------
+//
 Laika / sourceDirectories := Seq(sourceDirectory.value / "main/resources/pages")
 laikaSite / target        := sourceDirectory.value / "main/scala/com/talestonini/pages/sourcegen"
 laikaTheme                := laika.theme.Theme.empty
