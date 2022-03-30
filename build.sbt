@@ -1,7 +1,7 @@
 enablePlugins(BuildInfoPlugin, ScalaJSPlugin, LaikaPlugin, ScalaJSBundlerPlugin)
 
 name         := "TalesTonini.com"
-version      := "0.1.12"
+version      := "0.2.0"
 scalaVersion := "2.13.8"
 
 // Enable macro annotations by setting scalac flags for Scala 2.13
@@ -29,7 +29,6 @@ libraryDependencies ++= Seq(
   "io.circe"   %%% "circe-parser"        % circeVersion,
   "org.http4s" %%% "http4s-client"       % http4sVersion,
   "org.http4s" %%% "http4s-ember-client" % http4sVersion,
-  "org.http4s" %%% "http4s-dsl"          % http4sVersion,
   "org.http4s" %%% "http4s-circe"        % http4sVersion,
   "io.monix"   %%% "monix-execution"     % "3.4.0",
   // Java Time for ScalaJS

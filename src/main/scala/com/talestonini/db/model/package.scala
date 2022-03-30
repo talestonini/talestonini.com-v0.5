@@ -6,11 +6,8 @@ import java.time.format.DateTimeFormatter.ofPattern
 import cats.effect.IO
 import com.talestonini.utils._
 import io.circe._
-import io.circe.syntax._
 import org.http4s.circe._
-import org.http4s.EntityDecoder
-import org.http4s.circe.CirceEntityEncoder
-import org.http4s.EntityEncoder
+import org.http4s.{EntityDecoder, EntityEncoder}
 import scala.language.implicitConversions
 
 package object model {
@@ -20,16 +17,6 @@ package object model {
   implicit lazy val decodeZonedDateTime: Decoder[ZonedDateTime] = Decoder.decodeZonedDateTime
 
   // --- common --------------------------------------------------------------------------------------------------------
-
-  // signUp response (get auth token)
-  case class AuthTokenResponse(kind: String, idToken: String, refreshToken: String, expiresIn: String, localId: String)
-
-  // follows Cloud Firestore specs
-  case class Doc[M](name: String, fields: M, createTime: String, updateTime: String)
-
-  type Docs[M] = Seq[Doc[M]]
-
-  case class DocsRes[M](documents: Docs[M])
 
   sealed trait Model {
     def dbFields: Seq[String]
@@ -48,7 +35,8 @@ package object model {
         )
     }
 
-  // implicit def bodyEntityEncoder[A](implicit encoder: Encoder[A]): EntityEncoder[IO, A] = jsonEncoderOf[IO, A]
+  // follows Cloud Firestore specs
+  case class Doc[M](name: String, fields: M, createTime: String, updateTime: String)
 
   implicit def docDecoder[M <: Model](implicit fieldsDecoder: Decoder[M]): Decoder[Doc[M]] =
     // name, fields, createTime and updateTime are part of Cloud Firestore specs
@@ -62,6 +50,9 @@ package object model {
         } yield Doc(name, fields, createTime, updateTime)
     }
 
+  type Docs[M] = Seq[Doc[M]]
+  case class DocsRes[M](documents: Docs[M])
+
   implicit def docsResDecoder[M <: Model](implicit docsDecoder: Decoder[Docs[M]]): Decoder[DocsRes[M]] =
     new Decoder[DocsRes[M]] {
       final def apply(c: HCursor): Decoder.Result[DocsRes[M]] =
@@ -69,6 +60,9 @@ package object model {
           docs <- c.get[Docs[M]]("documents")
         } yield DocsRes(docs)
     }
+
+  // signUp response (get auth token)
+  case class AuthTokenResponse(kind: String, idToken: String, refreshToken: String, expiresIn: String, localId: String)
 
   implicit def responseEntityDecoder[A](implicit decoder: Decoder[A]): EntityDecoder[IO, A] = jsonOf[IO, A]
 
@@ -169,8 +163,6 @@ package object model {
       }
     }
 
-  implicit def userAsJson(user: User): Json = userEncoder(user)
-
   implicit lazy val userDecoder: Decoder[User] =
     new Decoder[User] {
       def apply(c: HCursor): Decoder.Result[User] =
@@ -180,6 +172,8 @@ package object model {
           uid   <- c.downField("uid").get[String]("stringValue")
         } yield User(Option(name), Option(email), Option(uid))
     }
+
+  implicit def userAsJson(user: User): Json = userEncoder(user)
 
   // -------------------------------------------------------------------------------------------------------------------
 

@@ -6,21 +6,17 @@ import com.talestonini.db.model._
 import com.talestonini.utils.randomAlphaNumericString
 import io.circe._
 import io.circe.generic.auto._
-import io.circe.parser._
 import io.circe.syntax._
 import monix.execution.Scheduler.Implicits.{global => scheduler}
 import org.http4s.{Entity, EntityDecoder, EntityEncoder, Headers, Header, Method, Request}
 import org.http4s.circe._
 import org.http4s.client._
-import org.http4s.client.dsl.io._
-import org.http4s.dsl.io._
 import org.http4s.ember.client._
 import org.http4s.implicits._
 import org.http4s.{Uri, UriTemplate}
 import org.http4s.UriTemplate._
 import org.typelevel.ci._
 import scala.concurrent._
-import scala.language.implicitConversions
 import scala.util.{Failure, Success}
 
 object CloudFirestore {
@@ -63,6 +59,8 @@ object CloudFirestore {
   def removeComment(path: String): Future[Option[Throwable]] =
     deleteDocument[Comment](path)
 
+  // -------------------------------------------------------------------------------------------------------------------
+
   def getAuthTokenF(): IO[String] = {
     val uri     = uri"https://identitytoolkit.googleapis.com/v1/accounts:signUp".withQueryParam("key", ApiKey)
     val request = Request[IO](Method.POST, uri).withHeaders(Headers(Header.Raw(ci"Content-Type", "application/json")))
@@ -77,8 +75,6 @@ object CloudFirestore {
   }
 
   def getAuthToken(): Future[String] = getAuthTokenF().unsafeToFuture()
-
-  // -------------------------------------------------------------------------------------------------------------------
 
   def getDocumentsF[M <: Model](token: String, path: String)(
     implicit docsResDecoder: Decoder[DocsRes[M]]
@@ -121,8 +117,6 @@ object CloudFirestore {
     val request = Request[IO](Method.PATCH, uri)
       .withEntity[Json](Body(path, model).asJson)
       .withHeaders(Header.Raw(CIString("Authorization"), s"Bearer $token"))
-    // val request = PATCH(Body(path, model).asJson, uri)
-    // .withHeaders(Header.Raw(CIString("Authorization"), s"Bearer $token"))
     val clientResource: Resource[IO, Client[IO]] = EmberClientBuilder.default[IO].build
 
     clientResource
@@ -192,6 +186,13 @@ object CloudFirestore {
     p.future
   }
 
+  private def toFirestoreUri(path: String): Uri =
+    UriTemplate(
+      authority = Some(Uri.Authority(host = Uri.RegName(FirestoreHost))),
+      scheme = Some(Uri.Scheme.https),
+      path = List(PathElm("v1"), PathElm(path))
+    ).toUriIfPossible.getOrElse(throw CloudFirestoreException("unable to build URI"))
+
   // map of token -> (last usage time, last usage content)
   private var antiHackCache: Map[String, (Long, String)] = Map.empty
 
@@ -206,12 +207,5 @@ object CloudFirestore {
     val isSimilarContent = luContent.nonEmpty && content.toSeq.diff(luContent).unwrap.length() < 3
     isBadInterval || isSimilarContent
   }
-
-  def toFirestoreUri(path: String): Uri =
-    UriTemplate(
-      authority = Some(Uri.Authority(host = Uri.RegName(FirestoreHost))),
-      scheme = Some(Uri.Scheme.https),
-      path = List(PathElm("v1"), PathElm(path))
-    ).toUriIfPossible.getOrElse(throw CloudFirestoreException("unable to build URI"))
 
 }
