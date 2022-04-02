@@ -141,6 +141,8 @@ object App {
   private def displaySignInProviders() = isSignInProvidersVisible.value = true
   private def hideSignInProviders()    = isSignInProvidersVisible.value = false
 
+  // 'then' is in JS native code here
+  @annotation.nowarn
   private def captureUserInfo(userInfo: User): Unit = {
     def anyToStr(any: Any): String = if (any != null) any.toString else ""
 

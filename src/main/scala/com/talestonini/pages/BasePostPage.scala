@@ -16,9 +16,8 @@ import org.scalajs.dom.raw.Event
 import org.scalajs.dom.raw.HTMLTextAreaElement
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.window
-import scala.concurrent._
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Promise
+import scala.scalajs.concurrent.JSExecutionContext.queue
 import scala.util.{Failure, Success}
 
 trait BasePostPage extends Observer {
@@ -154,10 +153,10 @@ trait BasePostPage extends Observer {
             case f: Failure[Docs[Comment]] =>
               println(s"failed getting comments: ${f.exception.getMessage()}")
               hideLoading(isLoading, retrievingComments)
-          })
+          })(queue)
       case f: Failure[Doc[Post]] =>
         println(s"failed getting post document name: ${f.exception.getMessage()}")
-    })
+    })(queue)
 
   // observe user signing in/out to allow or not commenting on the post
   private var isAllowedToComment = Var(false)
@@ -203,7 +202,7 @@ trait BasePostPage extends Observer {
             ))
         case f: Failure[Doc[Comment]] =>
           println("failed creating comment")
-      })
+      })(queue)
   }
 
 }

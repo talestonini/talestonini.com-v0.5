@@ -18,6 +18,8 @@ package firebase {
   trait Thenable[T] extends js.Object {
     def `catch`(onReject: js.Function1[Error, Any] = ???): js.Dynamic = js.native
 
+    // 'then' is in JS native code here
+    @annotation.nowarn
     def then(onResolve: js.Function1[T, Any] = ???,
       onReject: js.Function1[Error, Any] = ???): firebase.Thenable[js.Any] = js.native
   }

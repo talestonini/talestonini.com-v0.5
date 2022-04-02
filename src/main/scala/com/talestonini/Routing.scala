@@ -11,8 +11,8 @@ import org.scalajs.dom.window
 import pages.{Posts, Tags}
 import pages.sourcegen._
 import pages.sourcegen.posts._
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Promise
+import scala.scalajs.concurrent.JSExecutionContext.queue
 import scala.util.{Failure, Success}
 
 object Routing {
@@ -70,7 +70,7 @@ object Routing {
       case f: Failure[Docs[Post]] =>
         println(s"failed getting posts: ${f.exception.getMessage()}")
         hideLoading(isLoading, retrievingPosts)
-    })
+    })(queue)
 
   case class Page(hash: String, content: Var[Binding[Node]])
 
