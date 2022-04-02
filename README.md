@@ -32,8 +32,11 @@ If that fails, try re-authenticating:
 ```
 
 ## Running unit tests
+- Tests only pass with the development API key, as the production one has security restrictions.
+
+### If running tests with a jsEnv other than the defaul
 - Node.js version 17.x.x presents issues running sbt target `fastOptJS::webpack`. To solve, run the following in the
-machine used to build the app (run my `sbt.sh`):
+machine used to build the app (run my `sbt-for-headless-browser.sh`):
 ```
 > export NODE_OPTIONS=--openssl-legacy-provider
 ```
@@ -45,7 +48,6 @@ make sure the app node dependencies match the modules installed locally for reli
   - On a Mac, you can install drivers with `brew install geckodriver`.
   - On Ubuntu, you can prepare the environment running `prep_test_env_once.sh`, and start sbt with `sbt.sh`.
 
-**Note**: Tests only pass with the development API key, as the production one has security restrictions.
 
 ## Deploying
 Use script `deploy.sh`.
