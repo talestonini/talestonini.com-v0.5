@@ -47,12 +47,18 @@ Global / onChangedBuildSource   := ReloadOnSourceChanges
 // -----------------
 //
 // ScalaJSBundlerPlugin adds Node.js dependencies
-//Compile / npmDependencies ++= Seq(
 // 17 Mar '22 - these dependencies are not needed, not for testing nor for the browser running app (keeping here for ref
 //              on node dependencies)
-//"net" -> "1.0.2",
-//"tls" -> "0.0.1"
-//)
+Compile / npmDependencies ++= Seq(
+//"buffer"    -> "6.0.3",
+//"crypto-js" -> "4.1.1",
+  "net" -> "1.0.2",
+//"os"        -> "0.1.2",
+//"punycode"  -> "2.1.1",
+//"stream"    -> "0.0.2",
+  "tls"        -> "0.0.1",
+  "net-socket" -> "1.1.0"
+)
 
 // Test setup
 // ----------

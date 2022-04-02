@@ -65,7 +65,7 @@ object App {
     </div>
 
   @JSExport("main")
-  def main(): Unit = {
+  def main(args: Array[String]): Unit = {
     runFirebaseAuth()
     setInStorage(pristineAuthState, true)
     html.render(document.body, app())
