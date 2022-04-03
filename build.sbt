@@ -58,6 +58,8 @@ libraryDependencies ++= Seq(
 // --------------------
 //
 // Adds any Node.js dependencies listed above.
+// https://github.com/webpack/webpack/releases
+// https://github.com/webpack/webpack-dev-server/releases
 webpack / version               := "5.71.0" // latest WebPack 4 is 4.44.1, if needed
 startWebpackDevServer / version := "4.7.4"
 
