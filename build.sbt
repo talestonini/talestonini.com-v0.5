@@ -46,7 +46,6 @@ libraryDependencies ++= Seq(
 // Node dependencies
 // -----------------
 //
-// ScalaJSBundlerPlugin adds Node.js dependencies
 // 17 Mar '22 - these dependencies are not needed, not for testing nor for the browser running app (keeping here for ref
 //              on node dependencies)
 //Compile / npmDependencies ++= Seq(
@@ -54,6 +53,13 @@ libraryDependencies ++= Seq(
 //"net"           -> "1.0.2",
 //"tls"           -> "0.0.1"
 //)
+
+// ScalaJSBundlerPlugin
+// --------------------
+//
+// Adds any Node.js dependencies listed above.
+webpack / version               := "5.71.0" // latest WebPack 4 is 4.44.1, if needed
+startWebpackDevServer / version := "4.7.4"
 
 // Test setup
 // ----------

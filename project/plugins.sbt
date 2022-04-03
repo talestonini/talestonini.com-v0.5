@@ -11,8 +11,8 @@ addSbtPlugin("org.planet42" % "laika-sbt" % "0.18.2")
 
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.11.0")
 
-// https://scalacenter.github.io/scalajs-bundler/site-contents.html
-addSbtPlugin("ch.epfl.scala" % "sbt-scalajs-bundler" % "0.20.0")
+// https://github.com/scalacenter/scalajs-bundler/tags
+addSbtPlugin("ch.epfl.scala" % "sbt-scalajs-bundler" % "0.21.0-RC1")
 
 // https://github.com/sbt/sbt-dependency-graph/tags
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.10.0-RC1")

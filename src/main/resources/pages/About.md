@@ -72,3 +72,4 @@ curiosity about which posts attract more attention. For the sake of full transpa
 - Replaced [RösHTTP](https://github.com/hmil/RosHTTP) for [Http4s-DOM](https://http4s.github.io/http4s-dom/) due to the
 former not being maintained anymore and to give me a reason to play with [Cats](https://typelevel.org/cats/). This is at
 the database layer, implementing API calls to CloudFirestore.
+- Packaging the app with [scalajs-bundler](https://scalacenter.github.io/scalajs-bundler/).

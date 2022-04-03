@@ -84,6 +84,7 @@ object About {
         <li>Replaced <a href="https://github.com/hmil/RosHTTP">RösHTTP</a> for <a href="https://http4s.github.io/http4s-dom/">Http4s-DOM</a> due to the
         former not being maintained anymore and to give me a reason to play with <a href="https://typelevel.org/cats/">Cats</a>. This is at
         the database layer, implementing API calls to CloudFirestore.</li>
+        <li>Packaging the app with <a href="https://scalacenter.github.io/scalajs-bundler/">scalajs-bundler</a>.</li>
       </ul>
     </div>
 
