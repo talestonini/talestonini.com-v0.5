@@ -3,6 +3,7 @@
 public=$1
 cycle=$2
 
+rmdir -r $public
 mkdir -p $public/css
 mkdir -p $public/favicom
 mkdir -p $public/fonts
@@ -22,11 +23,15 @@ cp index.html $public
 if [ $cycle = dev ]
 then
   # use ...-fastopt.js
-  sed -i '' 's/talestonini-com-opt\.js/talestonini-com-fastopt\.js/g' $public/index.html
-  cp target/scala-2.13/talestonini-com-fastopt.js $public/target/scala-2.13
+  sed -i '' 's/talestonini-com-opt-bundle\.js/talestonini-com-fastopt-bundle\.js/g' $public/index.html
+  cp target/scala-2.13/scalajs-bundler/main/talestonini-com-fastopt-bundle.js $public/target/scala-2.13
 else
   # use ...-opt.js
-  cp target/scala-2.13/talestonini-com-opt.js $public/target/scala-2.13
+  # FIXME:
+  # 03 Apr 2022 - Not deploying the fullOptJS bundle because it fails with this error in console:
+  #               Uncaught InternalError: too much recursion
+  #cp target/scala-2.13/scalajs-bundler/main/talestonini-com-opt-bundle.js $public/target/scala-2.13
+  cp target/scala-2.13/scalajs-bundler/main/talestonini-com-fastopt-bundle.js $public/target/scala-2.13
 fi
 
 cp firebase.json $public

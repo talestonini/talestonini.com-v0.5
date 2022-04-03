@@ -65,7 +65,7 @@ object App {
     </div>
 
   @JSExport("main")
-  def main(): Unit = {
+  def main(args: Array[String]): Unit = {
     runFirebaseAuth()
     setInStorage(pristineAuthState, true)
     html.render(document.body, app())
@@ -141,6 +141,8 @@ object App {
   private def displaySignInProviders() = isSignInProvidersVisible.value = true
   private def hideSignInProviders()    = isSignInProvidersVisible.value = false
 
+  // 'then' is in JS native code here
+  @annotation.nowarn
   private def captureUserInfo(userInfo: User): Unit = {
     def anyToStr(any: Any): String = if (any != null) any.toString else ""
 

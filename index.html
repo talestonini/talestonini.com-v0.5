@@ -88,6 +88,9 @@
   <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
   <link rel="stylesheet" href="./css/font-awesome.min.css">
 
+  <!-- RequireJS 2.3.6 -->
+  <script src="./js/require.js"></script>
+
   <!-- PrismJS -->
   <link rel="stylesheet" href="./css/prism-tt.css">
   <link rel="stylesheet" href="./css/prism-line-numbers.css">
@@ -103,9 +106,6 @@
   <link rel="manifest" href="./favicom/site.webmanifest">
 
   <link rel="stylesheet" type="text/css" href="./css/styles.css">
-
-  <!-- Include Scala.js compiled code -->
-  <script type="text/javascript" src="./target/scala-2.13/talestonini-com-opt.js"></script>
 </head>
 
 <body onhashchange="prismHighlightAll()">
@@ -144,9 +144,10 @@
     }
   </script>
 
-  <script type="text/javascript">
-    App.main()
-  </script>
+  <!-- Include Scala.js compiled code -->
+  <!-- FIXME: It should use the fullOptJS bundle file. -->
+  <!--<script type="text/javascript" src="./target/scala-2.13/talestonini-com-opt-bundle.js"></script>-->
+  <script type="text/javascript" src="./target/scala-2.13/talestonini-com-fastopt-bundle.js"></script>
 </body>
 
 </html>

@@ -3,10 +3,12 @@ package com.talestonini.db
 import java.time._
 import java.time.format.DateTimeFormatter.ofPattern
 
+import cats.effect.IO
 import com.talestonini.utils._
-import fr.hmil.roshttp.body.Implicits._
-import fr.hmil.roshttp.body.JSONBody.{JSONObject, JSONString, JSONValue}
 import io.circe._
+import org.http4s.circe._
+import org.http4s.{EntityDecoder, EntityEncoder}
+import scala.language.implicitConversions
 
 package object model {
 
@@ -16,84 +18,82 @@ package object model {
 
   // --- common --------------------------------------------------------------------------------------------------------
 
-  // follows Cloud Firestore specs
-  case class Doc[E](name: String, fields: E, createTime: String, updateTime: String)
-
-  case class DocsRes[E](documents: Seq[Doc[E]])
-
-  sealed trait Entity {
+  sealed trait Model {
     def dbFields: Seq[String]
     def content: String
     def sortingField: String
   }
 
-  type Docs[E] = Seq[Doc[E]]
+  case class Body[M](name: String, fields: M)
 
-  implicit def docDecoder[E <: Entity](implicit fieldsDecoder: Decoder[E]): Decoder[Doc[E]] =
+  implicit def bodyEncoder[M <: Model](implicit modelEncoder: Encoder[M]): Encoder[Body[M]] =
+    new Encoder[Body[M]] {
+      def apply(body: Body[M]): Json =
+        Json.obj(
+          "name"   -> Json.fromString(body.name),
+          "fields" -> modelEncoder(body.fields)
+        )
+    }
+
+  // follows Cloud Firestore specs
+  case class Doc[M](name: String, fields: M, createTime: String, updateTime: String)
+
+  implicit def docDecoder[M <: Model](implicit fieldsDecoder: Decoder[M]): Decoder[Doc[M]] =
     // name, fields, createTime and updateTime are part of Cloud Firestore specs
-    new Decoder[Doc[E]] {
-      final def apply(c: HCursor): Decoder.Result[Doc[E]] =
+    new Decoder[Doc[M]] {
+      final def apply(c: HCursor): Decoder.Result[Doc[M]] =
         for {
           name       <- c.get[String]("name")
-          fields     <- c.get[E]("fields")
+          fields     <- c.get[M]("fields")
           createTime <- c.get[String]("createTime")
           updateTime <- c.get[String]("updateTime")
         } yield Doc(name, fields, createTime, updateTime)
     }
 
-  implicit def docsResDecoder[E <: Entity](implicit docSeqDecoder: Decoder[Seq[Doc[E]]]): Decoder[DocsRes[E]] =
-    new Decoder[DocsRes[E]] {
-      final def apply(c: HCursor): Decoder.Result[DocsRes[E]] =
+  type Docs[M] = Seq[Doc[M]]
+  case class DocsRes[M](documents: Docs[M])
+
+  implicit def docsResDecoder[M <: Model](implicit docsDecoder: Decoder[Docs[M]]): Decoder[DocsRes[M]] =
+    new Decoder[DocsRes[M]] {
+      final def apply(c: HCursor): Decoder.Result[DocsRes[M]] =
         for {
-          docs <- c.get[Seq[Doc[E]]]("documents")
+          docs <- c.get[Docs[M]]("documents")
         } yield DocsRes(docs)
     }
 
-  def entityToDocBody[E <: Entity](name: String, entity: E): JSONObject =
-    JSONObject(
-      "name" -> name,
-      "fields" -> (entity match {
-        // type match is the easiest for now (not keen on reflection)
-        case p: Post =>
-          JSONObject(
-            Seq[Option[(String, JSONValue)]](
-              p.title.map(t => "title"       -> field("stringValue", t)),
-              p.resource.map(r => "resource" -> field("stringValue", r)),
-              p.firstPublishDate.map(fpd =>
-                "first_publish_date" -> field("timestampValue", fpd.format(LongDateTimeFormatter))
-              ),
-              p.publishDate.map(pd => "publish_date" -> field("timestampValue", pd.format(LongDateTimeFormatter))),
-              p.enabled.map(e => "enabled"           -> field("enabled", e))
-            ).filter(_.isDefined).map(_.get): _*
-          )
-        case c: Comment =>
-          JSONObject(
-            Seq[Option[(String, JSONValue)]](
-              c.author.map(a => "author" -> field("mapValue", userToJsonValue(a))),
-              c.date.map(d => "date"     -> field("timestampValue", d.format(LongDateTimeFormatter))),
-              c.text.map(t => "text"     -> field("stringValue", t))
-            ).filter(_.isDefined).map(_.get): _*
-          )
-        case _ =>
-          throw new Exception(s"unexpected entity type: ${entity.getClass()}")
-      })
-    )
+  // signUp response (get auth token)
+  case class AuthTokenResponse(kind: String, idToken: String, refreshToken: String, expiresIn: String, localId: String)
+
+  implicit def responseEntityDecoder[A](implicit decoder: Decoder[A]): EntityDecoder[IO, A] = jsonOf[IO, A]
 
   // --- post (ie article) ---------------------------------------------------------------------------------------------
 
   case class Post(
-    resource: Option[String],
-    title: Option[String],
-    firstPublishDate: Option[ZonedDateTime],
-    publishDate: Option[ZonedDateTime],
-    enabled: Option[Boolean] = Some(true)
-  ) extends Entity {
+    resource: Option[String], title: Option[String], firstPublishDate: Option[ZonedDateTime],
+    publishDate: Option[ZonedDateTime], enabled: Option[Boolean] = Some(true)
+  ) extends Model {
     def dbFields: Seq[String] = Seq("resource", "title", "first_publish_date", "publish_date", "enabled")
     def content: String       = title.getOrElse("")
     def sortingField: String  = datetime2Str(publishDate.getOrElse(InitDateTime), DateTimeCompareFormatter)
   }
 
-  implicit lazy val postFieldsDecoder: Decoder[Post] =
+  implicit lazy val postEncoder: Encoder[Post] =
+    new Encoder[Post] {
+      final def apply(p: Post): Json = {
+        Json.obj(
+          Seq[Option[(String, Json)]](
+            p.resource.map(r => "resource" -> field("stringValue", r)),
+            p.title.map(t => "title" -> field("stringValue", t)),
+            p.firstPublishDate.map(fpd =>
+              "first_publish_date" -> field("timestampValue", fpd.format(LongDateTimeFormatter))),
+            p.publishDate.map(pd => "publish_date" -> field("timestampValue", pd.format(LongDateTimeFormatter))),
+            p.enabled.map(e => "enabled" -> field("booleanValue", e))
+          ).filter(_.isDefined).map(_.get): _*
+        )
+      }
+    }
+
+  implicit lazy val postDecoder: Decoder[Post] =
     // title, resource, first_publish_date and publish_date are my database specs
     new Decoder[Post] {
       final def apply(c: HCursor): Decoder.Result[Post] =
@@ -109,16 +109,27 @@ package object model {
   // --- comment -------------------------------------------------------------------------------------------------------
 
   case class Comment(
-    author: Option[User],
-    date: Option[ZonedDateTime],
-    text: Option[String]
-  ) extends Entity {
+    author: Option[User], date: Option[ZonedDateTime], text: Option[String]
+  ) extends Model {
     def dbFields: Seq[String] = Seq("author", "date", "text")
     def content: String       = text.getOrElse("")
     def sortingField: String  = datetime2Str(date.getOrElse(InitDateTime), DateTimeCompareFormatter)
   }
 
-  implicit lazy val commentFieldsDecoder: Decoder[Comment] =
+  implicit lazy val commentEncoder: Encoder[Comment] =
+    new Encoder[Comment] {
+      final def apply(c: Comment): Json = {
+        Json.obj(
+          Seq[Option[(String, Json)]](
+            c.author.map(a => "author" -> field("mapValue", Json.obj(("fields", a)))),
+            c.date.map(d => "date" -> field("timestampValue", d.format(LongDateTimeFormatter))),
+            c.text.map(t => "text" -> field("stringValue", t))
+          ).filter(_.isDefined).map(_.get): _*
+        )
+      }
+    }
+
+  implicit lazy val commentDecoder: Decoder[Comment] =
     // author, date and text are my database specs
     new Decoder[Comment] {
       final def apply(c: HCursor): Decoder.Result[Comment] =
@@ -132,16 +143,27 @@ package object model {
   // --- user ----------------------------------------------------------------------------------------------------------
 
   case class User(
-    name: Option[String],
-    email: Option[String],
-    uid: Option[String]
-  ) extends Entity {
+    name: Option[String], email: Option[String], uid: Option[String]
+  ) extends Model {
     def dbFields: Seq[String] = Seq("name", "email", "uid")
     def content: String       = name.getOrElse("")
     def sortingField: String  = email.getOrElse("")
   }
 
-  implicit lazy val userFieldsDecoder: Decoder[User] =
+  implicit lazy val userEncoder: Encoder[User] =
+    new Encoder[User] {
+      final def apply(u: User): Json = {
+        Json.obj(
+          Seq[Option[(String, Json)]](
+            u.name.map(n => "name" -> field("stringValue", n)),
+            u.email.map(e => "email" -> field("stringValue", e)),
+            u.uid.map(uid => "uid" -> field("stringValue", uid))
+          ).filter(_.isDefined).map(_.get): _*
+        )
+      }
+    }
+
+  implicit lazy val userDecoder: Decoder[User] =
     new Decoder[User] {
       def apply(c: HCursor): Decoder.Result[User] =
         for {
@@ -151,20 +173,15 @@ package object model {
         } yield User(Option(name), Option(email), Option(uid))
     }
 
-  private def userToJsonValue(user: User): JSONValue =
-    JSONObject(
-      "fields" -> JSONObject(
-        Seq[Option[(String, JSONValue)]](
-          user.name.map(n => "name"   -> field("stringValue", n)),
-          user.email.map(e => "email" -> field("stringValue", e)),
-          user.uid.map(u => "uid"     -> field("stringValue", u))
-        ).filter(_.isDefined).map(_.get): _*
-      )
-    )
+  implicit def userAsJson(user: User): Json = userEncoder(user)
 
   // -------------------------------------------------------------------------------------------------------------------
 
-  private def field(`type`: String, value: String): JSONObject    = JSONObject(`type` -> new JSONString(value))
-  private def field(`type`: String, value: JSONValue): JSONObject = JSONObject(`type` -> value)
+  private def field(`type`: String, value: String): Json =
+    Json.fromJsonObject(JsonObject((`type`, Json.fromString(value))))
+  private def field(`type`: String, value: Boolean): Json =
+    Json.fromJsonObject(JsonObject((`type`, Json.fromBoolean(value))))
+  private def field(`type`: String, value: Json): Json =
+    Json.fromJsonObject(JsonObject((`type`, value)))
 
 }
