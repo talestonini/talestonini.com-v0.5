@@ -11,7 +11,7 @@ import monix.execution.Scheduler.Implicits.{global => scheduler}
 import org.http4s.{Entity, EntityDecoder, EntityEncoder, Headers, Header, Method, Request}
 import org.http4s.circe._
 import org.http4s.client._
-import org.http4s.ember.client._
+import org.http4s.dom.FetchClientBuilder
 import org.http4s.implicits._
 import org.http4s.{Uri, UriTemplate}
 import org.http4s.UriTemplate._
@@ -63,14 +63,11 @@ object CloudFirestore {
   def getAuthTokenF(): IO[String] = {
     val uri     = uri"https://identitytoolkit.googleapis.com/v1/accounts:signUp".withQueryParam("key", ApiKey)
     val request = Request[IO](Method.POST, uri).withHeaders(Headers(Header.Raw(ci"Content-Type", "application/json")))
-    val clientResource: Resource[IO, Client[IO]] = EmberClientBuilder.default[IO].build
 
-    clientResource
-      .use(client =>
-        client
-          .expectOr[AuthTokenResponse](request)(response =>
-            IO(CloudFirestoreException(s"failed requesting signUp token: $response")))
-          .map(response => response.idToken))
+    FetchClientBuilder[IO].create
+      .expectOr[AuthTokenResponse](request)(response =>
+        IO(CloudFirestoreException(s"failed requesting signUp token: $response")))
+      .map(response => response.idToken)
   }
 
   def getAuthToken(): Future[String] = getAuthTokenF().unsafeToFuture()
@@ -80,14 +77,10 @@ object CloudFirestore {
   ): IO[Docs[M]] = {
     val uri     = toFirestoreUri(path)
     val request = Request[IO](Method.GET, uri).withHeaders(Header.Raw(CIString("Authorization"), s"Bearer $token"))
-    val clientResource: Resource[IO, Client[IO]] = EmberClientBuilder.default[IO].build
 
-    clientResource
-      .use(client =>
-        client
-          .expectOr[DocsRes[M]](request)(response =>
-            IO(CloudFirestoreException(s"failed getting documents: $response")))
-          .map(docsRes => docsRes.documents.sortBy(_.fields.sortingField).reverse))
+    FetchClientBuilder[IO].create
+      .expectOr[DocsRes[M]](request)(response => IO(CloudFirestoreException(s"failed getting documents: $response")))
+      .map(docsRes => docsRes.documents.sortBy(_.fields.sortingField).reverse)
   }
 
   private def getDocuments[M <: Model](token: String, path: String)(
@@ -116,12 +109,9 @@ object CloudFirestore {
     val request = Request[IO](Method.PATCH, uri)
       .withEntity[Json](Body(path, model).asJson)
       .withHeaders(Header.Raw(CIString("Authorization"), s"Bearer $token"))
-    val clientResource: Resource[IO, Client[IO]] = EmberClientBuilder.default[IO].build
 
-    clientResource
-      .use(client =>
-        client
-          .expectOr[Doc[M]](request)(response => IO(CloudFirestoreException(s"failed upserting document: $response"))))
+    FetchClientBuilder[IO].create
+      .expectOr[Doc[M]](request)(response => IO(CloudFirestoreException(s"failed upserting document: $response")))
   }
 
   private def upsertDocument[M <: Model](token: String, path: String, model: M)(
@@ -156,10 +146,9 @@ object CloudFirestore {
     val uri = toFirestoreUri(path)
     val request = Request[IO](method = Method.DELETE, uri = uri)
       .withHeaders(Header.Raw(CIString("Authorization"), s"Bearer $token"))
-    val clientResource: Resource[IO, Client[IO]] = EmberClientBuilder.default[IO].build
 
-    clientResource
-      .use(client => client.successful(request))
+    FetchClientBuilder[IO].create
+      .successful(request)
       .map {
         case true  => None
         case false => Some(CloudFirestoreException("failed deleting document"))

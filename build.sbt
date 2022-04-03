@@ -1,8 +1,12 @@
 enablePlugins(BuildInfoPlugin, ScalaJSPlugin, LaikaPlugin, ScalaJSBundlerPlugin)
+Global / onChangedBuildSource := ReloadOnSourceChanges
 
 name         := "TalesTonini.com"
 version      := "0.2.0"
 scalaVersion := "2.13.8"
+
+scalaJSUseMainModuleInitializer := true
+Compile / mainClass             := Some("com.talestonini.App")
 
 // Enable macro annotations by setting scalac flags for Scala 2.13
 scalacOptions ++= {
@@ -18,19 +22,19 @@ val circeVersion  = "0.15.0-M1"
 val http4sVersion = "1.0.0-M32"
 
 libraryDependencies ++= Seq(
-  "org.scala-js" %%% "scalajs-dom" % "1.1.0", // cannot use latest version yet due to binary incompatibilities
+  "org.scala-js" %%% "scalajs-dom" % "1.1.0+179-fa23209f-SNAPSHOT", // cannot use latest version yet due to binary incompatibilities
   // Binding
-  "com.thoughtworks.binding" %%% "route"   % "12.0.0", // needed for Routing.scala
+  "com.thoughtworks.binding" %%% "route" % "12.0.0" exclude ("org.scala-js", "scalajs-dom_sjs1_2.13"), // needed for Routing.scala
   "com.thoughtworks.binding" %%% "binding" % "12.1.0",
-  "org.lrng.binding"         %%% "html"    % "1.0.3",  // needed for all HTML elements
+  "org.lrng.binding" %%% "html" % "1.0.3" exclude ("org.scala-js", "scalajs-dom_sjs1_2.13"), // needed for all HTML elements
   // Http4s
-  "io.circe"   %%% "circe-core"          % circeVersion,
-  "io.circe"   %%% "circe-generic"       % circeVersion,
-  "io.circe"   %%% "circe-parser"        % circeVersion,
-  "org.http4s" %%% "http4s-client"       % http4sVersion,
-  "org.http4s" %%% "http4s-ember-client" % http4sVersion,
-  "org.http4s" %%% "http4s-circe"        % http4sVersion,
-  "io.monix"   %%% "monix-execution"     % "3.4.0",
+  "io.circe"   %%% "circe-core"      % circeVersion,
+  "io.circe"   %%% "circe-generic"   % circeVersion,
+  "io.circe"   %%% "circe-parser"    % circeVersion,
+  "org.http4s" %%% "http4s-circe"    % http4sVersion,
+  "org.http4s" %%% "http4s-client"   % http4sVersion,
+  "org.http4s" %%% "http4s-dom"      % http4sVersion exclude ("org.scala-js", "scalajs-dom_sjs1_2.13"),
+  "io.monix"   %%% "monix-execution" % "3.4.0",
   // Java Time for ScalaJS
   "io.github.cquiroz" %%% "scala-java-time"      % "2.4.0-M2",
   "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.4.0-M2",
@@ -39,26 +43,17 @@ libraryDependencies ++= Seq(
   "org.typelevel" %%% "munit-cats-effect-3" % "1.0.7"  % Test
 )
 
-scalaJSUseMainModuleInitializer := true
-Compile / mainClass             := Some("com.talestonini.App")
-Global / onChangedBuildSource   := ReloadOnSourceChanges
-
 // Node dependencies
 // -----------------
 //
 // ScalaJSBundlerPlugin adds Node.js dependencies
 // 17 Mar '22 - these dependencies are not needed, not for testing nor for the browser running app (keeping here for ref
 //              on node dependencies)
-Compile / npmDependencies ++= Seq(
-//"buffer"    -> "6.0.3",
-//"crypto-js" -> "4.1.1",
-  "net" -> "1.0.2",
-//"os"        -> "0.1.2",
-//"punycode"  -> "2.1.1",
-//"stream"    -> "0.0.2",
-  "tls"        -> "0.0.1",
-  "net-socket" -> "1.1.0"
-)
+//Compile / npmDependencies ++= Seq(
+// "fetch-headers" -> "3.0.1",
+// "net" -> "1.0.2",
+// "tls" -> "0.0.1"
+//)
 
 // Test setup
 // ----------
