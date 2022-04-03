@@ -50,25 +50,19 @@ libraryDependencies ++= Seq(
 // 17 Mar '22 - these dependencies are not needed, not for testing nor for the browser running app (keeping here for ref
 //              on node dependencies)
 //Compile / npmDependencies ++= Seq(
-// "fetch-headers" -> "3.0.1",
-// "net" -> "1.0.2",
-// "tls" -> "0.0.1"
+//"fetch-headers" -> "3.0.1",
+//"net"           -> "1.0.2",
+//"tls"           -> "0.0.1"
 //)
 
 // Test setup
 // ----------
 //
-// 17 Mar '11 - jsEnv is by default NodeJS; these other envs are only needed when testing browser-related features.
-//              They are here just for future reference, but are not needed for testing Cats Effects code, Java Time,
-//              etc. (In fact, the Cats Effects code in http4s does not pass in browser environments, as "net socket"
-//              is not present and I get "$$x1 is not a constructor", related to instantiating a net socket in http4s
-//              code. Apparently, I'd need a polyfill for that sort of NodeJS functionality that is not present in a
-//              browser. All browsers/headless browsers below fail those tests.)
-//Test / requireJsDomEnv := true
+Test / requireJsDomEnv := true
 // Node + DOM
 //Test / jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv()
 // Firefox
-//Test / jsEnv := new org.scalajs.jsenv.selenium.SeleniumJSEnv(new org.openqa.selenium.firefox.FirefoxOptions())
+Test / jsEnv := new org.scalajs.jsenv.selenium.SeleniumJSEnv(new org.openqa.selenium.firefox.FirefoxOptions())
 // Chrome
 //Test / jsEnv := new org.scalajs.jsenv.selenium.SeleniumJSEnv(
 //new org.openqa.selenium.chrome.ChromeOptions().addArguments("--no-sandbox", "--disable-dev-shm-usage")

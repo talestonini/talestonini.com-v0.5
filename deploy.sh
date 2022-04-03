@@ -3,6 +3,6 @@
 sbt clean
 # tests only pass with the DEV API key
 #sbt test
-sbt fullOptJS
+sbt fullOptJS::webpack
 ./prep_deploy.sh public prod
 firebase deploy

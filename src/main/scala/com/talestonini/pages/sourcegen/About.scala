@@ -76,6 +76,15 @@ object About {
         <li>Personal identifiers that visitors utilise in their social media accounts used to log into my website;</li>
         <li>Comments (and soon likes) left on the posts by logged-in visitors.</li>
       </ul>
+      
+      <h1 id="release-notes" class="section">Release Notes</h1>
+      
+      <h3 id="_0-2-0" class="section">0.2.0</h3>
+      <ul>
+        <li>Replaced <a href="https://github.com/hmil/RosHTTP">RösHTTP</a> for <a href="https://http4s.github.io/http4s-dom/">Http4s-DOM</a> due to the
+        former not being maintained anymore and to give me a reason to play with <a href="https://typelevel.org/cats/">Cats</a>. This is at
+        the database layer, implementing API calls to CloudFirestore.</li>
+      </ul>
     </div>
 
 }
