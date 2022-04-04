@@ -23,8 +23,8 @@ abstract class CreatePostSuite extends CatsEffectSuite {
   val scalaDecoratorsPostsPath = "projects/ttdotcom/databases/(default)/documents/posts"
   val newPostPath              = s"$scalaDecoratorsPostsPath/${randomAlphaNumericString(20)}"
 
-  val resource         = "binaryIncompatibility"
-  val title            = "A tough binary incompatibility issue"
+  val resource         = "dbLayerRefactor"
+  val title            = "Refactoring the database access layer"
   val firstPublishDate = ZonedDateTime.now()
 
   test("create a post") {

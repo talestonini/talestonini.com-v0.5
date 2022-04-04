@@ -3,7 +3,7 @@
 public=$1
 cycle=$2
 
-rmdir -r $public
+rm -rf $public
 mkdir -p $public/css
 mkdir -p $public/favicom
 mkdir -p $public/fonts
