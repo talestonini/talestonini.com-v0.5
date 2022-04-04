@@ -6,8 +6,9 @@ import com.talestonini.utils._
 import java.time.ZonedDateTime
 import munit.CatsEffectSuite
 
-//@munit.IgnoreSuite
-class CreatePostSuite extends CatsEffectSuite {
+// make suite abstract to ignore running
+// https://scalameta.org/munit/docs/filtering.html#ignore-entire-test-suite
+abstract class CreatePostSuite extends CatsEffectSuite {
 
   var testToken: Option[String] = None
   def getTestToken()            = testToken.getOrElse(throw new Exception("test token is invalid"))
