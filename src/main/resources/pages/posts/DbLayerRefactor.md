@@ -1,6 +1,10 @@
 {%
   class.name = DbLayerRefactor
 %}
+<div class="aside">
+  <img src="/img/refactoring.png" />
+</div>
+
 A few weeks ago I took myself the task of updating the database access layer of this website. Some parts of this page
 are stored in a Cloud Firestore database, like *comments* and *likes* (when I actually implement *likes*), and are
 retrieved via Cloud Firestore's REST API straight from the browser (there is not a *backend for frontend* running at the
@@ -35,7 +39,7 @@ Ok, I still needed a suitable http4s backend for my refactor. At the corner of h
 *related projects*. One of them - [http4s-dom](https://http4s.github.io/http4s-dom/) - looked very promissing...
 
 <div class="aside">
-  <img src="/img/http4s-dom.png" alt="http4s-dom" />
+  <img src="/img/http4s-dom.png" />
   <figcaption>Fig.1 - http4s-dom documentation snipet</figcaption>
 </div>
 
@@ -44,6 +48,51 @@ I had to try it. I already had all TDD tests waiting for the code.
 
 Changing from ember to the *fetch* client was super simple. Apart from building the client itself, which ember "wraps"
 in a [Cats Effect Resource](https://typelevel.org/cats-effect/docs/std/resource) typeclass, the REST API calls used the
-very same interfaces, as expected from a very well designed library such as http4s. But... as soon as I tried to compile
-it all without dependency **http4s-ember-client** and with new dependency **http4s-dom** I got a **binary
-incompatibility**!:
+very same interfaces, as expected from a very well designed library such as http4s. (You can check the final code
+[here](https://github.com/talestonini/talestonini.com/blob/master/src/main/scala/com/talestonini/db/CloudFirestore.scala).)
+But... as soon as I tried to compile without dependency *http4s-ember-client* and with new dependency *http4s-dom*, I
+got an annoying *binary incompatibility*:
+
+<div class="aside">
+  <img src="/img/binary-incompatibility.png" />
+  <figcaption>Fig.2 - Binary incompatibility across versions of dependency scalajs-dom</figcaption>
+</div>
+
+**A *binary incompatibility* happens when your code depends on different breaking versions of a library.** My website
+already had the following dependencies:
+
+- *org.scala-js : scalajs-dom* version *1.1.0*
+- *com.thoughtworks.binding : route*, which in turn depends on *scalajs-dom* version *1.0.0*
+- *org.lrng.binding : html*, which in turn depends on *scalajs-dom* version *0.9.8*
+
+Versions *1.1.0*, *1.0.0* and *0.9.8* of *scalajs-dom* are all compatible among themselves (i.e. non-breaking), so the
+compiler/linker never had an issue. However, when I added dependency:
+
+- *org.http4s : http4s-dom*, which in turn depends on *scalajs-dom* version *2.1.0*
+
+a *breaking* change between *scalajs-dom* version *2.1.0* and its previous versions was introduced. Panicking, I tried
+updating the first dependency (*scalajs-dom*) to version *2.1.0*, hoping the error would magically disappear somehow,
+but that still revealed the binary incompatibility. The 3 original dependencies listed above are non-negociable - they
+are the bricks and mortar of the website build. This time, after all the journey I had already been to choose an HTTP
+client library with a JavaScript backend to replace RösHTTP, I was not in the mood to search for another HTTP library.
+
+In the end, "brute force" was needed, and I thank once again open source projects. I'll tell you why. Having:
+
+- no version alternative to remove the binary incompatibility;
+- no desire to rebuild the whole website without ThoughtWorks Binding, and;
+- no desire to go search for yet another HTTP library with JavaScript backend,
+
+I resorted to **forking** *scalajs-dom* from version *1.1.0* including all the missing components from version *2.1.0*
+needed by *http4s-dom*. That is essentially a **merge** between versions *1.1.0* and parts of *2.1.0*, which constitute
+my new website dependency:
+
+- *org.scala-js : scalajs-dom* version *1.1.0+179-fa23209f-SNAPSHOT*
+
+All the code compiles fine now. For this to finally work, I also excluded transitive dependency on *scalajs-dom* from
+all involved libraries *route*, *html* and *http4s-dom*.
+
+You can check out the complete list of dependencies in
+[build.sbt](https://github.com/talestonini/talestonini.com/blob/master/build.sbt), my fork of
+[scalajs-dom](https://github.com/talestonini/scala-js-dom), and some more info on
+[preventing version conflicts with versionscheme](https://www.scala-lang.org/blog/2021/02/16/preventing-version-conflicts-with-versionscheme.html)
+(however, this is more for Scala library writers than for library users, like me in this case).

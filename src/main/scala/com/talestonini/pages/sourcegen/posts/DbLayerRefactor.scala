@@ -17,6 +17,9 @@ object DbLayerRefactor extends BasePostPage {
 
   @html def postContent(): Binding[Node] =
     <div>
+      <div class="aside">
+        <img src="/img/refactoring.png"/>
+      </div>
       <p>A few weeks ago I took myself the task of updating the database access layer of this website. Some parts of this page
       are stored in a Cloud Firestore database, like <em>comments</em> and <em>likes</em> (when I actually implement <em>likes</em>), and are
       retrieved via Cloud Firestore&#39;s REST API straight from the browser (there is not a <em>backend for frontend</em> running at the
@@ -46,16 +49,57 @@ object DbLayerRefactor extends BasePostPage {
       <p>Ok, I still needed a suitable http4s backend for my refactor. At the corner of http4s documentation page there are some
       <em>related projects</em>. One of them - <a href="https://http4s.github.io/http4s-dom/">http4s-dom</a> - looked very promissing...</p>
       <div class="aside">
-        <img src="/img/http4s-dom.png" alt="http4s-dom"/>
+        <img src="/img/http4s-dom.png"/>
         <figcaption>Fig.1 - http4s-dom documentation snipet</figcaption>
       </div>
       <p>...until I read the dreadind words &quot;backed by fetch&quot;... No, <em>fetch</em> again! What if I ran into the CORS issue once more?
       I had to try it. I already had all TDD tests waiting for the code.</p>
       <p>Changing from ember to the <em>fetch</em> client was super simple. Apart from building the client itself, which ember &quot;wraps&quot;
       in a <a href="https://typelevel.org/cats-effect/docs/std/resource">Cats Effect Resource</a> typeclass, the REST API calls used the
-      very same interfaces, as expected from a very well designed library such as http4s. But... as soon as I tried to compile
-      it all without dependency <strong>http4s-ember-client</strong> and with new dependency <strong>http4s-dom</strong> I got a <strong>binary
-      incompatibility</strong>!:</p>
+      very same interfaces, as expected from a very well designed library such as http4s. (You can check the final code
+      <a href="https://github.com/talestonini/talestonini.com/blob/master/src/main/scala/com/talestonini/db/CloudFirestore.scala">here</a>.)
+      But... as soon as I tried to compile without dependency <em>http4s-ember-client</em> and with new dependency <em>http4s-dom</em>, I
+      got an annoying <em>binary incompatibility</em>:</p>
+      <div class="aside">
+        <img src="/img/binary-incompatibility.png"/>
+        <figcaption>Fig.2 - Binary incompatibility across versions of dependency scalajs-dom</figcaption>
+      </div>
+      <p><strong>A <em>binary incompatibility</em> happens when your code depends on different breaking versions of a library.</strong> My website
+      already had the following dependencies:</p>
+      <ul>
+        <li><em>org.scala-js : scalajs-dom</em> version <em>1.1.0</em></li>
+        <li><em>com.thoughtworks.binding : route</em>, which in turn depends on <em>scalajs-dom</em> version <em>1.0.0</em></li>
+        <li><em>org.lrng.binding : html</em>, which in turn depends on <em>scalajs-dom</em> version <em>0.9.8</em></li>
+      </ul>
+      <p>Versions <em>1.1.0</em>, <em>1.0.0</em> and <em>0.9.8</em> of <em>scalajs-dom</em> are all compatible among themselves (i.e. non-breaking), so the
+      compiler/linker never had an issue. However, when I added dependency:</p>
+      <ul>
+        <li><em>org.http4s : http4s-dom</em>, which in turn depends on <em>scalajs-dom</em> version <em>2.1.0</em></li>
+      </ul>
+      <p>a <em>breaking</em> change between <em>scalajs-dom</em> version <em>2.1.0</em> and its previous versions was introduced. Panicking, I tried
+      updating the first dependency (<em>scalajs-dom</em>) to version <em>2.1.0</em>, hoping the error would magically disappear somehow,
+      but that still revealed the binary incompatibility. The 3 original dependencies listed above are non-negociable - they
+      are the bricks and mortar of the website build. This time, after all the journey I had already been to choose an HTTP
+      client library with a JavaScript backend to replace RösHTTP, I was not in the mood to search for another HTTP library.</p>
+      <p>In the end, &quot;brute force&quot; was needed, and I thank once again open source projects. I&#39;ll tell you why. Having:</p>
+      <ul>
+        <li>no version alternative to remove the binary incompatibility;</li>
+        <li>no desire to rebuild the whole website without ThoughtWorks Binding, and;</li>
+        <li>no desire to go search for yet another HTTP library with JavaScript backend,</li>
+      </ul>
+      <p>I resorted to <strong>forking</strong> <em>scalajs-dom</em> from version <em>1.1.0</em> including all the missing components from version <em>2.1.0</em>
+      needed by <em>http4s-dom</em>. That is essentially a <strong>merge</strong> between versions <em>1.1.0</em> and parts of <em>2.1.0</em>, which constitute
+      my new website dependency:</p>
+      <ul>
+        <li><em>org.scala-js : scalajs-dom</em> version <em>1.1.0+179-fa23209f-SNAPSHOT</em></li>
+      </ul>
+      <p>All the code compiles fine now. For this to finally work, I also excluded transitive dependency on <em>scalajs-dom</em> from
+      all involved libraries <em>route</em>, <em>html</em> and <em>http4s-dom</em>.</p>
+      <p>You can check out the complete list of dependencies in
+      <a href="https://github.com/talestonini/talestonini.com/blob/master/build.sbt">build.sbt</a>, my fork of
+      <a href="https://github.com/talestonini/scala-js-dom">scalajs-dom</a>, and some more info on
+      <a href="https://www.scala-lang.org/blog/2021/02/16/preventing-version-conflicts-with-versionscheme.html">preventing version conflicts with versionscheme</a>
+      (however, this is more for Scala library writers than for library users, like me in this case).</p>
     </div>
 
 }

@@ -86,6 +86,11 @@ object About {
         the database layer, implementing API calls to Cloud Firestore.</li>
         <li>Packaging the app with <a href="https://scalacenter.github.io/scalajs-bundler/">scalajs-bundler</a>.</li>
       </ul>
+      
+      <h3 id="_0-2-1" class="section">0.2.1</h3>
+      <ul>
+        <li>New post <a href="https://talestonini.com/#/dbLayerRefactor">Refactoring the database access layer</a>.</li>
+      </ul>
     </div>
 
 }
