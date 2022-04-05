@@ -32,7 +32,7 @@ object DbLayerRefactor extends BasePostPage {
       <a href="https://sttp.softwaremill.com/en/v2/">sttp</a>. Because everything runs on the browser, I needed an HTTP library that
       provides a JavaScript backend, which sttp does via the
       <a href="https://sttp.softwaremill.com/en/v2/backends/javascript/fetch.html">Fetch API</a>. It was all well and good until I hit a
-      a wall: this backend implementation would require me to change server side Cloud Firestore&#39;s REST API to overcome a
+      wall: this backend implementation would require me to change server side Cloud Firestore&#39;s REST API to overcome a
       <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">CORS</a> issue, which is not an option.</p>
       <p>Back to the drawing board, I needed another HTTP library with a JavaScript backend. So I decided to try
       <a href="https://http4s.org/">http4s</a>, after all it also supports lots of backends and favours the <em>pure functional</em> side of
@@ -43,7 +43,7 @@ object DbLayerRefactor extends BasePostPage {
       <a href="https://http4s.org/v1/docs/client.html#creating-the-client">2.13 and 3</a> and has an
       example on <a href="https://http4s.org/v1/docs/client.html#creating-the-client">creating the client</a> in the http4s
       documentation. It turns out that <strong>just because a library transpiles to JavaScript, it does not mean that it can run on
-      the browser</strong>. That is the case with ember as it relies on plain TCP sockets, which are not available in the browser
+      the browser</strong>. That is the case with ember, as it relies on plain TCP sockets, which are not available in the browser
       (check <a href="https://stackoverflow.com/questions/40599069/node-js-net-socket-is-not-a-constructor">this issue</a> on stack
       overflow). And so I learned that ember clients are fine for NodeJS, but not for the browser.</p>
       <p>Ok, I still needed a suitable http4s backend for my refactor. At the corner of http4s documentation page there are some

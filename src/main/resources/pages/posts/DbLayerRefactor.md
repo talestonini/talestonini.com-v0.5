@@ -18,7 +18,7 @@ Back to the database layer update, my first choice as a substitute to RösHTTP w
 [sttp](https://sttp.softwaremill.com/en/v2/). Because everything runs on the browser, I needed an HTTP library that
 provides a JavaScript backend, which sttp does via the
 [Fetch API](https://sttp.softwaremill.com/en/v2/backends/javascript/fetch.html). It was all well and good until I hit a
-a wall: this backend implementation would require me to change server side Cloud Firestore's REST API to overcome a
+wall: this backend implementation would require me to change server side Cloud Firestore's REST API to overcome a
 [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) issue, which is not an option.
 
 Back to the drawing board, I needed another HTTP library with a JavaScript backend. So I decided to try
@@ -31,7 +31,7 @@ looked good at first: it offers binaries for ScalaJS
 [2.13 and 3](https://http4s.org/v1/docs/client.html#creating-the-client) and has an
 example on [creating the client](https://http4s.org/v1/docs/client.html#creating-the-client) in the http4s
 documentation. It turns out that **just because a library transpiles to JavaScript, it does not mean that it can run on
-the browser**. That is the case with ember as it relies on plain TCP sockets, which are not available in the browser
+the browser**. That is the case with ember, as it relies on plain TCP sockets, which are not available in the browser
 (check [this issue](https://stackoverflow.com/questions/40599069/node-js-net-socket-is-not-a-constructor) on stack
 overflow). And so I learned that ember clients are fine for NodeJS, but not for the browser.
 
