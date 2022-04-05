@@ -32,16 +32,18 @@ the browser**. That is the case with ember as it relies on plain TCP sockets, wh
 overflow). And so I learned that ember clients are fine for NodeJS, but not for the browser.
 
 Ok, I still needed a suitable http4s backend for my refactor. At the corner of http4s documentation page there are some
-"related projects". One of them - [http4s-dom](https://http4s.github.io/http4s-dom/) - looked very promissing...
+*related projects*. One of them - [http4s-dom](https://http4s.github.io/http4s-dom/) - looked very promissing...
 
 <div class="aside">
   <img src="/img/http4s-dom.png" alt="http4s-dom" />
   <figcaption>Fig.1 - http4s-dom documentation snipet</figcaption>
 </div>
 
-...until I read dreadind words "backed by fetch"... No, *fetch* again! What if I ran into a CORS issue once more? I had
-to try it. I already had all TDD tests waiting for the code.
+...until I read the dreadind words "backed by fetch"... No, *fetch* again! What if I ran into the CORS issue once more?
+I had to try it. I already had all TDD tests waiting for the code.
 
 Changing from ember to the *fetch* client was super simple. Apart from building the client itself, which ember "wraps"
-in a [Cats Effect Resource](https://typelevel.org/cats-effect/docs/std/resource), the REST API calls used the very same
-interfaces, as expected from a very well designed library such as http4s.
+in a [Cats Effect Resource](https://typelevel.org/cats-effect/docs/std/resource) typeclass, the REST API calls used the
+very same interfaces, as expected from a very well designed library such as http4s. But... as soon as I tried to compile
+it all without dependency **http4s-ember-client** and with new dependency **http4s-dom** I got a **binary
+incompatibility**!:

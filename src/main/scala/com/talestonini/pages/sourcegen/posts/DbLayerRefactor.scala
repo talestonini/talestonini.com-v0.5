@@ -44,16 +44,18 @@ object DbLayerRefactor extends BasePostPage {
       (check <a href="https://stackoverflow.com/questions/40599069/node-js-net-socket-is-not-a-constructor">this issue</a> on stack
       overflow). And so I learned that ember clients are fine for NodeJS, but not for the browser.</p>
       <p>Ok, I still needed a suitable http4s backend for my refactor. At the corner of http4s documentation page there are some
-      &quot;related projects&quot;. One of them - <a href="https://http4s.github.io/http4s-dom/">http4s-dom</a> - looked very promissing...</p>
+      <em>related projects</em>. One of them - <a href="https://http4s.github.io/http4s-dom/">http4s-dom</a> - looked very promissing...</p>
       <div class="aside">
         <img src="/img/http4s-dom.png" alt="http4s-dom"/>
         <figcaption>Fig.1 - http4s-dom documentation snipet</figcaption>
       </div>
-      <p>...until I read dreadind words &quot;backed by fetch&quot;... No, <em>fetch</em> again! What if I ran into a CORS issue once more? I had
-      to try it. I already had all TDD tests waiting for the code.</p>
+      <p>...until I read the dreadind words &quot;backed by fetch&quot;... No, <em>fetch</em> again! What if I ran into the CORS issue once more?
+      I had to try it. I already had all TDD tests waiting for the code.</p>
       <p>Changing from ember to the <em>fetch</em> client was super simple. Apart from building the client itself, which ember &quot;wraps&quot;
-      in a <a href="https://typelevel.org/cats-effect/docs/std/resource">Cats Effect Resource</a>, the REST API calls used the very same
-      interfaces, as expected from a very well designed library such as http4s.</p>
+      in a <a href="https://typelevel.org/cats-effect/docs/std/resource">Cats Effect Resource</a> typeclass, the REST API calls used the
+      very same interfaces, as expected from a very well designed library such as http4s. But... as soon as I tried to compile
+      it all without dependency <strong>http4s-ember-client</strong> and with new dependency <strong>http4s-dom</strong> I got a <strong>binary
+      incompatibility</strong>!:</p>
     </div>
 
 }
