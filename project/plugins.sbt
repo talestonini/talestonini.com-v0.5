@@ -2,7 +2,8 @@ addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
 
 // Test Setup (must be before sbt-scalajs)
 //libraryDependencies += "org.scala-js" %% "scalajs-env-jsdom-nodejs" % "1.0.0"
-libraryDependencies += "org.scala-js" %% "scalajs-env-selenium" % "1.1.1"
+libraryDependencies += "org.scala-js"           %% "scalajs-env-selenium"    % "1.1.1"
+libraryDependencies += "org.seleniumhq.selenium" % "selenium-firefox-driver" % "4.1.3"
 //addSbtPlugin("org.scala-js" % "sbt-scalajs-env-phantomjs" % "1.0.0")
 
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.9.0")

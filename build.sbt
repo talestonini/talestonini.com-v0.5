@@ -2,7 +2,7 @@ enablePlugins(BuildInfoPlugin, ScalaJSPlugin, LaikaPlugin, ScalaJSBundlerPlugin)
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 name         := "TalesTonini.com"
-version      := "0.2.0"
+version      := "0.2.1"
 scalaVersion := "2.13.8"
 
 scalaJSUseMainModuleInitializer := true
@@ -22,6 +22,8 @@ val circeVersion  = "0.15.0-M1"
 val http4sVersion = "1.0.0-M32"
 
 libraryDependencies ++= Seq(
+  // ScalaJS
+  // (this scalajs-dom is built from my fork: https://github.com/talestonini/scala-js-dom)
   "org.scala-js" %%% "scalajs-dom" % "1.1.0+179-fa23209f-SNAPSHOT", // cannot use latest version yet due to binary incompatibilities
   // Binding
   "com.thoughtworks.binding" %%% "route" % "12.0.0" exclude ("org.scala-js", "scalajs-dom_sjs1_2.13"), // needed for Routing.scala
@@ -76,8 +78,9 @@ Test / jsEnv := new org.scalajs.jsenv.selenium.SeleniumJSEnv(new org.openqa.sele
 //new org.openqa.selenium.chrome.ChromeOptions().addArguments("--no-sandbox", "--disable-dev-shm-usage")
 //)
 // PhantomJS
-//Test / jsEnv := PhantomJSEnv(org.scalajs.jsenv.phantomjs.PhantomJSEnv.Config().withArgs(List("--web-security=no"))).value
-//scalaJSLinkerConfig ~= { _.withESFeatures(_.withUseECMAScript2015(false)) }
+//Test / jsEnv := PhantomJSEnv(
+//org.scalajs.jsenv.phantomjs.PhantomJSEnv.Config().withArgs(List("--web-security=no"))).value
+//scalaJSLinkerConfig ~= { _.withESFeatures(_.withESVersion(ESVersion.ES2021)) }
 
 // Scalastyle
 // ----------

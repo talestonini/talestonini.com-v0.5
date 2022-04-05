@@ -1,10 +1,10 @@
 package com.talestonini.db
 
 import cats.effect.{IO, SyncIO}
-import munit.CatsEffectSuite
 import com.talestonini.db.model.{Post, Comment, User}
 import com.talestonini.utils._
 import java.time.ZonedDateTime
+import munit.CatsEffectSuite
 
 class CloudFirestoreSuite extends CatsEffectSuite {
 

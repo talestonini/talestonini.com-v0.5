@@ -18,6 +18,7 @@ import scala.util.{Failure, Success}
 object Routing {
 
   private val postDocMap: Map[String, Promise[Doc[Post]]] = Map(
+    "dbLayerRefactor"      -> DbLayerRefactor.postDocPromise,
     "dockerVim"            -> DockerVim.postDocPromise,
     "funProgCapstone"      -> FunProgCapstone.postDocPromise,
     "morseCodeChallenge"   -> MorseCodeChallenge.postDocPromise,
@@ -26,12 +27,13 @@ object Routing {
   )
 
   private val pageMap: Map[String, Binding[Node]] = Map(
-    ""      -> ScalaDecorators(),
+    ""      -> DbLayerRefactor(),
     "about" -> About(),
     "posts" -> Posts(),
     "tags"  -> Tags(),
     // posts
     "funProgCapstone"      -> FunProgCapstone(),
+    "dbLayerRefactor"      -> DbLayerRefactor(),
     "dockerVim"            -> DockerVim(),
     "morseCodeChallenge"   -> MorseCodeChallenge(),
     "scalaDecorators"      -> ScalaDecorators(),
