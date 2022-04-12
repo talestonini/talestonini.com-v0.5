@@ -77,7 +77,7 @@ object About {
         <li>Comments (and soon likes) left on the posts by logged-in visitors.</li>
       </ul>
       
-      <h1 id="release-notes" class="section">Release Notes</h1>
+      <h1 id="release-notes" class="section">Release notes</h1>
       
       <h3 id="_0-2-0" class="section">0.2.0</h3>
       <ul>
