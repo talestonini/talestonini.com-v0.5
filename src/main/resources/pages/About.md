@@ -36,11 +36,11 @@
 
 #About my website
 
-I started this website to share my interests and learnings and as a way to play around with ScalaJS. These are some of
+I started this website to share my interests and learnings and as a way to play around with Scala.js. These are some of
 the technologies and libraries that I use to build it:
 
 - [Scala 2.13](https://www.scala-lang.org/)
-- [ScalaJS](https://www.scala-js.org/)
+- [Scala.js](https://www.scala-js.org/)
 - [ThoughtWorks Binding](https://github.com/ThoughtWorksInc/Binding.scala)
 - [Laika](https://planet42.github.io/Laika/)
 - [Firebase](https://firebase.google.com/)
@@ -51,7 +51,7 @@ the technologies and libraries that I use to build it:
 The **source code is open** [in my GitHub account](https://github.com/talestonini/talestonini.com) and I would gladly
 receive feedback about it.
 
-As you can see, I built a little engine to generate ScalaJS code for the posts I write in
+As you can see, I built a little engine to generate Scala.js code for the posts I write in
 [Markdown](https://en.wikipedia.org/wiki/Markdown).
 
 ##A note on data privacy and transparency

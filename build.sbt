@@ -22,7 +22,7 @@ val circeVersion  = "0.15.0-M1"
 val http4sVersion = "1.0.0-M32"
 
 libraryDependencies ++= Seq(
-  // ScalaJS
+  // Scala.js
   // (this scalajs-dom is built from my fork: https://github.com/talestonini/scala-js-dom)
   "org.scala-js" %%% "scalajs-dom" % "1.1.0+179-fa23209f-SNAPSHOT", // cannot use latest version yet due to binary incompatibilities
   // Binding
@@ -37,7 +37,7 @@ libraryDependencies ++= Seq(
   "org.http4s" %%% "http4s-client"   % http4sVersion,
   "org.http4s" %%% "http4s-dom"      % http4sVersion exclude ("org.scala-js", "scalajs-dom_sjs1_2.13"),
   "io.monix"   %%% "monix-execution" % "3.4.0",
-  // Java Time for ScalaJS
+  // Java Time for Scala.js
   "io.github.cquiroz" %%% "scala-java-time"      % "2.4.0-M2",
   "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.4.0-M2",
   // Test

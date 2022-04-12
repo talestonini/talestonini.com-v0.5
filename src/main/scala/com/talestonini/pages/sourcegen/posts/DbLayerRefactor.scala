@@ -36,15 +36,15 @@ object DbLayerRefactor extends BasePostPage {
       <p>Back to the drawing board, I needed another HTTP library with a JavaScript backend. So I decided to try
       <a href="https://http4s.org/">http4s</a>, after all it also supports lots of backends and favours the <em>pure functional</em> side of
       Scala through the use of <a href="https://typelevel.org/cats-effect/">Cats Effect</a>. It turned out to be an interesting
-      learning opportunity on ScalaJS as a whole. Bear with me.</p>
-      <p>On choosing an http4s backend, I started off by searching for the ones with a corresponding ScalaJS offering. <em>Ember</em>
-      looked good at first: it offers binaries for ScalaJS
+      learning opportunity on Scala.js as a whole. Bear with me.</p>
+      <p>On choosing an http4s backend, I started off by searching for the ones with a corresponding Scala.js offering. <em>Ember</em>
+      looked good at first: it offers binaries for Scala.js
       <a href="https://http4s.org/v1/docs/client.html#creating-the-client">2.13 and 3</a> and has an
       example on <a href="https://http4s.org/v1/docs/client.html#creating-the-client">creating the client</a> in the http4s
       documentation. It turns out that <strong>just because a library transpiles to JavaScript, it does not mean that it can run on
       the browser</strong>. That is the case with ember, as it relies on plain TCP sockets, which are not available in the browser
       (check <a href="https://stackoverflow.com/questions/40599069/node-js-net-socket-is-not-a-constructor">this issue</a> on stack
-      overflow). And so I learned that ember clients are fine for NodeJS, but not for the browser.</p>
+      overflow). And so I learned that ember clients are fine for Node.js, but not for the browser.</p>
       <p>Ok, I still needed a suitable http4s backend for my refactor. At the corner of http4s documentation page there are some
       <em>related projects</em>. One of them - <a href="https://http4s.github.io/http4s-dom/">http4s-dom</a> - looked very promising...</p>
       <div class="aside">

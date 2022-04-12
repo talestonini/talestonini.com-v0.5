@@ -23,16 +23,16 @@ wall: this backend implementation would require me to change server side Cloud F
 Back to the drawing board, I needed another HTTP library with a JavaScript backend. So I decided to try
 [http4s](https://http4s.org/), after all it also supports lots of backends and favours the *pure functional* side of
 Scala through the use of [Cats Effect](https://typelevel.org/cats-effect/). It turned out to be an interesting
-learning opportunity on ScalaJS as a whole. Bear with me.
+learning opportunity on Scala.js as a whole. Bear with me.
 
-On choosing an http4s backend, I started off by searching for the ones with a corresponding ScalaJS offering. *Ember*
-looked good at first: it offers binaries for ScalaJS
+On choosing an http4s backend, I started off by searching for the ones with a corresponding Scala.js offering. *Ember*
+looked good at first: it offers binaries for Scala.js
 [2.13 and 3](https://http4s.org/v1/docs/client.html#creating-the-client) and has an
 example on [creating the client](https://http4s.org/v1/docs/client.html#creating-the-client) in the http4s
 documentation. It turns out that **just because a library transpiles to JavaScript, it does not mean that it can run on
 the browser**. That is the case with ember, as it relies on plain TCP sockets, which are not available in the browser
 (check [this issue](https://stackoverflow.com/questions/40599069/node-js-net-socket-is-not-a-constructor) on stack
-overflow). And so I learned that ember clients are fine for NodeJS, but not for the browser.
+overflow). And so I learned that ember clients are fine for Node.js, but not for the browser.
 
 Ok, I still needed a suitable http4s backend for my refactor. At the corner of http4s documentation page there are some
 *related projects*. One of them - [http4s-dom](https://http4s.github.io/http4s-dom/) - looked very promising...

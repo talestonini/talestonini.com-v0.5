@@ -48,11 +48,11 @@ object About {
       </div>
       
       <h1 id="about-my-website" class="section">About my website</h1>
-      <p>I started this website to share my interests and learnings and as a way to play around with ScalaJS. These are some of
+      <p>I started this website to share my interests and learnings and as a way to play around with Scala.js. These are some of
       the technologies and libraries that I use to build it:</p>
       <ul>
         <li><a href="https://www.scala-lang.org/">Scala 2.13</a></li>
-        <li><a href="https://www.scala-js.org/">ScalaJS</a></li>
+        <li><a href="https://www.scala-js.org/">Scala.js</a></li>
         <li><a href="https://github.com/ThoughtWorksInc/Binding.scala">ThoughtWorks Binding</a></li>
         <li><a href="https://planet42.github.io/Laika/">Laika</a></li>
         <li><a href="https://firebase.google.com/">Firebase</a></li>
@@ -62,7 +62,7 @@ object About {
       </ul>
       <p>The <strong>source code is open</strong> <a href="https://github.com/talestonini/talestonini.com">in my GitHub account</a> and I would gladly
       receive feedback about it.</p>
-      <p>As you can see, I built a little engine to generate ScalaJS code for the posts I write in
+      <p>As you can see, I built a little engine to generate Scala.js code for the posts I write in
       <a href="https://en.wikipedia.org/wiki/Markdown">Markdown</a>.</p>
       
       <h2 id="a-note-on-data-privacy-and-transparency" class="section">A note on data privacy and transparency</h2>

@@ -1,6 +1,6 @@
 # [TalesTonini.com](https://talestonini.com)
 This is my personal website, where I add articles about varied stuff.
-It is developed in ScalaJS and hosted with Firebase Hosting.
+It is developed in Scala.js and hosted with Firebase Hosting.
 
 ## Developing
 ```
