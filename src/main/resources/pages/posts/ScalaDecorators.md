@@ -8,7 +8,7 @@ Decorator is a structural Design Pattern whose intent, according to Erich Gamma 
 > for extending functionality. (Erich Gamma and others, 1994, 175)
 
 Also known as *wrappers*, decorators are the *preferred* alternative to inheritance, as they are more pluggable, less
-static and over time are friendlier of code refactoring.
+static and over time are friendlier to code refactoring.
 
 In this post, I would like to show how to take advantage of some really nice features of the Scala language to write
 elegant decorators. Besides that, I'll explore how we can extend functionality of third-party libraries even when they
@@ -118,7 +118,7 @@ Not even a new type is needed here! Following is how we can invoke our decorated
 Here we need to import the extension method into the code, if not in the same package, as you'd expect.
 
 Extension methods are very rich, allowing the definition of operators, generic and collective extensions. I'm not going
-to exhaust the topic of extension methods here, since the intent of this post is to ellaborate on decorators in Scala.
+to exhaust the topic of extension methods here, since the intent of this post is to elaborate on decorators in Scala.
 
 ## Conclusion
 

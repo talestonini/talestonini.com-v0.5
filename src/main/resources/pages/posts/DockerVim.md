@@ -30,4 +30,4 @@ to try it ;)
 
 You can pull the image from Docker Hub [here](https://hub.docker.com/r/talestonini/dockervim).  Just follow the few
 manual instructions on the page to install the pre-configured Vim plugins and a fix to the Java language server binary.
-Any feedback and improvement contributions are greatly appreciated. Thanks for the read.
+Any feedback and improvement contributions are greatly appreciated. Thanks for reading.

@@ -76,3 +76,6 @@ the database layer, implementing API calls to Cloud Firestore.
 
 ###0.2.1
 - New post [Refactoring the database access layer](https://talestonini.com/#/dbLayerRefactor).
+
+###0.2.2
+- Fixed typos.

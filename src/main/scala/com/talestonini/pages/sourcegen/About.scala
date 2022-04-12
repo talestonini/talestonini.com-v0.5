@@ -91,6 +91,11 @@ object About {
       <ul>
         <li>New post <a href="https://talestonini.com/#/dbLayerRefactor">Refactoring the database access layer</a>.</li>
       </ul>
+      
+      <h3 id="_0-2-2" class="section">0.2.2</h3>
+      <ul>
+        <li>Fixed typos.</li>
+      </ul>
     </div>
 
 }

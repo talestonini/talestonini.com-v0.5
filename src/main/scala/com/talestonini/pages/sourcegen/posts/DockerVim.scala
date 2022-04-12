@@ -42,7 +42,7 @@ object DockerVim extends BasePostPage {
       to try it ;)</p>
       <p>You can pull the image from Docker Hub <a href="https://hub.docker.com/r/talestonini/dockervim">here</a>.  Just follow the few
       manual instructions on the page to install the pre-configured Vim plugins and a fix to the Java language server binary.
-      Any feedback and improvement contributions are greatly appreciated. Thanks for the read.</p>
+      Any feedback and improvement contributions are greatly appreciated. Thanks for reading.</p>
     </div>
 
 }

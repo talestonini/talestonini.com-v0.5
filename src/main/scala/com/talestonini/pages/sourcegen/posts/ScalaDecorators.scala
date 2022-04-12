@@ -22,7 +22,7 @@ object ScalaDecorators extends BasePostPage {
       <blockquote>Attach additional responsibilities to an object dynamically. Decorators provide a flexible alternative to subclassing
       for extending functionality. (Erich Gamma and others, 1994, 175)</blockquote>
       <p>Also known as <em>wrappers</em>, decorators are the <em>preferred</em> alternative to inheritance, as they are more pluggable, less
-      static and over time are friendlier of code refactoring.</p>
+      static and over time are friendlier to code refactoring.</p>
       <p>In this post, I would like to show how to take advantage of some really nice features of the Scala language to write
       elegant decorators. Besides that, I&#39;ll explore how we can extend functionality of third-party libraries even when they
       are explicitly marked to not allow inheritance (i.e. <em>final</em> classes in Java, or <em>sealed</em> in Scala).</p>
@@ -91,7 +91,7 @@ object ScalaDecorators extends BasePostPage {
       <div class="aside"><figcaption>Snippet.7 - Using a Scala 3 decorator</figcaption></div>
       <p>Here we need to import the extension method into the code, if not in the same package, as you&#39;d expect.</p>
       <p>Extension methods are very rich, allowing the definition of operators, generic and collective extensions. I&#39;m not going
-      to exhaust the topic of extension methods here, since the intent of this post is to ellaborate on decorators in Scala.</p>
+      to exhaust the topic of extension methods here, since the intent of this post is to elaborate on decorators in Scala.</p>
       
       <h2 id="conclusion" class="section">Conclusion</h2>
       <p>In this post we saw what a <em>decorator</em> is in the realm of Object Oriented Design Patterns and defined three ways of

@@ -5,14 +5,13 @@
   <img src="/img/refactoring.png" />
 </div>
 
-A few weeks ago I took myself the task of updating the database access layer of this website. Some parts of this page
-are stored in a Cloud Firestore database, like *comments* and *likes* (when I actually implement *likes*), and are
-retrieved via Cloud Firestore's REST API straight from the browser (there is not a *backend for frontend* running at the
-server side). The motivation for the update? Despite so thin and intuitive, library
-[RösHTTP](https://github.com/hmil/RosHTTP) is not being maintained anymore, and that would hold me back when I am
-finally able to upgrade the code from Scala 2.13 to Scala 3. At the moment, even
-[ThoughtWorks Binding](https://github.com/ThoughtWorksInc/Binding.scala) - the data-binding library at the core of this
-website - is not yet ready for Scala 3, but that's another story.
+A few weeks ago I took on the task of updating the database access layer of this website. Some parts of this page are
+stored in a Cloud Firestore database, like *comments* and *likes* (when I actually implement *likes*), and are retrieved
+via Cloud Firestore's REST API straight from the browser (there is not a *backend for frontend* running at the server
+side). The motivation for the update? Despite so thin and intuitive, library [RösHTTP](https://github.com/hmil/RosHTTP)
+is not being maintained anymore, and that would hold me back when I am finally able to upgrade the code from Scala 2.13
+to Scala 3. At the moment, even [ThoughtWorks Binding](https://github.com/ThoughtWorksInc/Binding.scala) - the
+data-binding library at the core of this website - is not yet ready for Scala 3, but that's another story.
 
 Back to the database layer update, my first choice as a substitute to RösHTTP was
 [sttp](https://sttp.softwaremill.com/en/v2/). Because everything runs on the browser, I needed an HTTP library that
@@ -26,7 +25,7 @@ Back to the drawing board, I needed another HTTP library with a JavaScript backe
 Scala through the use of [Cats Effect](https://typelevel.org/cats-effect/). It turned out to be an interesting
 learning opportunity on ScalaJS as a whole. Bear with me.
 
-On chosing an http4s backend, I started off by searching for the ones with a corresponding ScalaJS offering. *Ember*
+On choosing an http4s backend, I started off by searching for the ones with a corresponding ScalaJS offering. *Ember*
 looked good at first: it offers binaries for ScalaJS
 [2.13 and 3](https://http4s.org/v1/docs/client.html#creating-the-client) and has an
 example on [creating the client](https://http4s.org/v1/docs/client.html#creating-the-client) in the http4s
@@ -36,11 +35,11 @@ the browser**. That is the case with ember, as it relies on plain TCP sockets, w
 overflow). And so I learned that ember clients are fine for NodeJS, but not for the browser.
 
 Ok, I still needed a suitable http4s backend for my refactor. At the corner of http4s documentation page there are some
-*related projects*. One of them - [http4s-dom](https://http4s.github.io/http4s-dom/) - looked very promissing...
+*related projects*. One of them - [http4s-dom](https://http4s.github.io/http4s-dom/) - looked very promising...
 
 <div class="aside">
   <img src="/img/http4s-dom.png" />
-  <figcaption>Fig.1 - http4s-dom documentation snipet</figcaption>
+  <figcaption>Fig.1 - http4s-dom documentation snippet</figcaption>
 </div>
 
 ...until I read the dreadind words "backed by fetch"... No, *fetch* again! What if I ran into the CORS issue once more?
@@ -72,7 +71,7 @@ compiler/linker never had an issue. However, when I added dependency:
 
 a *breaking* change between *scalajs-dom* version *2.1.0* and its previous versions was introduced. Panicking, I tried
 updating the first dependency (*scalajs-dom*) to version *2.1.0*, hoping the error would magically disappear somehow,
-but that still revealed the binary incompatibility. The 3 original dependencies listed above are non-negociable - they
+but that still revealed the binary incompatibility. The 3 original dependencies listed above are non-negotiable - they
 are the bricks and mortar of the website build. This time, after all the journey I had already been to choose an HTTP
 client library with a JavaScript backend to replace RösHTTP, I was not in the mood to search for another HTTP library.
 
