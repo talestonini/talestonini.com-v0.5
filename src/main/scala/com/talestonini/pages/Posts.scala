@@ -21,12 +21,12 @@ object Posts {
     for (p <- bPostLinks)
       yield <div>
               <p>
-                <a class="w3-bold" href={s"#/${p.resource.bind}"}>{p.title.bind}</a>
                 <div class="post-date">
                   <a href={s"#/${p.resource.bind}"}>
                     <i>{p.publishDate.bind}</i> {firstPublishDate(p).bind}
                   </a>
                 </div>
+                <a class="w3-bold" href={s"#/${p.resource.bind}"}>{p.title.bind}</a>
               </p>
             </div>
 

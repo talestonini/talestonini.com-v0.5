@@ -27,12 +27,30 @@ trait BasePostPage extends Observer {
   // where each post builds its content, converted from MarkDown to HTML by Laika
   def postContent(): Binding[Node]
 
+  private val talesToniniLink   = "https://talestonini.com/#/"
+  private val linkedinShareLink = "https://au.linkedin.com/sharing/share-offsite/?mini=true&url="
+  private val twitterShareLink  = "https://twitter.com/intent/tweet?text="
+
   @html def apply(): Binding[Node] =
     <div>
-      <div class="post-title w3-padding-8">{bPostDoc.bind.fields.title.getOrElse("")}</div>
-      <div class="post-date">
-        {postDate(bPostDoc.bind.fields)}
+      <div class="post-date w3-padding-16 w3-display-container">
+        <div class="w3-display-left">{postDate(bPostDoc.bind.fields)}</div>
+        <div class="share-post w3-display-right">
+          <a href={linkedinShareLink + talesToniniLink + bPostDoc.bind.fields.resource.getOrElse("")}
+            class="no-decoration" target="_blank">
+            <i class="fa fa-linkedin w3-hover-opacity" />
+          </a>
+          <a href={twitterShareLink + talesToniniLink + bPostDoc.bind.fields.resource.getOrElse("")}
+            class="no-decoration" target="_blank">
+            <i class="fa fa-twitter w3-hover-opacity" />
+          </a>
+          <a href={s"javascript:copyToClipboard(\"${talesToniniLink + bPostDoc.bind.fields.resource.getOrElse("")}\")"}
+            class="no-decoration">
+            <i class="fa fa-link w3-hover-opacity" />
+          </a>
+        </div>
       </div>
+      <div class="post-title w3-padding-8">{bPostDoc.bind.fields.title.getOrElse("")}</div>
       <div class="w3-padding-16 line-numbers">{postContent()}</div>
       <hr />
       <div class="post-comments">

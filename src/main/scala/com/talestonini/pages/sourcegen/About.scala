@@ -79,22 +79,12 @@ object About {
       
       <h1 id="release-notes" class="section">Release notes</h1>
       
-      <h3 id="_0-2-0" class="section">0.2.0</h3>
+      <h3 id="_0-2-x" class="section">0.2.x</h3>
       <ul>
-        <li>Replaced <a href="https://github.com/hmil/RosHTTP">RösHTTP</a> for <a href="https://http4s.github.io/http4s-dom/">Http4s-DOM</a> due to the
+        <li>Replaced <a href="https://github.com/hmil/RosHTTP">RösHTTP</a> for <a href="https://http4s.github.io/http4s-dom/">http4s-dom</a> due to the
         former not being maintained anymore and to give me a reason to play with <a href="https://typelevel.org/cats/">Cats</a>. This is at
         the database layer, implementing API calls to Cloud Firestore.</li>
         <li>Packaging the app with <a href="https://scalacenter.github.io/scalajs-bundler/">scalajs-bundler</a>.</li>
-      </ul>
-      
-      <h3 id="_0-2-1" class="section">0.2.1</h3>
-      <ul>
-        <li>New post <a href="https://talestonini.com/#/dbLayerRefactor">Refactoring the database access layer</a>.</li>
-      </ul>
-      
-      <h3 id="_0-2-2" class="section">0.2.2</h3>
-      <ul>
-        <li>Fixed typos.</li>
       </ul>
     </div>
 

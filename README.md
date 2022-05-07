@@ -13,12 +13,14 @@ The above is not true anymore, as the website depends on Firebase components.
 Typically, you'll want to continually bundle the app with:
 ```
 > sbt
-> ~fastOptJS
+> ~fastOptJS::webpack
 ```
 ...and at another terminal window:
 ```
 > ./test_local.sh
 ```
+In fact, open `sbt` with script `sbt.sh`, so that you give it more memory. And **don't forget `::webpack`**, as you'll
+need a bundle to run the app!
 
 ## Testing locally before deploying
 Use script `test_local.sh`.  You may need to login manually first:
@@ -47,10 +49,16 @@ make sure the app node dependencies match the modules installed locally for reli
   - On Ubuntu, you can prepare the environment running `prep_test_env_once.sh`, and start sbt with `sbt-for-ubuntu.sh`.
 
 ## Deploying
-Use script `deploy.sh`.
+Build with:
+```
+> sbt fullOptJS::webpack
+```
+... and use script `deploy.sh`:
 ```
 > ./deploy.sh
 ```
+At the moment (and I write this as of version 0.2.3), the bundle produced by `fullOptJS` fails with an error related to
+too much recursion. As a workaround, `fastOptJS`'s bundle is doing fine.
 
 ## Upgrading npm dependencies
 All **npm** dependencies are delivered by *Firebase Hosting* (afaik) so far. To upgrade them, refer to the
@@ -61,7 +69,7 @@ script-includes in `index.html`. In the [npm](https://www.npmjs.com/) website, s
 
 ### New features
 - Likes
-- Tweet/LinkedIn a post
+- ~~Tweet/LinkedIn a post~~
 - Tags
 - ~~JS bundler~~: makes no sense, as the website does not depend on any npm library (that is not delivered by *Firebase
 Hosting*)

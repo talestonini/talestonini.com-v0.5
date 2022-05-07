@@ -118,9 +118,7 @@
         Prism.highlightAll();
       }, 5); // need to wait a bit or Prism will not be ready to do the highlight
     }
-  </script>
 
-  <script>
     function toggleSidebar() {
       var sidebar = document.getElementById("sidebar")
       var overlay = document.getElementById("overlay")
@@ -133,14 +131,19 @@
         overlay.style.display = "none";
       }
     }
-  </script>
 
-  <script>
     function sendGtagEvent(eventName, pagePath) {
       gtag('event', eventName, {
         page_path: pagePath,
         send_to: 'G-7S73VXDDSG'
       })
+    }
+
+    function copyToClipboard(text) {
+      if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text);
+      }
+      return Promise.reject("the clipboard API is not available");
     }
   </script>
 
