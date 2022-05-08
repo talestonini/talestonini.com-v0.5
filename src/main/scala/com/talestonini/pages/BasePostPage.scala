@@ -27,27 +27,21 @@ trait BasePostPage extends Observer {
   // where each post builds its content, converted from MarkDown to HTML by Laika
   def postContent(): Binding[Node]
 
-  private val talesToniniLink   = "https://talestonini.com/#/"
-  private val linkedinShareLink = "https://au.linkedin.com/sharing/share-offsite/?mini=true&url="
-  private val twitterShareLink  = "https://twitter.com/intent/tweet?text="
+  private val lin     = "https://au.linkedin.com/sharing/share-offsite/?mini=true&url="
+  private val twitter = "https://twitter.com/intent/tweet?text="
+  private val tt      = "https%3A%2F%2Ftalestonini.com%2F%23%2F"
 
   @html def apply(): Binding[Node] =
     <div>
       <div class="post-date w3-padding-16 w3-display-container">
         <div class="w3-display-left">{postDate(bPostDoc.bind.fields)}</div>
         <div class="share-post w3-display-right">
-          <a href={linkedinShareLink + talesToniniLink + bPostDoc.bind.fields.resource.getOrElse("")}
-            class="no-decoration" target="_blank">
-            <i class="fa fa-linkedin w3-hover-opacity" />
-          </a>
-          <a href={twitterShareLink + talesToniniLink + bPostDoc.bind.fields.resource.getOrElse("")}
-            class="no-decoration" target="_blank">
-            <i class="fa fa-twitter w3-hover-opacity" />
-          </a>
-          <a href={s"javascript:copyToClipboard(\"${talesToniniLink + bPostDoc.bind.fields.resource.getOrElse("")}\")"}
-            class="no-decoration">
-            <i class="fa fa-link w3-hover-opacity" />
-          </a>
+        {shareAnchor("fa-linkedin", lin + tt + bPostDoc.bind.fields.resource.getOrElse(""), "Share on LinkedIn")}
+        {shareAnchor("fa-twitter", twitter + tt + bPostDoc.bind.fields.resource.getOrElse(""), "Share on Twitter")}
+        {
+      shareAnchor("fa-link", s"javascript:copyToClipboard('${tt + bPostDoc.bind.fields.resource.getOrElse("")}')",
+        "Copy link", "_self")
+    }
         </div>
       </div>
       <div class="post-title w3-padding-8">{bPostDoc.bind.fields.title.getOrElse("")}</div>
@@ -59,6 +53,13 @@ trait BasePostPage extends Observer {
         {comments()}
       </div>
     </div>
+
+  @html private def shareAnchor(anchorIcon: String, href: String, tooltipText: String,
+    anchorTarget: String = "_blank"): Binding[Node] =
+    <a href={href} class="w3-tooltip no-decoration" target={anchorTarget}>
+      <i class={"fa " + anchorIcon + " w3-hover-opacity"} />
+      <span class="tooltip w3-text w3-tag w3-small">{tooltipText}</span>
+    </a>
 
   @html private def postDate(p: Post): Binding[Node] = {
     val firstPublishDate = p.firstPublishDate.map(fpd => datetime2Str(fpd, SimpleDateFormatter)).getOrElse("")

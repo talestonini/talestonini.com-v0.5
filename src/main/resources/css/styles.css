@@ -291,3 +291,12 @@ blockquote:before {
 blockquote p {
   display: inline;
 }
+
+.tooltip {
+  position: absolute;
+  left: 0;
+  bottom: -20px;
+  width: max-content;
+  opacity: 0.60;
+  color: white;
+}
