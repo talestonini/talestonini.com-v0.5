@@ -73,3 +73,6 @@ curiosity about which posts attract more attention. For the sake of full transpa
 former not being maintained anymore and to give me a reason to play with [Cats](https://typelevel.org/cats/). This is at
 the database layer, implementing API calls to Cloud Firestore.
 - Packaging the app with [scalajs-bundler](https://scalacenter.github.io/scalajs-bundler/).
+
+###0.3.x
+- Added links that allow for sharing a post via LinkedIn and Twitter, and also for copying a post URL to the clipboard.

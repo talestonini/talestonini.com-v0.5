@@ -118,10 +118,7 @@ object CloudFirestore {
     implicit docDecoder: Decoder[Doc[M]], bodyEncoder: Encoder[Body[M]]
   ): Future[Doc[M]] =
     if (isBadRequest(token, model.content)) {
-      // TODO improve this
-      val p = Promise[Doc[M]]()
-      p failure CloudFirestoreException("")
-      p.future
+      Promise.failed[Doc[M]](CloudFirestoreException("")).future
     } else
       upsertDocumentF(token, path, model).unsafeToFuture()
 

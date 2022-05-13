@@ -86,6 +86,11 @@ object About {
         the database layer, implementing API calls to Cloud Firestore.</li>
         <li>Packaging the app with <a href="https://scalacenter.github.io/scalajs-bundler/">scalajs-bundler</a>.</li>
       </ul>
+      
+      <h3 id="_0-3-x" class="section">0.3.x</h3>
+      <ul>
+        <li>Added links that allow for sharing a post via LinkedIn and Twitter, and also for copying a post URL to the clipboard.</li>
+      </ul>
     </div>
 
 }

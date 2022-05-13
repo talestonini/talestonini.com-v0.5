@@ -27,8 +27,8 @@ trait BasePostPage extends Observer {
   // where each post builds its content, converted from MarkDown to HTML by Laika
   def postContent(): Binding[Node]
 
-  private val lin     = "https://au.linkedin.com/sharing/share-offsite/?mini=true&url="
-  private val twitter = "https://twitter.com/intent/tweet?text="
+  private val lin     = "https://www.linkedin.com/sharing/share-offsite/?mini=true&url="
+  private val twitter = "https://twitter.com/intent/tweet?url="
   private val tt      = "https%3A%2F%2Ftalestonini.com%2F%23%2F"
 
   @html def apply(): Binding[Node] =
@@ -38,10 +38,8 @@ trait BasePostPage extends Observer {
         <div class="share-post w3-display-right">
         {shareAnchor("fa-linkedin", lin + tt + bPostDoc.bind.fields.resource.getOrElse(""), "Share on LinkedIn")}
         {shareAnchor("fa-twitter", twitter + tt + bPostDoc.bind.fields.resource.getOrElse(""), "Share on Twitter")}
-        {
-      shareAnchor("fa-link", s"javascript:copyToClipboard('${tt + bPostDoc.bind.fields.resource.getOrElse("")}')",
-        "Copy link", "_self")
-    }
+        {shareAnchor("fa-link", s"javascript:copyToClipboard('${tt + bPostDoc.bind.fields.resource.getOrElse("")}')",
+          "Copy link", "_self")}
         </div>
       </div>
       <div class="post-title w3-padding-8">{bPostDoc.bind.fields.title.getOrElse("")}</div>
