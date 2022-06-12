@@ -8,42 +8,44 @@ import cats.syntax.functor._
 
 trait Database[M[_]] {
 
-  def getAuthTokenF(): M[String]
+  def getAuthToken(): M[String]
 
-  def getDocumentsF[T <: Model](token: String, path: String)(
+  def getDocuments[T <: Model](token: String, path: String)(
     implicit docsResDecoder: Decoder[DocsRes[T]]
   ): M[Docs[T]]
 
-  def upsertDocumentF[T <: Model](token: String, path: String, model: T)(
+  def upsertDocument[T <: Model](token: String, path: String, model: T)(
     implicit docDecoder: Decoder[Doc[T]], bodyEncoder: Encoder[Body[T]]
   ): M[Doc[T]]
 
-  def deleteDocumentF[T <: Model](token: String, path: String)(
+  def deleteDocument[T <: Model](token: String, path: String)(
     implicit docDecoder: Decoder[Doc[T]]
   ): M[Option[Throwable]]
 
-  def getDocumentsF[T <: Model, M[_]: Monad](db: Database[M], path: String)(
+  // -------------------------------------------------------------------------------------------------------------------
+
+  def getDocuments[T <: Model, M[_]: Monad](db: Database[M], path: String)(
     implicit docsResDecoder: Decoder[DocsRes[T]]
   ): M[Docs[T]] =
     for {
-      token <- db.getAuthTokenF()
-      docs  <- db.getDocumentsF(token, path)
+      token <- db.getAuthToken()
+      docs  <- db.getDocuments(token, path)
     } yield docs
 
-  def upsertDocumentF[T <: Model, M[_]: Monad](db: Database[M], path: String, model: T)(
+  def upsertDocument[T <: Model, M[_]: Monad](db: Database[M], path: String, model: T)(
     implicit docDecoder: Decoder[Doc[T]], bodyEncoder: Encoder[Body[T]]
   ): M[Doc[T]] =
     for {
-      token <- db.getAuthTokenF()
-      doc   <- db.upsertDocumentF(token, path, model)
+      token <- db.getAuthToken()
+      doc   <- db.upsertDocument(token, path, model)
     } yield doc
 
-  def deleteDocumentF[T <: Model, M[_]: Monad](db: Database[M], path: String)(
+  def deleteDocument[T <: Model, M[_]: Monad](db: Database[M], path: String)(
     implicit docDecoder: Decoder[Doc[T]]
   ): M[Option[Throwable]] =
     for {
-      token <- db.getAuthTokenF()
-      t     <- db.deleteDocumentF(token, path)
+      token <- db.getAuthToken()
+      t     <- db.deleteDocument(token, path)
     } yield t
 
 }

@@ -1,13 +1,11 @@
 package com.talestonini.db
 
-import cats.effect.{IO, Resource}
-import cats.effect.unsafe.implicits.global
+import cats.effect.IO
 import com.talestonini.db.model._
 import com.talestonini.utils.randomAlphaNumericString
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
-import monix.execution.Scheduler.Implicits.{global => scheduler}
 import org.http4s.{Entity, EntityDecoder, EntityEncoder, Headers, Header, Method, Request}
 import org.http4s.circe._
 import org.http4s.client._
@@ -16,8 +14,6 @@ import org.http4s.implicits._
 import org.http4s.{Uri, UriTemplate}
 import org.http4s.UriTemplate._
 import org.typelevel.ci._
-import scala.concurrent._
-import scala.util.{Failure, Success}
 
 object CloudFirestore extends Database[IO] {
 
@@ -29,38 +25,38 @@ object CloudFirestore extends Database[IO] {
   case class CloudFirestoreException(msg: String) extends Exception(msg)
 
   def getPosts(token: String): IO[Docs[Post]] =
-    getDocumentsF[Post](token, s"projects/$ProjectId/databases/$Database/documents/posts")
+    getDocuments[Post](token, s"projects/$ProjectId/databases/$Database/documents/posts")
 
   def getPosts(): IO[Docs[Post]] =
-    getDocumentsF[Post, IO](this, s"projects/$ProjectId/databases/$Database/documents/posts")
+    getDocuments[Post, IO](this, s"projects/$ProjectId/databases/$Database/documents/posts")
 
   def getComments(token: String, postDocName: String): IO[Docs[Comment]] =
-    getDocumentsF[Comment](token, s"$postDocName/comments")
+    getDocuments[Comment](token, s"$postDocName/comments")
 
   def getComments(postDocName: String): IO[Docs[Comment]] =
-    getDocumentsF[Comment, IO](this, s"$postDocName/comments")
+    getDocuments[Comment, IO](this, s"$postDocName/comments")
 
   def createComment(token: String, postDocName: String, comment: Comment): IO[Doc[Comment]] = {
     val newCommentId   = randomAlphaNumericString(20)
     val commentDocName = s"$postDocName/comments/$newCommentId"
-    upsertDocumentF[Comment](token, commentDocName, comment)
+    upsertDocument[Comment](token, commentDocName, comment)
   }
 
   def createComment(postDocName: String, comment: Comment): IO[Doc[Comment]] = {
     val newCommentId   = randomAlphaNumericString(20)
     val commentDocName = s"$postDocName/comments/$newCommentId"
-    upsertDocumentF[Comment, IO](this, commentDocName, comment)
+    upsertDocument[Comment, IO](this, commentDocName, comment)
   }
 
   def removeComment(token: String, path: String): IO[Option[Throwable]] =
-    deleteDocumentF[Comment](token, path)
+    deleteDocument[Comment](token, path)
 
   def removeComment(path: String): IO[Option[Throwable]] =
-    deleteDocumentF[Comment, IO](this, path)
+    deleteDocument[Comment, IO](this, path)
 
   // -------------------------------------------------------------------------------------------------------------------
 
-  def getAuthTokenF(): IO[String] = {
+  def getAuthToken(): IO[String] = {
     val uri     = uri"https://identitytoolkit.googleapis.com/v1/accounts:signUp".withQueryParam("key", ApiKey)
     val request = Request[IO](Method.POST, uri).withHeaders(Headers(Header.Raw(ci"Content-Type", "application/json")))
 
@@ -72,7 +68,7 @@ object CloudFirestore extends Database[IO] {
 
   // def getAuthToken(): Future[String] = getAuthTokenF().unsafeToFuture()
 
-  def getDocumentsF[T <: Model](token: String, path: String)(
+  def getDocuments[T <: Model](token: String, path: String)(
     implicit docsResDecoder: Decoder[DocsRes[T]]
   ): IO[Docs[T]] = {
     val uri     = toFirestoreUri(path)
@@ -102,7 +98,7 @@ object CloudFirestore extends Database[IO] {
   // p.future
   // }
 
-  def upsertDocumentF[T <: Model](token: String, path: String, model: T)(
+  def upsertDocument[T <: Model](token: String, path: String, model: T)(
     implicit docDecoder: Decoder[Doc[T]], bodyEncoder: Encoder[Body[T]]
   ): IO[Doc[T]] = {
     val uri = toFirestoreUri(path).withQueryParam("updateMask.fieldPaths", model.dbFields)
@@ -137,7 +133,7 @@ object CloudFirestore extends Database[IO] {
   // p.future
   // }
 
-  def deleteDocumentF[T <: Model](token: String, path: String)(
+  def deleteDocument[T <: Model](token: String, path: String)(
     implicit docDecoder: Decoder[Doc[T]]
   ): IO[Option[Throwable]] = {
     val uri = toFirestoreUri(path)
