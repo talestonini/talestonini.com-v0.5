@@ -1,5 +1,6 @@
 package com.talestonini
 
+import cats.effect.unsafe.implicits.global
 import com.talestonini.App.isLoading
 import com.talestonini.db.CloudFirestore
 import com.talestonini.db.model._
@@ -47,6 +48,7 @@ object Routing {
   displayLoading(isLoading, retrievingPosts)
   CloudFirestore
     .getPosts()
+    .unsafeToFuture()
     .onComplete({
       case posts: Success[Docs[Post]] =>
         for (p <- posts.get if p.fields.enabled.getOrElse(true)) {

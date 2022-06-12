@@ -2,7 +2,7 @@ enablePlugins(BuildInfoPlugin, ScalaJSPlugin, LaikaPlugin, ScalaJSBundlerPlugin)
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 name         := "TalesTonini.com"
-version      := "0.3.0"
+version      := "0.4.0"
 scalaVersion := "2.13.8"
 
 scalaJSUseMainModuleInitializer := true

@@ -1,5 +1,6 @@
 package com.talestonini.pages
 
+import cats.effect.unsafe.implicits.global
 import com.talestonini.App.{user, handleClickSignIn, isLoading}
 import com.talestonini.db.CloudFirestore
 import com.talestonini.db.model._
@@ -38,8 +39,10 @@ trait BasePostPage extends Observer {
         <div class="share-post w3-display-right">
         {shareAnchor("fa-linkedin", lin + tt + bPostDoc.bind.fields.resource.getOrElse(""), "Share on LinkedIn")}
         {shareAnchor("fa-twitter", twitter + tt + bPostDoc.bind.fields.resource.getOrElse(""), "Share on Twitter")}
-        {shareAnchor("fa-link", s"javascript:copyToClipboard('${tt + bPostDoc.bind.fields.resource.getOrElse("")}')",
-          "Copy link", "_self")}
+        {
+      shareAnchor("fa-link", s"javascript:copyToClipboard('${tt + bPostDoc.bind.fields.resource.getOrElse("")}')",
+        "Copy link", "_self")
+    }
         </div>
       </div>
       <div class="post-title w3-padding-8">{bPostDoc.bind.fields.title.getOrElse("")}</div>
@@ -158,6 +161,7 @@ trait BasePostPage extends Observer {
         displayLoading(isLoading, retrievingComments)
         CloudFirestore
           .getComments(postDoc.get.name)
+          .unsafeToFuture()
           .onComplete({
             case comments: Success[Docs[Comment]] =>
               for (c <- comments.get)
@@ -210,6 +214,7 @@ trait BasePostPage extends Observer {
     )
     CloudFirestore
       .createComment(user.accessToken, bPostDoc.value.name, c)
+      .unsafeToFuture()
       .onComplete({
         case doc: Success[Doc[Comment]] =>
           bComments.value.prepend(BComment(

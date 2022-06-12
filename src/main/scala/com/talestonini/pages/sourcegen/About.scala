@@ -91,6 +91,11 @@ object About {
       <ul>
         <li>Added links that allow for sharing a post via LinkedIn and Twitter, and also for copying a post URL to the clipboard.</li>
       </ul>
+      
+      <h3 id="_0-4-x" class="section">0.4.x</h3>
+      <ul>
+        <li>Refactored database package to remove usage of <strong>Future</strong> in favour of <strong>Cats IO</strong>.</li>
+      </ul>
     </div>
 
 }

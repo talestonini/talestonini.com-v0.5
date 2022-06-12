@@ -14,7 +14,7 @@ abstract class CreatePostSuite extends CatsEffectSuite {
   def getTestToken()            = testToken.getOrElse(throw new Exception("test token is invalid"))
 
   test("get an auth token") {
-    CloudFirestore.getAuthTokenF() flatMap { token =>
+    CloudFirestore.getAuthToken() flatMap { token =>
       testToken = Some(token)
       IO(assertEquals(token.substring(0, 5), "eyJhb"))
     }
@@ -30,7 +30,7 @@ abstract class CreatePostSuite extends CatsEffectSuite {
   test("create a post") {
     val newPost = Post(Some(resource), Some(title), Some(firstPublishDate), Some(firstPublishDate), Some(true))
 
-    CloudFirestore.upsertDocumentF[Post](getTestToken(), newPostPath, newPost) flatMap { post =>
+    CloudFirestore.upsertDocument[Post](getTestToken(), newPostPath, newPost) flatMap { post =>
       IO(assertEquals(post.fields.resource.get, resource))
       IO(assertEquals(post.fields.title.get, title))
     }
