@@ -24,11 +24,11 @@ package object model {
     def sortingField: String
   }
 
-  case class Body[M](name: String, fields: M)
+  case class Body[T](name: String, fields: T)
 
-  implicit def bodyEncoder[M <: Model](implicit modelEncoder: Encoder[M]): Encoder[Body[M]] =
-    new Encoder[Body[M]] {
-      def apply(body: Body[M]): Json =
+  implicit def bodyEncoder[T <: Model](implicit modelEncoder: Encoder[T]): Encoder[Body[T]] =
+    new Encoder[Body[T]] {
+      def apply(body: Body[T]): Json =
         Json.obj(
           "name"   -> Json.fromString(body.name),
           "fields" -> modelEncoder(body.fields)
@@ -36,28 +36,28 @@ package object model {
     }
 
   // follows Cloud Firestore specs
-  case class Doc[M](name: String, fields: M, createTime: String, updateTime: String)
+  case class Doc[T](name: String, fields: T, createTime: String, updateTime: String)
 
-  implicit def docDecoder[M <: Model](implicit fieldsDecoder: Decoder[M]): Decoder[Doc[M]] =
+  implicit def docDecoder[T <: Model](implicit fieldsDecoder: Decoder[T]): Decoder[Doc[T]] =
     // name, fields, createTime and updateTime are part of Cloud Firestore specs
-    new Decoder[Doc[M]] {
-      final def apply(c: HCursor): Decoder.Result[Doc[M]] =
+    new Decoder[Doc[T]] {
+      final def apply(c: HCursor): Decoder.Result[Doc[T]] =
         for {
           name       <- c.get[String]("name")
-          fields     <- c.get[M]("fields")
+          fields     <- c.get[T]("fields")
           createTime <- c.get[String]("createTime")
           updateTime <- c.get[String]("updateTime")
         } yield Doc(name, fields, createTime, updateTime)
     }
 
-  type Docs[M] = Seq[Doc[M]]
-  case class DocsRes[M](documents: Docs[M])
+  type Docs[T] = Seq[Doc[T]]
+  case class DocsRes[T](documents: Docs[T])
 
-  implicit def docsResDecoder[M <: Model](implicit docsDecoder: Decoder[Docs[M]]): Decoder[DocsRes[M]] =
-    new Decoder[DocsRes[M]] {
-      final def apply(c: HCursor): Decoder.Result[DocsRes[M]] =
+  implicit def docsResDecoder[T <: Model](implicit docsDecoder: Decoder[Docs[T]]): Decoder[DocsRes[T]] =
+    new Decoder[DocsRes[T]] {
+      final def apply(c: HCursor): Decoder.Result[DocsRes[T]] =
         for {
-          docs <- c.get[Docs[M]]("documents")
+          docs <- c.get[Docs[T]]("documents")
         } yield DocsRes(docs)
     }
 
