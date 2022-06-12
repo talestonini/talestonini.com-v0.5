@@ -1,10 +1,10 @@
 package com.talestonini.db
 
-import com.talestonini.db.model._
-import io.circe.{Encoder, Decoder}
 import cats.Monad
 import cats.syntax.flatMap._
 import cats.syntax.functor._
+import com.talestonini.db.model._
+import io.circe.{Encoder, Decoder}
 
 trait Database[M[_]] {
 

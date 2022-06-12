@@ -76,3 +76,6 @@ the database layer, implementing API calls to Cloud Firestore.
 
 ###0.3.x
 - Added links that allow for sharing a post via LinkedIn and Twitter, and also for copying a post URL to the clipboard.
+
+###0.4.x
+- Refactored database package to remove usage of **Future** in favour of **Cats IO**.

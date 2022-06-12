@@ -66,8 +66,6 @@ object CloudFirestore extends Database[IO] {
       .map(response => response.idToken)
   }
 
-  // def getAuthToken(): Future[String] = getAuthTokenF().unsafeToFuture()
-
   def getDocuments[T <: Model](token: String, path: String)(
     implicit docsResDecoder: Decoder[DocsRes[T]]
   ): IO[Docs[T]] = {
@@ -78,25 +76,6 @@ object CloudFirestore extends Database[IO] {
       .expectOr[DocsRes[T]](request)(response => IO(CloudFirestoreException(s"failed getting documents: $response")))
       .map(docsRes => docsRes.documents.sortBy(_.fields.sortingField).reverse)
   }
-
-  // private def getDocuments[T <: Model](token: String, path: String)(
-  // implicit docsResDecoder: Decoder[DocsRes[T]]
-  // ): Future[Docs[T]] = getDocumentsF(token, path).unsafeToFuture()
-
-  // private def getDocuments[T <: Model](path: String)(
-  // implicit docsResDecoder: Decoder[DocsRes[T]]
-  // ): Future[Docs[T]] = {
-  // val p = Promise[Docs[T]]()
-  // getAuthToken()
-  // .onComplete({
-  // case token: Success[String] =>
-  // p completeWith getDocuments[T](token.get, path)
-  // case f: Failure[String] =>
-  // val errMsg = s"failed getting auth token: ${f.exception.getMessage()}"
-  // p failure CloudFirestoreException(errMsg)
-  // })
-  // p.future
-  // }
 
   def upsertDocument[T <: Model](token: String, path: String, model: T)(
     implicit docDecoder: Decoder[Doc[T]], bodyEncoder: Encoder[Body[T]]
@@ -109,29 +88,6 @@ object CloudFirestore extends Database[IO] {
     FetchClientBuilder[IO].create
       .expectOr[Doc[T]](request)(response => IO(CloudFirestoreException(s"failed upserting document: $response")))
   }
-
-  // private def upsertDocument[T <: Model](token: String, path: String, model: T)(
-  // implicit docDecoder: Decoder[Doc[T]], bodyEncoder: Encoder[Body[T]]
-  // ): Future[Doc[T]] =
-  // if (isBadRequest(token, model.content)) {
-  // Promise.failed[Doc[T]](CloudFirestoreException("")).future
-  // } else
-  // upsertDocumentF(token, path, model).unsafeToFuture()
-
-  // private def upsertDocument[T <: Model](path: String, model: T)(
-  // implicit docDecoder: Decoder[Doc[T]], bodyEncoder: Encoder[Body[T]]
-  // ): Future[Doc[T]] = {
-  // val p = Promise[Doc[T]]()
-  // getAuthToken()
-  // .onComplete({
-  // case token: Success[String] =>
-  // p completeWith upsertDocument[T](token.get, path, model)
-  // case f: Failure[String] =>
-  // val errMsg = s"failed getting auth token: ${f.exception.getMessage()}"
-  // p failure CloudFirestoreException(errMsg)
-  // })
-  // p.future
-  // }
 
   def deleteDocument[T <: Model](token: String, path: String)(
     implicit docDecoder: Decoder[Doc[T]]
@@ -147,25 +103,6 @@ object CloudFirestore extends Database[IO] {
         case false => Some(CloudFirestoreException("failed deleting document"))
       }
   }
-
-  // def deleteDocument[T <: Model](token: String, path: String)(
-  // implicit docDecoder: Decoder[Doc[T]]
-  // ): Future[Option[Throwable]] = deleteDocumentF(token, path).unsafeToFuture()
-
-  // private def deleteDocument[T <: Model](path: String)(
-  // implicit docDecoder: Decoder[Doc[T]]
-  // ): Future[Option[Throwable]] = {
-  // val p = Promise[Option[Throwable]]()
-  // getAuthToken()
-  // .onComplete({
-  // case token: Success[String] =>
-  // p completeWith deleteDocumentF[T](token.get, path).unsafeToFuture()
-  // case f: Failure[String] =>
-  // val errMsg = s"failed getting auth token: ${f.exception.getMessage()}"
-  // p failure CloudFirestoreException(errMsg)
-  // })
-  // p.future
-  // }
 
   private def toFirestoreUri(path: String): Uri =
     UriTemplate(
