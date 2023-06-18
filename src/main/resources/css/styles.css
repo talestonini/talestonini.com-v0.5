@@ -52,20 +52,10 @@
   align-items: center;
 }
 
-.menu-sign-in-out {
-  padding: 10px 20px 10px 0;
-}
-
 .menu-item {
   text-align: center;
   padding: 10px 0 10px 0;
   margin: 0 30px 0 30px;
-  text-decoration: none;
-}
-
-.menu-item-sign-in-out {
-  font-size: small;
-  padding: 0 0 10px 0;
   text-decoration: none;
 }
 
@@ -78,30 +68,10 @@
   z-index: 5
 }
 
-.pipe {
-  font-size: small;
-  padding: 0 10px 0 0;
-  text-decoration: none;
-}
-
 .hamburger {
   /* positions the hr below the hamburger */
   padding: 0 0 23px 0;
   text-align: right;
-}
-
-.greeting {
-  text-align: center;
-  font-size: x-small;
-}
-
-.greeting p {
-  margin: auto;
-}
-
-.not-now {
-  text-align: center;
-  padding: 0 0 8px 0;
 }
 
 .content {
@@ -171,10 +141,6 @@ h3 {
   font-size: 20px;
 }
 
-.content .button-bar {
-  padding: 8px 0 0 0;
-}
-
 .content button {
   width: 120px;
 }
@@ -219,12 +185,6 @@ h3 {
 
   .menu-item {
     margin: 0 20px 0 20px;
-  }
-
-  .menu-item-sign-in-out {
-    font-size: small;
-    padding: 0 0 10px 0;
-    text-decoration: none;
   }
 
   .content {

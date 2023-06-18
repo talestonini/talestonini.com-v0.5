@@ -54,18 +54,6 @@ receive feedback about it.
 As you can see, I built a little engine to generate Scala.js code for the posts I write in
 [Markdown](https://en.wikipedia.org/wiki/Markdown).
 
-##A note on data privacy and transparency
-
-My website is hosted by **Firebase** (a platform that is owned by Google) and has **Google Analytics** enabled, so that
-I can track visits to my pages and posts. I also allow visitors to login via some social media platforms (GitHub,
-Twitter, Google and Facebook), which allows visitors to leave comments on the posts and soon to leave likes on them too.
-I do not do anything special or malicious with the data I collect about visitors and visits, other than satisfy my own
-curiosity about which posts attract more attention. For the sake of full transparency, this is what I collect:
-
-- Count of visits per page (not linked to visitors);
-- Personal identifiers that visitors utilise in their social media accounts used to log into my website;
-- Comments (and soon likes) left on the posts by logged-in visitors.
-
 #Release notes
 
 ###0.2.x
@@ -79,3 +67,6 @@ the database layer, implementing API calls to Cloud Firestore.
 
 ###0.4.x
 - Refactored database package to remove usage of **Future** in favour of **Cats IO**.
+
+###0.5.x
+- Code cleanup.

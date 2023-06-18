@@ -1,27 +1,23 @@
 package com.talestonini.pages
 
 import cats.effect.unsafe.implicits.global
-import com.talestonini.App.{user, handleClickSignIn, isLoading}
+import com.talestonini.App.isLoading
 import com.talestonini.db.CloudFirestore
 import com.talestonini.db.model._
 import com.talestonini.utils._
 import com.talestonini.utils.javascript.display
-import com.talestonini.utils.observer.EventName._
-import com.talestonini.utils.observer.Observer
 import com.thoughtworks.binding.Binding
-import com.thoughtworks.binding.Binding.BindingSeq
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import org.lrng.binding.html
 import org.lrng.binding.html.NodeBinding
 import org.scalajs.dom.raw.Event
-import org.scalajs.dom.raw.HTMLTextAreaElement
+import org.scalajs.dom.raw.{HTMLInputElement, HTMLTextAreaElement}
 import org.scalajs.dom.raw.Node
-import org.scalajs.dom.window
 import scala.concurrent.Promise
 import scala.scalajs.concurrent.JSExecutionContext.queue
 import scala.util.{Failure, Success}
 
-trait BasePostPage extends Observer {
+trait BasePostPage {
 
   // --- UI ------------------------------------------------------------------------------------------------------------
 
@@ -78,51 +74,51 @@ trait BasePostPage extends Observer {
   private val isInputtingComment = Var(false)
   @html private def commentInput(): Binding[Node] = {
     val initComment = "What do you think?"
-    val bText       = Var(initComment)
+    val bComment    = Var(initComment)
+    val initName    = "Name"
+    val bName       = Var(initName)
 
-    val focusHandler = { e: Event =>
-      bText.value = ""
+    val commentFocusHandler = { e: Event =>
+      bComment.value = ""
       isInputtingComment.value = true
     }
 
-    val bTextArea: NodeBinding[HTMLTextAreaElement] =
-      <textarea class="w3-input w3-border" placeholder={initComment} rows="1" value={bText.bind}
-        onclick="this.rows = '5'" onfocus={focusHandler} />
+    val nameFocusHandler = { e: Event =>
+      bName.value = ""
+    }
 
-    def cleanTextArea() = {
-      bText.value = initComment
+    val bTextArea: NodeBinding[HTMLTextAreaElement] =
+      <textarea class="w3-input w3-border" placeholder={initComment} rows="1" value={bComment.bind}
+        onclick="this.rows = '5'" onfocus={commentFocusHandler} />
+
+    val bInput: NodeBinding[HTMLInputElement] =
+      <input class="w3-input w3-border" type="text" placeholder={initName} value={bName.bind}
+        onfocus={nameFocusHandler} />
+
+    def cleanCommentInputs() = {
+      bComment.value = initComment
+      bName.value = initName
       isInputtingComment.value = false
       bTextArea.value.rows = 1
     }
 
     val commentButtonHandler = { e: Event =>
-      val textArea = bTextArea.value
-      if (textArea.value.nonEmpty) {
-        bText.value = textArea.value
-        persistComment(bText.value)
-        cleanTextArea()
+      if (bTextArea.value.value.nonEmpty) {
+        persistComment(bInput.value.value, bTextArea.value.value)
+        cleanCommentInputs()
       }
     }
 
-    val cancelButtonHandler = { e: Event => cleanTextArea() }
-
-    val signInToCommentHandler = { e: Event =>
-      handleClickSignIn()
-      window.scrollTo(0, 0)
-    }
-
-    val signInToComment: Binding[Node] =
-      <div style={s"display: ${display(!isAllowedToComment.bind)}"}>
-        <p>Please <a style="text-decoration: underline; cursor: pointer"
-          onclick={signInToCommentHandler}>sign in</a> to leave your comments.</p>
-      </div>
+    val cancelButtonHandler = { e: Event => cleanCommentInputs() }
 
     val buttonClasses = "w3-button w3-ripple w3-padding w3-black"
     val commentInputControls: Binding[Node] =
-      <div class="w3-panel w3-light-grey w3-leftbar w3-padding-16"
-        style={s"display: ${display(isAllowedToComment.bind)}"}>
+      <div class="w3-panel w3-light-grey w3-leftbar w3-padding-16">
         {bTextArea.bind}
-        <div class="button-bar w3-right" style={s"display: ${display(isInputtingComment.bind)}"}>
+        <div class="w3-padding-8" style={s"display: ${display(isInputtingComment.bind)}"}>
+          {bInput.bind}
+        </div>
+        <div class="w3-right" style={s"display: ${display(isInputtingComment.bind)}"}>
           <div class="w3-bar">
             <button type="button" class={buttonClasses} onclick={commentButtonHandler}>Comment</button>
             <button type="button" class={buttonClasses} onclick={cancelButtonHandler}>Cancel</button>
@@ -130,13 +126,7 @@ trait BasePostPage extends Observer {
         </div>
       </div>
 
-    val res =
-      <div>
-        {signInToComment}
-        {commentInputControls}
-      </div>
-
-    res
+    commentInputControls
   }
 
   @html private def comments() =
@@ -179,14 +169,6 @@ trait BasePostPage extends Observer {
         println(s"failed getting post document name: ${f.exception.getMessage()}")
     })(queue)
 
-  // observe user signing in/out to allow or not commenting on the post
-  private var isAllowedToComment = Var(false)
-  user.register(this, UserSignedIn, UserSignedOut)
-  def onNotify(e: EventName): Unit = e match {
-    case UserSignedIn  => isAllowedToComment.value = true
-    case UserSignedOut => isAllowedToComment.value = false
-  }
-
   // --- private -------------------------------------------------------------------------------------------------------
 
   // the binding post document backing this post page
@@ -201,11 +183,11 @@ trait BasePostPage extends Observer {
   private val bComments = Vars.empty[BComment]
 
   // persist new comment into db
-  private def persistComment(comment: String): Unit = {
+  private def persistComment(name: String, comment: String): Unit = {
     val dbUser = com.talestonini.db.model.User(
-      name = Option(user.displayName.value),
-      email = Option(user.email.value),
-      uid = Option(user.uid.value)
+      name = Option(name),
+      email = Option("---"), // there is no auth anymore
+      uid = Option("---")    // there is no auth anymore
     )
     val c = Comment(
       author = Option(dbUser),
@@ -213,7 +195,7 @@ trait BasePostPage extends Observer {
       text = Option(comment)
     )
     CloudFirestore
-      .createComment(user.accessToken, bPostDoc.value.name, c)
+      .createComment(bPostDoc.value.name, c)
       .unsafeToFuture()
       .onComplete({
         case doc: Success[Doc[Comment]] =>

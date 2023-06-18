@@ -35,8 +35,8 @@ If that fails, try re-authenticating:
 
 ## Running unit tests
 - Tests only pass with the development API key, as the production one has security restrictions.
-- Node.js version 17.x.x presents issues running sbt target `fastOptJS::webpack`. To solve, run the following in the
-machine used to build the app (run my `sbt-for-ubuntu.sh`):
+- ~~Node.js version 17.x.x presents issues running sbt target `fastOptJS::webpack`. To solve, run the following in the
+machine used to build the app (run my `sbt-for-ubuntu.sh`):~~
 ```
 > export NODE_OPTIONS=--openssl-legacy-provider
 ```

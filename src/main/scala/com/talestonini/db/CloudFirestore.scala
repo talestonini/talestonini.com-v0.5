@@ -6,9 +6,8 @@ import com.talestonini.utils.randomAlphaNumericString
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
-import org.http4s.{Entity, EntityDecoder, EntityEncoder, Headers, Header, Method, Request}
+import org.http4s.{Headers, Header, Method, Request}
 import org.http4s.circe._
-import org.http4s.client._
 import org.http4s.dom.FetchClientBuilder
 import org.http4s.implicits._
 import org.http4s.{Uri, UriTemplate}
@@ -79,15 +78,18 @@ object CloudFirestore extends Database[IO] {
 
   def upsertDocument[T <: Model](token: String, path: String, model: T)(
     implicit docDecoder: Decoder[Doc[T]], bodyEncoder: Encoder[Body[T]]
-  ): IO[Doc[T]] = {
-    val uri = toFirestoreUri(path).withQueryParam("updateMask.fieldPaths", model.dbFields)
-    val request = Request[IO](Method.PATCH, uri)
-      .withEntity[Json](Body(path, model).asJson)
-      .withHeaders(Header.Raw(CIString("Authorization"), s"Bearer $token"))
+  ): IO[Doc[T]] =
+    if (isBadRequest(model.content)) {
+      IO.raiseError(new Exception(s"bad request")) // anti hack protection
+    } else {
+      val uri = toFirestoreUri(path).withQueryParam("updateMask.fieldPaths", model.dbFields)
+      val request = Request[IO](Method.PATCH, uri)
+        .withEntity[Json](Body(path, model).asJson)
+        .withHeaders(Header.Raw(CIString("Authorization"), s"Bearer $token"))
 
-    FetchClientBuilder[IO].create
-      .expectOr[Doc[T]](request)(response => IO(CloudFirestoreException(s"failed upserting document: $response")))
-  }
+      FetchClientBuilder[IO].create
+        .expectOr[Doc[T]](request)(response => IO(CloudFirestoreException(s"failed upserting document: $response")))
+    }
 
   def deleteDocument[T <: Model](token: String, path: String)(
     implicit docDecoder: Decoder[Doc[T]]
@@ -111,19 +113,23 @@ object CloudFirestore extends Database[IO] {
       path = List(PathElm("v1"), PathElm(path))
     ).toUriIfPossible.getOrElse(throw CloudFirestoreException("unable to build URI"))
 
-  // map of token -> (last usage time, last usage content)
+  // map of session -> (last usage time, last usage content)
   private var antiHackCache: Map[String, (Long, String)] = Map.empty
 
-  private def isBadRequest(token: String, content: String): Boolean = {
+  private def isBadRequest(content: String): Boolean = {
     val now                 = java.lang.System.currentTimeMillis()
-    val (luTime, luContent) = antiHackCache.get(token).getOrElse((0L, ""))
+    val (luTime, luContent) = antiHackCache.get(session).getOrElse((0L, ""))
 
     // update the cache
-    antiHackCache = antiHackCache.updated(token, (now, content))
+    antiHackCache = antiHackCache.updated(session, (now, content))
 
     val isBadInterval    = luTime > 0L && (now - luTime) < 1000
     val isSimilarContent = luContent.nonEmpty && content.toSeq.diff(luContent).unwrap.length() < 3
     isBadInterval || isSimilarContent
   }
+
+  // --- private -------------------------------------------------------------------------------------------------------
+
+  private lazy val session = randomAlphaNumericString(30)
 
 }

@@ -19,7 +19,7 @@ class CloudFirestoreSuite extends CatsEffectSuite {
   }
 
   val postsPath               = "projects/ttdotcom/databases/(default)/documents/posts"
-  val scalaDecoratorsPostPath = "projects/ttdotcom/databases/(default)/documents/posts/nnpTGgZd4t5SBetL6lY9"
+  val scalaDecoratorsPostPath = "projects/ttdotcom/databases/(default)/documents/posts/vH6lZRC6NTtZ3O16IfVy"
 
   test("get a post") {
     // let's get the post about Scala Decorators
