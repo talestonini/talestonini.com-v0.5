@@ -16,7 +16,6 @@ cp -r target/scala-2.13/classes/favicom/* $public/favicom
 cp -r target/scala-2.13/classes/fonts/* $public/fonts
 cp -r target/scala-2.13/classes/img/* $public/img
 cp -r target/scala-2.13/classes/js/* $public/js
-cp -r target/scala-2.13/classes/legal/* $public
 
 cp index.html $public
 
